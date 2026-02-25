@@ -13,14 +13,6 @@ def package_files(directory):
     return paths
 
 
-def required(requirements_file):
-    """ Read requirements file and remove comments and empty lines. """
-    with open(os.path.join(os.path.dirname(__file__), requirements_file),
-              'r') as f:
-        requirements = f.read().splitlines()
-        return [pkg for pkg in requirements
-                if pkg.strip() and not pkg.startswith("#")]
-
 
 def get_version():
     """ Find the version of the package"""
@@ -55,7 +47,6 @@ setup(
     packages=['tugalex'],
     include_package_data=True,
     package_data={'': extra_files},
-    install_requires=required('requirements.txt'),
     url='https://github.com/TigreGotico/tugalex',
     license='',
     author='JarbasAi',

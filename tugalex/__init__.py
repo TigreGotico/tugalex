@@ -204,6 +204,14 @@ class TugaLexicon:
         Returns:
             The phoneme string for the specified word and POS in the region, or None if no entry exists.
         """
+        archaic = self.archaic_words
+        if word in archaic:
+            word = archaic[word]
+
+        homo = self.homographs
+        if word in homo and pos in homo[word]:
+            return homo[word][pos]
+
         return self.ipa[region].get(word, {}).get(pos)
 
     def get_syllables(self, word: str, region: str = "lbx") -> List[str]:
@@ -228,7 +236,7 @@ class TugaLexicon:
         return self.syllables[region].get(word, [])
 
     def get(
-        self, word: str, pos: str = "NOUN", region: str = "lbx"
+            self, word: str, pos: str = "NOUN", region: str = "lbx"
     ) -> Dict[str, Union[Optional[str], List[str]]]:
         """
         Retrieve both syllable segmentation and phoneme transcription for a word in a given region and part of speech.
@@ -279,24 +287,37 @@ class TugaLexicon:
         """
         if region not in self.ipa:
             raise ValueError(f"Unsupported dialect: {region}")
-
+        homo = self.homographs
         return {
-            word: self.ipa[region][word][pos]
-            for word in self.ipa[region] if pos in self.ipa[region][word]
-        }
+            **{
+                word: self.ipa[region][word][pos]
+                for word in self.ipa[region]
+                if pos in self.ipa[region][word]
+            },
+            **{
+                word: homo[word][pos]
+                for word in homo
+                if pos in homo[word]
+            }}
 
     @cached_property
     def possible_postags(self) -> Dict[str, List[str]]:
         """
-        Get all possible Part-of-Speech tags for words in the default 'lbx' region.
+        Get all possible Part-of-Speech tags for words in the lexicon.
 
         Returns:
             Dict[str, List[str]]: Map of word -> list of available POS tags.
         """
+        homo = self.homographs
         return {
-            word: list(self.ipa["lbx"][word].keys())
-            for word in self.ipa["lbx"]
-        }
+            **{
+                word: list(self.ipa["lbx"][word].keys())
+                for word in self.ipa["lbx"]
+            },
+            **{
+                word: list(homo[word].keys())
+                for word in homo
+            }}
 
     @cached_property
     def AO1990(self) -> Dict[str, List[str]]:
@@ -482,8 +503,6 @@ if __name__ == "__main__":
     # Voiced U words count: 283
 
     # print(ph.possible_postags)
-
-    from pprint import pprint
 
     phoneme_dataset = ph.get_ipa_map()
     # pprint(phoneme_dataset) # Uncomment to see full list
