@@ -1,3 +1,4 @@
+import json
 import os
 from functools import cached_property
 from typing import Dict, List, Tuple, Optional, Set, Union
@@ -50,13 +51,53 @@ class TugaLexicon:
         self.ao_br_path: str = os.path.join(
             os.path.dirname(__file__), "data", "acordo_ortografico_pt_BR.csv"
         )
+        self.homographs_path: str = os.path.join(
+            os.path.dirname(__file__), "data", "heterophonic_homographs.csv"
+        )
+        self.archaisms_path: str = os.path.join(
+            os.path.dirname(__file__), "data", "archaisms.csv"
+        )
 
-        # Lazy loaded attributes
         self.ao_pt: Dict[str, List[str]] = self._load_ao(self.ao_pt_path)
         self.ao_br: Dict[str, List[str]] = self._load_ao(self.ao_br_path)
+        self.homographs: Dict[str, Dict[str, str]] = self._load_homographs(self.homographs_path)
+        self.archaic_words: Dict[str, str] = self._load_archaisms(self.archaisms_path)
+        # Lazy loaded attributes
         self._ipa: IPA_MAP = {}
         self._syllables: SYLLABLE_MAP = {}
         self._regions: Set[str] = set()
+
+    @staticmethod
+    def _load_archaisms(path: str) -> Dict[str, str]:
+        data = {}
+        with open(path, "r", encoding="utf-8") as f:
+            for l in f.read().split("\n")[1:]:
+                if "," not in l:
+                    continue
+                l = l.replace('"', "")
+                parts = l.split(",", 2)
+                if len(parts) != 3:
+                    continue
+                old_word, new_word, _ = parts
+                data[old_word] = new_word
+        return data
+
+    @staticmethod
+    def _load_homographs(path: str) -> Dict[str, Dict[str, str]]:
+        data = {}
+        with open(path, "r", encoding="utf-8") as f:
+            for l in f.read().split("\n")[1:]:
+                if "," not in l:
+                    continue
+                l = l.replace('"', "")
+                parts = l.split(",", 2)
+                if len(parts) != 3:
+                    continue
+                word, pos, ipa = parts
+                if word not in data:
+                    data[word] = {}
+                data[word][pos] = ipa
+        return data
 
     @staticmethod
     def _load_lang_map(path: str) -> Tuple[IPA_MAP, SYLLABLE_MAP, Set[str]]:
@@ -331,90 +372,6 @@ class TugaLexicon:
         }
 
     @cached_property
-    def homographs(self) -> Dict[str, Dict[str, str]]:
-        """
-        Dictionary of homographs (words with different IPA depending on POS).
-
-        Returns:
-            Dict[str, Dict[str, str]]: Word -> POS -> Phoneme.
-        """
-        # words with different IPA depending on postag
-        # TODO - read from .csv
-        return {
-            "para": {"ADP": "ˈpɐɾɐ", "VERB": "ˈpaɾɐ"},
-            # para (preposição) vs pára (verbo) - sem distinção desde o AO1990
-            "pelo": {"ADP": "ˈpɨlu", "NOUN": "ˈpelu", "VERB": "ˈpɛlu"},
-            # pelo, pélo, pêlo - sem distinção desde o AO1990
-
-            "tola": {"NOUN": "ˈtɔlɐ", "ADJ": "ˈtolɐ"},  # tola (feminino de tolo, «tonto») – tola («cabeça», informal);
-            "seco": {"ADJ": "ˈseku", "VERB": "ˈsɛku"},  # "sêco" vs "séco"
-
-            "acordo": {"NOUN": "ɐˈkoɾdu", "VERB": "ɐˈkɔɾdu"},  # acordo («entendimento») – acordo (verbo acordar);
-            "acerto": {"NOUN": "ɐˈseɾtu", "VERB": "ɐˈsɛɾtu"},  # acerto («acordo», «correção») – acerto (verbo acertar);
-            "cerro": {"NOUN": "ˈseʁu", "VERB": "ˈsɛʁu"},  # cerro («elevação, colina») – cerro (verbo cerrar);
-            "choro": {"NOUN": "ˈʃoɾu", "VERB": "ˈʃɔɾu"},  # choro («pranto») – choro (verbo chorar);
-            "colher": {"NOUN": "kuˈʎɛɾ", "VERB": "kuˈʎeɾ"},  # colher («utensílio de mesa») – colher («apanhar»);
-            "começo": {"NOUN": "kuˈmesu", "VERB": "kuˈmɛsu"},  # começo («início») – começo (verbo começar);
-            "conserto": {"NOUN": "kõˈseɾtu", "VERB": "kõˈsɛɾtu"},
-            # conserto (substantivo) - conserto (1.ª pess.sing. pres. ind. - verbo consertar)
-            "coro": {"NOUN": "ˈkoɾu", "VERB": "ˈkɔɾu"},  # coro («conjunto de cantores») – coro (verbo corar);
-            "corte": {"NOUN": "ˈkoɾtɨ", "VERB": "ˈkɔɾtɨ"},
-            # corte («morada do rei») – corte («ato de cortar»; verbo cortar);
-            "gozo": {"NOUN": "ˈgozu", "VERB": "ˈgɔzu"},  # gozo («prazer»; «troça») – gozo (verbo gozar);
-            "gosto": {"NOUN": "ˈgoʃtu", "VERB": "ˈgɔʃt"},
-            # gosto (substantivo) - gosto (1.ª pess.sing. pres. ind. - verbo gostar)
-            "jogo": {"NOUN": "ˈʒoɡu", "VERB": "ˈʒɔɡu"},  # jogo («divertimento») – jogo (verbo jogar);
-            "molho": {"NOUN": "ˈmoʎu", "VERB": "ˈmɔʎu"},  # molho («líquido, caldo») – molho («feixe»; verbo molhar);
-            "olho": {"NOUN": "ˈoʎu", "VERB": "ˈɔʎu"},  # olho («órgão da visão») – olho (verbo olhar);
-            "rego": {"NOUN": "ˈʁeɡu", "VERB": "ˈʁɛɡu"},  # rego («sulco, vala») – rego (verbo regar);
-            "sede": {"NOUN": "ˈsɛdɨ", "VERB": "ˈsedɨ"},  # sede («vontade de beber») – sede («lugar»);
-            "sobre": {"NOUN": "ˈsobɾɨ", "VERB": "ˈsɔbɾɨ"},  # sobre («em cima») – sobre (verbo sobrar);
-            "torre": {"NOUN": "ˈtoʁɨ", "VERB": "ˈtɔʁɨ"},  # torre («coluna») – torre (verbo torrar);
-            "transtorno": {"NOUN": "tɾɐ̃ʃˈtoɾnu", "VERB": "tɾɐ̃ʃˈtɔɾnu"},
-            # transtorno («contrariedade») – transtorno (verbo transtornar);
-
-            "peso": {"NOUN": "ˈpezu", "VERB": "ˈpɛzu"},  # "pêso" vs "péso"
-            "porto": {"NOUN": "ˈpoɾtu", "VERB": "ˈpɔɾtu"},
-            "posto": {"NOUN": "ˈpoʃtu", "VERB": "ˈpɔʃtu"},  # eu "pósto" , o meu "pôsto", está "pôsto"
-            # "borra": {"NOUN": "ˈboʁɐ", "VERB": "ˈbɔʁɐ"}, # borra («resíduo») – borra (verbo borrar);  SKIP: uncommon - dialectal
-
-            # SKIP: disambiguation based on verb tense out of scope
-            # "vede": {"VERB": "ˈveðɨ", "VERB": "ˈvɛðɨ"}, # vede (verbo ver) – vede (verbo vedar).'
-            # "pode": {"PRESENT": "ˈpɔðɨ", "PAST": "ˈpoðɨ"},  # pode vs pôde
-        }
-
-    @cached_property
-    def archaic_words(self) -> Dict[str, str]:
-        """
-        Dictionary of archaic words (pre-20th century) mapped to modern spellings.
-
-        Returns:
-            Dict[str, str]: Archaic -> Modern.
-        """
-        # Até ao início do século XX, tanto em Portugal como no Brasil,
-        # seguia-se uma ortografia que, por regra, baseava-se nos étimos latino ou grego para escrever cada palavra
-        # TODO - read from .csv
-        return {
-            "architectura": "arquitetura",
-            "caravella": "caravela",
-            "diccionario": "dicionário",
-            "diphthongo": "ditongo",
-            "estylo": "estilo",
-            "grammatica": "gramática",
-            "lyrio": "lírio",
-            "parochia": "paroquia",
-            "kilometro": "quilometro",
-            "orthographia": "ortografia",
-            "pharmacia": "farmácia",
-            "phleugma": "fleuma",
-            "prompto": "pronto",
-            "psychologia": "psicologia",
-            "rheumatismo": "reumatismo",
-            "sanccionar": "sancionar",
-            "theatro": "teatro",
-        }
-
-    @cached_property
     def silent_p_words(self) -> Set[str]:
         """
         Set of words where 'p' is silent (common in mpc/mpç/mpt clusters before AO1990).
@@ -505,6 +462,8 @@ if __name__ == "__main__":
     # Voiced U words count: 283
 
     # print(ph.possible_postags)
+    print(ph.archaic_words)
+    print(ph.homographs)
 
     phoneme_dataset = ph.get_ipa_map()
     # pprint(phoneme_dataset) # Uncomment to see full list
