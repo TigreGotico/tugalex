@@ -65,31 +65,12 @@ TugaLex identifies specific linguistic phenomena programmatically:
 
 ---
 
-## 🛠 Advanced Usage
-
-### Lazy Loading
-
-TugaLex utilizes lazy loading for its data structures. The heavy CSV files are only read into memory when you first access properties like `.ipa`, `.syllables`, or `.regions`.
-
-### Working with Wordlists
-
-You can extract full regional datasets for custom modeling or validation:
-
-```python
-# Get all available words for the Brazilian dialect
-br_words = lex.get_wordlist(region="rjx")
-
-# Get a flat map of word -> phonemes for nouns in Portugal
-pt_nouns = lex.get_ipa_map(pos="NOUN", region="lbx")
-
-```
-
----
-
-## 📂 Data Requirements
+## 📂 Datasets
 
 TugaLex ships the following datasets which contain over 100,000 entries sourced from the [Portal da Língua Portuguesa](http://www.portaldalinguaportuguesa.org).
 
-* `regional_dict.csv`: Phoneme and syllable mappings.
-* `acordo_ortografico_pt_PT.csv`: Portugal orthographic mapping.
-* `acordo_ortografico_pt_BR.csv`: Brazil orthographic mapping.
+* [`regional_dict.csv`](https://huggingface.co/datasets/TigreGotico/portuguese_phonetic_lexicon): Phoneme and syllable mappings.
+* [`heterophonic_homographs.csv`](https://huggingface.co/datasets/TigreGotico/heterophonic_homographs_pt): words pronounced differently depending on postag.
+* [`acordo_ortografico_pt_PT.csv`](https://huggingface.co/datasets/TigreGotico/AO1990_pt-PT): Portugal old orthographic spellings.
+* [`acordo_ortografico_pt_BR.csv`](https://huggingface.co/datasets/TigreGotico/AO1990_pt-BR): Brazil old orthographic spellings.
+* [`archaisms.csv`](https://huggingface.co/datasets/TigreGotico/archaisms_pt): normalized words from before the 20th century.
