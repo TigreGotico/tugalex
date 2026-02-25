@@ -204,6 +204,8 @@ class TugaLexicon:
         Returns:
             The phoneme string for the specified word and POS in the region, or None if no entry exists.
         """
+        word = word.strip().lower()
+
         archaic = self.archaic_words
         if word in archaic:
             word = archaic[word]
