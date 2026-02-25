@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.2a2](https://github.com/TigreGotico/tugalex/tree/0.0.2a2) (2026-02-25)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.0.2a1...0.0.2a2)
+
+**Merged pull requests:**
+
+- chore: move hardcoded wordlists to .csv files [\#4](https://github.com/TigreGotico/tugalex/pull/4) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.2a1](https://github.com/TigreGotico/tugalex/tree/0.0.2a1) (2026-02-25)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/e428ebe5267d0e31f9da592deb26d66d756611a0...0.0.2a1)
