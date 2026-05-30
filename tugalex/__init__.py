@@ -79,7 +79,7 @@ class TugaLexicon:
                 if len(parts) != 3:
                     continue
                 old_word, new_word, _ = parts
-                data[old_word] = new_word
+                data[old_word.strip()] = new_word.strip()
         return data
 
     @staticmethod
@@ -94,6 +94,7 @@ class TugaLexicon:
                 if len(parts) != 3:
                     continue
                 word, pos, ipa = parts
+                word, pos, ipa = word.strip(), pos.strip(), ipa.strip()
                 if word not in data:
                     data[word] = {}
                 data[word][pos] = ipa
@@ -176,7 +177,7 @@ class TugaLexicon:
                 if len(parts) != 2:
                     continue
                 old_word, new_word = parts
-                AO[old_word] = new_word.split(", ")
+                AO[old_word.strip()] = [w.strip() for w in new_word.split(",")]
         return AO
 
     @property
