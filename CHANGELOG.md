@@ -1,12 +1,12 @@
 # Changelog
 
-## [0.0.3a1](https://github.com/TigreGotico/tugalex/tree/0.0.3a1) (2026-05-29)
+## [0.0.3a2](https://github.com/TigreGotico/tugalex/tree/0.0.3a2) (2026-05-30)
 
-[Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.0.2...0.0.3a1)
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.0.3...0.0.3a2)
 
 **Merged pull requests:**
 
-- docs: add docs/ and examples/ [\#10](https://github.com/TigreGotico/tugalex/pull/10) ([JarbasAl](https://github.com/JarbasAl))
+- chore: Configure Renovate [\#9](https://github.com/TigreGotico/tugalex/pull/9) ([renovate[bot]](https://github.com/apps/renovate))
 
 
 
