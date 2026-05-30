@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tugalex"
+dynamic = ["version"]
+description = "A lexicon handler and linguistic utility for Portuguese dialects"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+authors = [{ name = "JarbasAi", email = "jarbasai@mailfence.com" }]
+requires-python = ">=3.9"
+dependencies = []
+keywords = ["portuguese", "nlp", "lexicon", "phonetics", "ipa", "syllables", "orthography", "ao1990"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Linguistic",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/TigreGotico/tugalex"
+Repository = "https://github.com/TigreGotico/tugalex"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tugalex*"]
+
+[tool.setuptools.package-data]
+tugalex = ["data/*.csv"]
+
+[tool.setuptools.dynamic]
+version = { attr = "tugalex.version.VERSION_STR" }
