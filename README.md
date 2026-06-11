@@ -74,3 +74,10 @@ TugaLex ships the following datasets which contain over 100,000 entries sourced 
 * [`acordo_ortografico_pt_PT.csv`](https://huggingface.co/datasets/TigreGotico/AO1990_pt-PT): Portugal old orthographic spellings.
 * [`acordo_ortografico_pt_BR.csv`](https://huggingface.co/datasets/TigreGotico/AO1990_pt-BR): Brazil old orthographic spellings.
 * [`archaisms.csv`](https://huggingface.co/datasets/TigreGotico/archaisms_pt): normalized words from before the 20th century.
+
+## Used by
+
+- [orthography2ipa](https://github.com/TigreGotico/orthography2ipa) — its
+  G2P benchmark harness loads this lexicon as the Portuguese gold
+  pronunciation set (per-region PER/WER reference numbers in its
+  `docs/benchmarks.md`).
