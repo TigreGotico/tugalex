@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.0a1](https://github.com/TigreGotico/tugalex/tree/0.1.0a1) (2026-06-18)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.0.3a2...0.1.0a1)
+
+**Merged pull requests:**
+
+- feat: expand archaisms.csv with pre-1911 etymological spellings [\#18](https://github.com/TigreGotico/tugalex/pull/18) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.3a2](https://github.com/TigreGotico/tugalex/tree/0.0.3a2) (2026-05-30)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.0.3...0.0.3a2)
