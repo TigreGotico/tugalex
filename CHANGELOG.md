@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0a1](https://github.com/TigreGotico/tugalex/tree/0.3.0a1) (2026-06-19)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.2.0a1...0.3.0a1)
+
+**Merged pull requests:**
+
+- feat: 54 verified BR AO1990 pairs \(note-based resolution, portuguesaletra.com\) [\#22](https://github.com/TigreGotico/tugalex/pull/22) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.2.0a1](https://github.com/TigreGotico/tugalex/tree/0.2.0a1) (2026-06-19)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.1.0a1...0.2.0a1)
