@@ -113,12 +113,13 @@ class TugaLexicon:
         lookup structures.
 
         The CSV (plain or gzip, sniffed by extension) has the columns
-        ``word, pos, phones, syllables, region_code``; lines starting with
+        ``word, phones, syllables, region_code``; lines starting with
         ``#`` (the provenance header) are skipped.
         - ``phones`` uses ``|`` as the syllable separator, rendered ``·``.
-        - ``pos`` may be empty for words whose pronunciation does not vary
-          by part of speech; those are stored under the ``""`` key and act
-          as the every-POS fallback (see :meth:`get_phonemes`).
+        - The lexicon is POS-free by design: heterophonic homographs are
+          the homographs table's job (POS-keyed there only), so every
+          word carries one canonical pronunciation, stored under the
+          ``""`` key of the POS dimension for structural compatibility.
         - ``word`` and ``region_code`` are normalized to lowercase.
 
         Args:
@@ -145,15 +146,14 @@ class TugaLexicon:
             if header is None:
                 return ipa, syllables, regions
             for parts in reader:
-                if len(parts) < 5:
+                if len(parts) < 4:
                     continue
-                word, pos, phonemes, syl, region = parts[:5]
+                word, phonemes, syl, region = parts[:4]
                 word = word.strip().lower()
                 region = region.strip().lower()
                 phonemes = phonemes.replace("|", "·").strip()
                 regions.add(region)
-                ipa.setdefault(region, {}).setdefault(word, {})[
-                    pos.strip().upper()] = phonemes
+                ipa.setdefault(region, {}).setdefault(word, {})[""] = phonemes
                 syllables.setdefault(region, {})[word] = \
                     syl.strip().replace(" ", "|").split("|")
 
@@ -262,17 +262,10 @@ class TugaLexicon:
         if word in homo and pos in homo[word]:
             return homo[word][pos]
 
+        # the lexicon itself is POS-free: one canonical pronunciation per
+        # word; POS only matters for the homographs table consulted above
         entry = self.ipa[region].get(word, {})
-        if pos in entry:
-            return entry[pos]
-        # POS-invariant fallback: words whose pronunciation does not vary
-        # by part of speech carry a single ""-keyed row
-        if "" in entry:
-            return entry[""]
-        # last resort: the word's only attested pronunciation
-        if len(set(entry.values())) == 1:
-            return next(iter(entry.values()))
-        return None
+        return entry.get(pos) or entry.get("")
 
     def get_syllables(self, word: str, region: str = "lbx") -> List[str]:
         """
@@ -350,13 +343,10 @@ class TugaLexicon:
         homo = self.homographs
         table = {}
         for word, entry in self.ipa[region].items():
-            if pos in entry:
-                table[word] = entry[pos]
-            elif "" in entry:
-                # POS-invariant row: valid for every requested POS
-                table[word] = entry[""]
-            elif len(set(entry.values())) == 1:
-                table[word] = next(iter(entry.values()))
+            # the lexicon is POS-free; POS only selects homograph overrides
+            value = entry.get(pos) or entry.get("")
+            if value:
+                table[word] = value
         table.update({
             word: homo[word][pos]
             for word in homo
