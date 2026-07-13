@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.0a1](https://github.com/TigreGotico/tugalex/tree/2.0.0a1) (2026-07-13)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/1.0.0a1...2.0.0a1)
+
+**Breaking changes:**
+
+- feat!: POS-free regional dictionary [\#26](https://github.com/TigreGotico/tugalex/pull/26) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [1.0.0a1](https://github.com/TigreGotico/tugalex/tree/1.0.0a1) (2026-07-13)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.3.0a1...1.0.0a1)
