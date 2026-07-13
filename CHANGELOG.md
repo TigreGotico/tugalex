@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.1a1](https://github.com/TigreGotico/tugalex/tree/2.0.1a1) (2026-07-13)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.0.0a1...2.0.1a1)
+
+**Merged pull requests:**
+
+- fix\(packaging\): ship regional\_dict.csv.gz in wheels and sdists [\#28](https://github.com/TigreGotico/tugalex/pull/28) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [2.0.0a1](https://github.com/TigreGotico/tugalex/tree/2.0.0a1) (2026-07-13)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/1.0.0a1...2.0.0a1)
