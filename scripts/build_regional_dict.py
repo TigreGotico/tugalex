@@ -4,10 +4,18 @@
 Maintainer action (network). Downloads
 ``TigreGotico/portuguese-unified-pronunciation-lexicon`` and rewrites
 ``tugalex/data/regional_dict.csv.gz`` with ONLY the columns the loader
-consumes (word, pos, phones, syllables, region_code), keeping the six
-Portal da Língua Portuguesa regions tugaphone's dialect presets read.
-The ``phones`` column keeps the Portal's pipe-delimited syllabified
-form (the loader renders ``|`` as the ``·`` syllable mark).
+consumes (word, phones, syllables, region_code), keeping the six Portal
+da Língua Portuguesa regions tugaphone's dialect presets read. The
+``phones`` column keeps the Portal's pipe-delimited syllabified form
+(the loader renders ``|`` as the ``·`` syllable mark).
+
+POS is deliberately absent: heterophonic homographs are resolved by
+meaning (bifonia) or by the dedicated homographs table, never by a
+POS-keyed lexicon lookup. When a region carries several register
+variants of a word, the CANONICAL one is kept — the variant with the
+fewest narrow-phonetic marks (aspiration, labialization, length …),
+which recovers the standard register of the merged standard/colloquial
+rows.
 
 Usage::
 
@@ -50,7 +58,15 @@ def main() -> None:
         raw = resp.read()
     digest = hashlib.sha256(raw).hexdigest()
 
-    rows = []
+    _NARROW_MARKS = "ʰʷʲːˤ̥̬̃ʱ"
+
+    def canonical_rank(phones: str):
+        # standard register first: fewest narrow marks, then shortest,
+        # then lexicographic (deterministic)
+        return (sum(phones.count(m) for m in _NARROW_MARKS),
+                len(phones), phones)
+
+    best: dict = {}
     for line in raw.decode("utf-8").splitlines():
         if not line.strip():
             continue
@@ -60,14 +76,17 @@ def main() -> None:
         phones = (r.get("phones") or "").strip()
         if not region or not word or not phones:
             continue
-        rows.append((word, (r.get("pos") or "").strip(),
-                     phones, (r.get("syllables") or "").strip(), region))
-    rows.sort()
+        key = (word, region)
+        cand = (phones, (r.get("syllables") or "").strip())
+        if key not in best or canonical_rank(cand[0]) < canonical_rank(best[key][0]):
+            best[key] = cand
+    rows = sorted((w, ph, syl, reg)
+                  for (w, reg), (ph, syl) in best.items())
 
     buf = io.StringIO()
     buf.write(f"# source sha256={digest}\n")
     writer = csv.writer(buf, lineterminator="\n")
-    writer.writerow(["word", "pos", "phones", "syllables", "region_code"])
+    writer.writerow(["word", "phones", "syllables", "region_code"])
     writer.writerows(rows)
     with gzip.open(OUT, "wt", encoding="utf-8", compresslevel=9) as fh:
         fh.write(buf.getvalue())
