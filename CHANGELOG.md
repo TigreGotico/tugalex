@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.0a1](https://github.com/TigreGotico/tugalex/tree/1.0.0a1) (2026-07-13)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.3.0a1...1.0.0a1)
+
+**Breaking changes:**
+
+- feat!: source the regional dictionary from the unified pronunciation lexicon [\#24](https://github.com/TigreGotico/tugalex/pull/24) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.3.0a1](https://github.com/TigreGotico/tugalex/tree/0.3.0a1) (2026-06-19)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.2.0a1...0.3.0a1)
