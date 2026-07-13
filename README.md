@@ -12,11 +12,18 @@ TugaLex maps standard ISO codes to internal regional datasets:
 
 | ISO Code | Internal Code | Region |
 | --- | --- | --- |
-| `pt-PT` | `lbx` | Portugal |
-| `pt-BR` | `rjx` | Brazil |
-| `pt-AO` | `lda` | Angola |
-| `pt-MZ` | `mpx` | Mozambique |
-| `pt-TL` | `dli` | Timor-Leste |
+| `pt-PT` | `lbx` | Portugal (Lisbon) |
+| `pt-BR` | `rjx` | Brazil (Rio de Janeiro) |
+| — | `spx` | Brazil (São Paulo) |
+| `pt-AO` | `lda` | Angola (Luanda) |
+| `pt-MZ` | `mpx` | Mozambique (Maputo) |
+| `pt-TL` | `dli` | Timor-Leste (Díli) |
+
+The regional dictionary ships as a slim gzip extract (word, POS, phones,
+syllables, region) of the [unified Portuguese pronunciation lexicon](https://huggingface.co/datasets/TigreGotico/portuguese-unified-pronunciation-lexicon),
+regenerated with `python scripts/build_regional_dict.py`. Words whose
+pronunciation does not vary by part of speech carry a single POS-invariant
+entry that answers every POS query.
 
 ---
 
