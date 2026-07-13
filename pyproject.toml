@@ -32,7 +32,7 @@ where = ["."]
 include = ["tugalex*"]
 
 [tool.setuptools.package-data]
-tugalex = ["data/*.csv"]
+tugalex = ["data/*.csv", "data/*.csv.gz"]
 
 [tool.setuptools.dynamic]
 version = { attr = "tugalex.version.VERSION_STR" }
