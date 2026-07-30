@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.1a2](https://github.com/TigreGotico/tugalex/tree/2.0.1a2) (2026-07-30)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.0.1a1...2.0.1a2)
+
+**Merged pull requests:**
+
+- docs: rewrite README in Simplified Technical English [\#30](https://github.com/TigreGotico/tugalex/pull/30) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [2.0.1a1](https://github.com/TigreGotico/tugalex/tree/2.0.1a1) (2026-07-13)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.0.0a1...2.0.1a1)
