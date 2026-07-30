@@ -13,8 +13,8 @@ from tugalex import TugaLexicon
 | `dictionary_path` | `Optional[str]` | `None` | Path to a regional CSV. `None` uses the packaged `data/regional_dict.csv`. |
 
 Construction loads the small CSVs eagerly (AO1990 PT/BR, homographs, archaisms).
-The large `regional_dict.csv` is loaded lazily on first access to phonemes,
-syllables, or regions, then cached on the instance.
+The large `regional_dict.csv` loads lazily on first access to phonemes,
+syllables, or regions, then it is cached on the instance.
 
 ### Region codes
 
@@ -28,9 +28,9 @@ ISO dialect codes map to internal region codes through `lang_to_region()`:
 | `pt-MZ` | `mpx` |
 | `pt-TL` | `dli` |
 
-The dataset itself carries more regions than the five mapped above (for example
-`rjo`, `lbn`, `spx`, `map`, `spo`); inspect `lex.regions` for the full set. Pass
-any of those raw codes as `region=`.
+The dataset carries more regions than the five mapped above (for example
+`rjo`, `lbn`, `spx`, `map`, `spo`). Inspect `lex.regions` for the full set.
+Pass any of those raw codes as `region=`.
 
 ## Lookup methods
 
@@ -51,10 +51,10 @@ Returns a dict with keys `"syllables"` (`List[str]`, empty if unknown) and
 The IPA transcription, or `None` when there is no entry. Matching is
 case-insensitive. Lookup order:
 
-1. If the word is an archaism, it is first rewritten to its modern form.
+1. If the word is an archaism, TugaLex first rewrites it to its modern form.
 2. If the word is a heterophonic homograph with an entry for `pos`, that
    pronunciation wins (homographs are region-independent).
-3. Otherwise the regional dictionary is consulted for `region` + `pos`.
+3. Otherwise TugaLex consults the regional dictionary for `region` and `pos`.
 
 ```python
 lex.get_phonemes("acordo", pos="NOUN")   # 'ɐˈkoɾdu'
@@ -64,8 +64,8 @@ lex.get_phonemes("architecto")           # 'ɐɾ·ki·tˈɛ·tu'  (archaism -> a
 
 ### `get_syllables(word, region="lbx") -> List[str]`
 
-Syllable segments for the word; empty list if unknown. Raises `ValueError` if
-`region` is not in the loaded dataset.
+Syllable segments for the word, or an empty list if unknown. Raises
+`ValueError` if `region` is not in the loaded dataset.
 
 ```python
 lex.get_syllables("casa")    # ['ca', 'sa']
@@ -83,7 +83,8 @@ len(lex.get_wordlist("lbx"))   # 53349
 ### `get_ipa_map(pos="NOUN", region="lbx") -> Dict[str, str]`
 
 A flat `{word: phonemes}` map for one POS and region, merging the regional
-dictionary with the homograph table. Raises `ValueError` for an unknown region.
+dictionary with the homograph table. Raises `ValueError` for an unknown
+region.
 
 ```python
 g2p = lex.get_ipa_map(pos="NOUN")
@@ -104,7 +105,7 @@ lex.lang_to_region("pt-BR")   # 'rjx'
 
 ### `normalize_ao1900(sentence) -> str`
 
-Rewrite each word to its modern AO1990 spelling; unknown words pass through.
+Rewrite each word to its modern AO1990 spelling. Unknown words pass through.
 
 ```python
 lex.normalize_ao1900("acção óptimo")   # 'ação ótimo'
@@ -136,7 +137,7 @@ lex.reverse_ao1900_br("ato")   # 'ato'
 | `homographs` | `Dict[word, Dict[POS, str]]` | POS-dependent pronunciations. |
 | `archaic_words` | `Dict[old, new]` | Pre-20th-century spelling to modern. |
 | `possible_postags` | `Dict[word, List[str]]` | POS tags available per word (cached). |
-| `AO1990` | `Dict[old, List[str]]` | Combined PT + BR old→new spelling map (cached). |
+| `AO1990` | `Dict[old, List[str]]` | Combined PT + BR old-to-new spelling map (cached). |
 | `silent_p_words` | `Set[str]` | Words with a silent `p` (`mpc`/`mpç`/`mpt` clusters) (cached). |
 | `voiced_u_words` | `Set[str]` | Words where `u` is voiced in `gue`/`gui`/`que`/`qui` (former trema) (cached). |
 
@@ -148,7 +149,5 @@ len(lex.voiced_u_words)        # 283
 lex.possible_postags["acordo"] # ['NOUN', 'VERB']
 ```
 
-## Where next
-
-- [quickstart.md](quickstart.md) — install and first calls
-- [advanced.md](advanced.md) — recipes, gotchas, integration
+---
+[← Quickstart](quickstart.md) · [Home](../README.md) · [Advanced →](advanced.md)
