@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.2a1](https://github.com/TigreGotico/tugalex/tree/2.0.2a1) (2026-09-03)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.0.1a2...2.0.2a1)
+
+**Merged pull requests:**
+
+- fix: use IPA ɡ \(U+0261\) instead of ASCII g in lexicon transcriptions [\#32](https://github.com/TigreGotico/tugalex/pull/32) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [2.0.1a2](https://github.com/TigreGotico/tugalex/tree/2.0.1a2) (2026-07-30)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.0.1a1...2.0.1a2)
