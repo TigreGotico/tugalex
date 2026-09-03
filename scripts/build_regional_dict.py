@@ -74,6 +74,11 @@ def main() -> None:
         region = REGION_MAP.get(r.get("region", ""))
         word = (r.get("word") or "").strip()
         phones = (r.get("phones") or "").strip()
+        # the gold uses ASCII "g" (U+0067) where IPA calls for the voiced
+        # velar stop "ɡ" (U+0261, distinct codepoint) — normalize here so
+        # downstream TTS vocabularies, which only know U+0261, don't
+        # silently drop the phoneme.
+        phones = phones.replace("g", "ɡ")
         if not region or not word or not phones:
             continue
         key = (word, region)
