@@ -1,8 +1,8 @@
 # Changelog
 
-## [2.0.3a1](https://github.com/TigreGotico/tugalex/tree/2.0.3a1) (2026-10-29)
+## [2.1.0a1](https://github.com/TigreGotico/tugalex/tree/2.1.0a1) (2026-10-29)
 
-[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.0.2a1...2.0.3a1)
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.0.2a1...2.1.0a1)
 
 **Merged pull requests:**
 
