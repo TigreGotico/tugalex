@@ -2,7 +2,8 @@ import csv
 import gzip
 import json
 import os
-from functools import cached_property
+import re
+from functools import cached_property, lru_cache
 from typing import Dict, List, Tuple, Optional, Set, Union
 
 # Typing aliases for better readability
@@ -12,6 +13,39 @@ IPA_MAP = Dict[str, Dict[str, Dict[str, str]]]
 SYLLABLE_MAP = Dict[str, Dict[str, List[str]]]
 # Word mapping (e.g., AO1990 old -> new)
 WORD_REPLACEMENT_MAP = Dict[str, List[str]]
+
+
+NOUN_GENDER_PATH = os.path.join(os.path.dirname(__file__), "data", "noun_gender_exceptions.csv.gz")
+
+# Suffix rules for the gender of a Portuguese noun, singular or plural. The
+# first match wins. Each rule is right for at least 80% of the nouns it
+# matches in the source of noun_gender_exceptions.csv.gz (see
+# scripts/build_noun_gender.py); the exceptions file lists the nouns the
+# rules get wrong or do not cover.
+NOUN_GENDER_SUFFIXES: Tuple[Tuple[str, str], ...] = (
+    ("f", r"ç(?:ão|ões)$"),
+    ("f", r"s(?:ão|ões)$"),
+    ("f", r"dades?$"),
+    ("f", r"tudes?$"),
+    ("f", r"(?:gem|gens)$"),
+    ("f", r"ezas?$"),
+    ("f", r"ises?$"),
+    ("m", r"(?<!ã)os?$"),
+    ("m", r"(?:or|ores)$"),
+    ("m", r"umes?$"),
+    ("f", r"as?$"),
+)
+
+
+def suffix_noun_gender(word: str) -> Optional[str]:
+    """The gender that the suffix rules alone give a noun, or None."""
+    return next((gender for gender, suffix in NOUN_GENDER_SUFFIXES if re.search(suffix, word)), None)
+
+
+@lru_cache(maxsize=1)
+def _noun_gender_exceptions() -> Dict[str, str]:
+    with gzip.open(NOUN_GENDER_PATH, "rt", encoding="utf-8", newline="") as f:
+        return {row["word"]: row["gender"] for row in csv.DictReader(f)}
 
 
 class TugaLexicon:
@@ -372,6 +406,27 @@ class TugaLexicon:
                 word: list(homo[word].keys())
                 for word in homo
             }}
+
+    @staticmethod
+    def get_noun_gender(word: str) -> Optional[str]:
+        """
+        Get the grammatical gender of a Portuguese common noun.
+
+        The exceptions list decides first, then the suffix rules
+        (``NOUN_GENDER_SUFFIXES``). The caller decides whether the word is a
+        noun: function words get an answer from the suffix rules too.
+
+        Args:
+            word (str): A noun, singular or plural, in any letter case.
+
+        Returns:
+            Optional[str]: "m" or "f"; "mf" for a noun of both genders, such
+                as a common-gender noun ("artista") or a noun whose gender
+                changes with its meaning ("capital"); None when no rule applies
+                and the noun is not listed.
+        """
+        word = word.lower()
+        return _noun_gender_exceptions().get(word) or suffix_noun_gender(word)
 
     @cached_property
     def AO1990(self) -> Dict[str, List[str]]:
