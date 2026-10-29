@@ -81,6 +81,19 @@ TugaLexicon.get_noun_gender("dias")      # 'm'
 TugaLexicon.get_noun_gender("artista")   # 'mf' (both genders)
 ```
 
+### 5. Given-Name Gender
+
+Get the grammatical gender of a given name, written as in running text.
+The list holds regnal names, the Brazilian census names that match a
+Wikidata given name, and the Wikidata given names marked Portuguese.
+
+```python
+TugaLexicon.get_given_name_gender("Isabel")   # 'f'
+TugaLexicon.get_given_name_gender("Afonso")   # 'm'
+TugaLexicon.get_given_name_gender("Darci")    # 'mf' (both genders)
+TugaLexicon.get_given_name_gender("Raio")     # None
+```
+
 ---
 
 ## Datasets
@@ -97,6 +110,12 @@ TugaLex ships the following datasets. Together they contain over 100,000 entries
 get wrong or do not cover, and the nouns of both genders.
 `scripts/build_noun_gender.py` regenerates it from the noun genders of the
 English Wiktionary.
+
+`given_names.csv.gz` lists given names with their gender.
+`scripts/build_given_names.py` regenerates it from Wikidata (CC0) and the IBGE
+2010 census first names published by datasets-br/prenomes (ODC-PDDL-1.0).
+`scripts/given_name_overrides.csv` corrects the names whose Wikidata items
+mislead, each with its evidence.
 
 ---
 

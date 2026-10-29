@@ -1,0 +1,4 @@
+name,gender,reason
+Elisabete,f,"Portuguese form of Elisabeth; Wikidata Q63315182 has only the generic class Q202444, so the build drops it; the variant Elizabete is feminine"
+Rui,m,"Wikidata Q20000233 is the masculine Rui; the feminine items with the same label (Q126176907, Q121086954) are Japanese readings"
+Simone,f,"Wikidata Q602977 is unisex because Simone is masculine in Italian; its other-gender form is Simon (Q4117588), Portuguese Simão, so Portuguese Simone is feminine"

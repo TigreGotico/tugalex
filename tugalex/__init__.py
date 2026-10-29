@@ -16,6 +16,7 @@ WORD_REPLACEMENT_MAP = Dict[str, List[str]]
 
 
 NOUN_GENDER_PATH = os.path.join(os.path.dirname(__file__), "data", "noun_gender_exceptions.csv.gz")
+GIVEN_NAMES_PATH = os.path.join(os.path.dirname(__file__), "data", "given_names.csv.gz")
 
 # Suffix rules for the gender of a Portuguese noun, singular or plural. The
 # first match wins. Each rule is right for at least 80% of the nouns it
@@ -46,6 +47,12 @@ def suffix_noun_gender(word: str) -> Optional[str]:
 def _noun_gender_exceptions() -> Dict[str, str]:
     with gzip.open(NOUN_GENDER_PATH, "rt", encoding="utf-8", newline="") as f:
         return {row["word"]: row["gender"] for row in csv.DictReader(f)}
+
+
+@lru_cache(maxsize=1)
+def _given_names() -> Dict[str, str]:
+    with gzip.open(GIVEN_NAMES_PATH, "rt", encoding="utf-8", newline="") as f:
+        return {row["name"]: row["gender"] for row in csv.DictReader(f)}
 
 
 class TugaLexicon:
@@ -427,6 +434,26 @@ class TugaLexicon:
         """
         word = word.lower()
         return _noun_gender_exceptions().get(word) or suffix_noun_gender(word)
+
+    @staticmethod
+    def get_given_name_gender(name: str) -> Optional[str]:
+        """
+        Get the grammatical gender of a given name.
+
+        The list holds regnal names ("Pio", "Isabel"), the Brazilian census
+        names that match a Wikidata given name, and the Wikidata given names
+        marked Portuguese (see ``scripts/build_given_names.py``). The match is
+        exact: a name is written as in running text, with its capital letter
+        and accents, so "isabel" and "joão" are not found.
+
+        Args:
+            name (str): A given name, such as "Isabel" or "João".
+
+        Returns:
+            Optional[str]: "m" or "f"; "mf" for a name borne by both sexes
+                ("Darci"); None for a word that is not on the list.
+        """
+        return _given_names().get(name)
 
     @cached_property
     def AO1990(self) -> Dict[str, List[str]]:
