@@ -70,6 +70,17 @@ TugaLex identifies specific linguistic phenomena programmatically:
 * **Silent Letters:** Identifying words with silent 'p' or 'c' common before the 1990 agreement.
 * **Voiced 'u':** Detecting words where 'u' is pronounced in 'gue/gui/que/qui' clusters (formerly marked with a trema `ü`).
 
+### 4. Noun Gender
+
+Get the grammatical gender of a Portuguese common noun, singular or plural.
+Suffix rules decide most nouns, and a list of exceptions decides the rest.
+
+```python
+TugaLexicon.get_noun_gender("lei")       # 'f'
+TugaLexicon.get_noun_gender("dias")      # 'm'
+TugaLexicon.get_noun_gender("artista")   # 'mf' (both genders)
+```
+
 ---
 
 ## Datasets
@@ -81,6 +92,11 @@ TugaLex ships the following datasets. Together they contain over 100,000 entries
 * [`acordo_ortografico_pt_PT.csv`](https://huggingface.co/datasets/TigreGotico/AO1990_pt-PT): Portugal old orthographic spellings.
 * [`acordo_ortografico_pt_BR.csv`](https://huggingface.co/datasets/TigreGotico/AO1990_pt-BR): Brazil old orthographic spellings.
 * [`archaisms.csv`](https://huggingface.co/datasets/TigreGotico/archaisms_pt): normalized words from before the 20th century.
+
+`noun_gender_exceptions.csv.gz` lists the nouns whose gender the suffix rules
+get wrong or do not cover, and the nouns of both genders.
+`scripts/build_noun_gender.py` regenerates it from the noun genders of the
+English Wiktionary.
 
 ---
 

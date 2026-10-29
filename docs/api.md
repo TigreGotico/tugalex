@@ -101,6 +101,43 @@ unsupported dialect.
 lex.lang_to_region("pt-BR")   # 'rjx'
 ```
 
+## Noun gender
+
+### `TugaLexicon.get_noun_gender(word) -> Optional[str]`
+
+The grammatical gender of a Portuguese common noun, singular or plural, in
+any letter case. A static method: it needs no `TugaLexicon` instance.
+
+It returns `"m"` or `"f"`, `"mf"` for a noun of both genders, or `None` when
+no rule applies and the noun is not listed. A noun of both genders is a
+common-gender noun (`"o/a artista"`), a noun whose gender changes with its
+meaning (`"o capital"`, `"a capital"`), or a noun whose gender differs
+between Portugal and Brazil.
+
+The exceptions file `tugalex/data/noun_gender_exceptions.csv.gz` decides
+first. Then the suffix rules in `tugalex.NOUN_GENDER_SUFFIXES` apply, in
+order: `-ção`, `-são`, `-dade`, `-tude`, `-gem`, `-eza` and `-ise` are
+feminine; `-o` (not `-ão`), `-or` and `-ume` are masculine; `-a` is feminine.
+Plural forms of each suffix match too. The caller decides whether the word is
+a noun, because function words get an answer from the suffix rules too.
+
+```python
+from tugalex import TugaLexicon
+
+TugaLexicon.get_noun_gender("lei")       # 'f'   (listed)
+TugaLexicon.get_noun_gender("dias")      # 'm'   (listed)
+TugaLexicon.get_noun_gender("nações")    # 'f'   (suffix -ção)
+TugaLexicon.get_noun_gender("artista")   # 'mf'
+TugaLexicon.get_noun_gender("zzk")       # None
+```
+
+`scripts/build_noun_gender.py` regenerates the exceptions file. It compares
+the suffix rules against the noun genders of the English Wiktionary and
+keeps the nouns the rules get wrong or do not cover, and every noun of both
+genders. `scripts/noun_gender_overrides.csv` sets the gender of forms that a
+rare loanword sense would make both-gender (`cores`: "a cor", beside the
+computing term "o core").
+
 ## Orthographic agreement (AO1990)
 
 ### `normalize_ao1900(sentence) -> str`
