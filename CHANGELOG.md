@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.3a1](https://github.com/TigreGotico/tugalex/tree/2.0.3a1) (2026-10-29)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.0.2a1...2.0.3a1)
+
+**Merged pull requests:**
+
+- fix: give every Lisbon lexicon entry one primary stress mark [\#35](https://github.com/TigreGotico/tugalex/pull/35) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+- feat: get the grammatical gender of a Portuguese noun [\#34](https://github.com/TigreGotico/tugalex/pull/34) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.0.2a1](https://github.com/TigreGotico/tugalex/tree/2.0.2a1) (2026-09-03)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.0.1a2...2.0.2a1)
