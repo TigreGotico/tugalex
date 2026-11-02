@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.2.1a1](https://github.com/TigreGotico/tugalex/tree/2.2.1a1) (2026-11-02)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.2.0a1...2.2.1a1)
+
+**Merged pull requests:**
+
+- fix: make get\_syllables and get\_phonemes agree on input and region [\#41](https://github.com/TigreGotico/tugalex/pull/41) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+- fix: parse the AO1990 tables as CSV [\#40](https://github.com/TigreGotico/tugalex/pull/40) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.2.0a1](https://github.com/TigreGotico/tugalex/tree/2.2.0a1) (2026-10-29)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.1.0a1...2.2.0a1)
