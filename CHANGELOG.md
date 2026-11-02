@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.2.2a2](https://github.com/TigreGotico/tugalex/tree/2.2.2a2) (2026-11-02)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.2.2a1...2.2.2a2)
+
+**Merged pull requests:**
+
+- chore: require Python 3.11, the oldest version not past end of life [\#42](https://github.com/TigreGotico/tugalex/pull/42) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
+## [2.2.2a1](https://github.com/TigreGotico/tugalex/tree/2.2.2a1) (2026-11-02)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.2.1a1...2.2.2a1)
+
 ## [2.2.1a1](https://github.com/TigreGotico/tugalex/tree/2.2.1a1) (2026-11-02)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.2.0a1...2.2.1a1)
