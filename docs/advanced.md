@@ -79,8 +79,8 @@ spell-checking pipeline.
   A lowercase tag silently misses and returns `None`.
 - **Unknown words return falsy, they do not raise.** `get_phonemes` returns
   `None` and `get_syllables` returns `[]` for words not in the dataset. An
-  unsupported *region*, by contrast, raises `ValueError` from `get_syllables`,
-  `get_wordlist`, `get_ipa_map`, and `lang_to_region`.
+  unsupported *region*, by contrast, raises `ValueError` from `get_phonemes`,
+  `get_syllables`, `get_wordlist`, `get_ipa_map`, and `lang_to_region`.
 - **First touch is slow.** The first access to `ipa`, `syllables`, `regions`, or
   any method that uses them parses the large CSV. Construct one `TugaLexicon`
   and reuse it across calls.
