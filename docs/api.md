@@ -49,7 +49,8 @@ Returns a dict with keys `"syllables"` (`List[str]`, empty if unknown) and
 ### `get_phonemes(word, pos="NOUN", region="lbx") -> Optional[str]`
 
 The IPA transcription, or `None` when there is no entry. Matching is
-case-insensitive. Lookup order:
+case-insensitive. Raises `ValueError` if `region` is not in the loaded
+dataset. Lookup order:
 
 1. If the word is an archaism, TugaLex first rewrites it to its modern form.
 2. If the word is a heterophonic homograph with an entry for `pos`, that
@@ -64,8 +65,8 @@ lex.get_phonemes("architecto")           # 'ɐɾ·ki·tˈɛ·tu'  (archaism -> a
 
 ### `get_syllables(word, region="lbx") -> List[str]`
 
-Syllable segments for the word, or an empty list if unknown. Raises
-`ValueError` if `region` is not in the loaded dataset.
+Syllable segments for the word, or an empty list if unknown. Matching is
+case-insensitive. Raises `ValueError` if `region` is not in the loaded dataset.
 
 ```python
 lex.get_syllables("casa")    # ['ca', 'sa']

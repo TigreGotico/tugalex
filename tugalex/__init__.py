@@ -294,7 +294,12 @@ class TugaLexicon:
 
         Returns:
             The phoneme string for the specified word and POS in the region, or None if no entry exists.
+
+        Raises:
+            ValueError: If the region is not in the loaded dataset.
         """
+        if region not in self.ipa:
+            raise ValueError(f"Unsupported dialect: {region}")
         word = word.strip().lower()
 
         archaic = self.archaic_words
@@ -315,7 +320,7 @@ class TugaLexicon:
         Retrieve the syllable segments for a word in the given region.
 
         Parameters:
-            word (str): The target word, normalized to lowercase.
+            word (str): The target word; matching is case-insensitive because entries are normalized to lowercase.
             region (str): Dataset region code (e.g. 'lbx', 'rjx', 'lda', 'mpx', 'dli').
 
         Returns:
@@ -329,7 +334,7 @@ class TugaLexicon:
 
         if region not in self.syllables:
             raise ValueError(f"Unsupported dialect: {region}")
-        return self.syllables[region].get(word, [])
+        return self.syllables[region].get(word.strip().lower(), [])
 
     def get(
             self, word: str, pos: str = "NOUN", region: str = "lbx"

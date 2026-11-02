@@ -27,6 +27,26 @@ class TestDialectMapping:
             lex.lang_to_region("en-US")
 
 
+class TestLookupNormalization:
+    def test_get_syllables_is_case_insensitive(self, lex):
+        assert lex.syllables["lbx"]["casa"] == ["ca", "sa"]
+        assert lex.get_syllables("  Casa ") == ["ca", "sa"]
+
+    def test_get_returns_syllables_for_capitalized_word(self, lex):
+        assert lex.get("Acordo", pos="NOUN") == lex.get("acordo", pos="NOUN")
+        assert lex.get("Acordo")["syllables"] == ["a", "cor", "do"]
+
+    def test_unknown_region_raises_value_error_everywhere(self, lex):
+        with pytest.raises(ValueError):
+            lex.get_phonemes("casa", region="xx")
+        with pytest.raises(ValueError):
+            lex.get_phonemes("para", pos="ADP", region="xx")
+        with pytest.raises(ValueError):
+            lex.get_syllables("casa", region="xx")
+        with pytest.raises(ValueError):
+            lex.get("casa", region="xx")
+
+
 class TestHomographs:
     def test_homograph_loaded_with_clean_keys(self, lex):
         # Regression: CRLF line endings left a trailing '\r' on the POS key
