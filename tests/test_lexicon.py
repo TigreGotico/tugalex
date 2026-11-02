@@ -72,6 +72,24 @@ class TestAO1990:
     def test_unknown_word_passthrough(self, lex):
         assert lex.normalize_ao1900("casa") == "casa"
 
+    def test_header_row_is_not_an_entry(self, lex):
+        assert "old_form" not in lex.ao_pt
+        assert "old_form" not in lex.ao_br
+
+    def test_every_old_form_of_a_row_maps_to_its_new_forms(self, lex):
+        # "liquefacção, liquefação, liqüefacção, liqüefação","liquefação, liquefacção"
+        for old in ("liquefacção", "liquefação", "liqüefacção", "liqüefação"):
+            assert lex.ao_br[old] == ["liquefação", "liquefacção"]
+        # "alcaguete, alcagüete",alcaguete
+        assert lex.ao_br["alcagüete"] == ["alcaguete"]
+        assert lex.normalize_ao1900("alcaguete alcagüete") == "alcaguete alcaguete"
+
+    def test_new_br_forms_carry_no_trema(self, lex):
+        # AO1990 abolished the trema, so no new spelling keeps a ü.
+        with_trema = {old: news for old, news in lex.ao_br.items()
+                      if any("ü" in n for n in news)}
+        assert with_trema == {}
+
 
 class TestPhenomena:
     def test_silent_p_words(self, lex):

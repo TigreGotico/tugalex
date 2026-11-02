@@ -180,9 +180,9 @@ lex.reverse_ao1900_br("ato")   # 'ato'
 
 ```python
 sorted(lex.regions)            # ['dli', 'lbn', 'lbx', 'lda', 'map', ...]
-len(lex.AO1990)                # 3923
+len(lex.AO1990)                # 3985
 len(lex.silent_p_words)        # 15
-len(lex.voiced_u_words)        # 283
+len(lex.voiced_u_words)        # 324
 lex.possible_postags["acordo"] # ['NOUN', 'VERB']
 ```
 

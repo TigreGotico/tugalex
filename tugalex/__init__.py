@@ -206,7 +206,9 @@ class TugaLexicon:
         Load Acordo Ortográfico mappings from a CSV file.
 
         Args:
-            path (str): Path to the CSV file containing "old_word,new_word" pairs.
+            path (str): Path to a CSV file with an ``old_form,new_form`` header.
+                Either field may be a quoted, comma-separated list of spellings;
+                every old spelling maps to all the new spellings of its row.
 
         Returns:
             Dict[str, List[str]]: Mapping of old spelling to list of new spellings.
@@ -215,16 +217,16 @@ class TugaLexicon:
         if not os.path.exists(path):
             raise FileNotFoundError(path)
 
-        with open(path, "r", encoding="utf-8") as f:
-            for l in f.read().split("\n"):
-                if "," not in l:
+        with open(path, "r", encoding="utf-8", newline="") as f:
+            reader = csv.reader(f)
+            next(reader, None)
+            for row in reader:
+                if len(row) != 2:
                     continue
-                l = l.replace('"', "")
-                parts = l.split(",", 1)
-                if len(parts) != 2:
-                    continue
-                old_word, new_word = parts
-                AO[old_word.strip()] = [w.strip() for w in new_word.split(",")]
+                old_forms, new_forms = row
+                new_words = [w.strip() for w in new_forms.split(",")]
+                for old_word in old_forms.split(","):
+                    AO[old_word.strip()] = list(new_words)
         return AO
 
     @property
@@ -552,7 +554,7 @@ if __name__ == "__main__":
     print(f"Voiced U words count: {len(ph.voiced_u_words)}")
     # Regions available: {'lda', 'mpx', 'rjo', 'rjx', 'lbx', 'lbn', 'dli', 'spx', 'map', 'spo'}
     # Silent P words count: 15
-    # Voiced U words count: 283
+    # Voiced U words count: 324
 
     # print(ph.possible_postags)
     print(ph.archaic_words)
