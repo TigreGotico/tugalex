@@ -1,20 +1,22 @@
 # Quickstart
 
 `tugalex` is a lexicon handler for Portuguese dialects. One class,
-`TugaLexicon`, answers three kinds of question about a Portuguese word: how is
-it pronounced (IPA), how does it break into syllables, and how does it spell
-across the AO1990 orthographic agreement. All data ships in the package as
-CSV. There is no network access, no model files, and no API keys.
+`TugaLexicon`, answers questions about a Portuguese word: how is it
+pronounced (IPA), how does it break into syllables, how does it spell across
+the AO1990 orthographic agreement, and which grammatical gender a noun or a
+given name has. All data ships in the package as CSV and gzip CSV. There is
+no network access, no model files, and no API keys.
 
 ## 1. Install
 
 ```bash
-pip install -e .
+pip install --pre tugalex
 ```
 
 There are no third-party runtime dependencies. The datasets live under
-`tugalex/data/`. `regional_dict.csv` is the large one (about 49 MB) and loads
-lazily the first time you touch phonemes, syllables, or regions.
+`tugalex/data/`. `regional_dict.csv.gz` is the large one (about 2.5 MB
+compressed) and loads lazily the first time you touch phonemes, syllables,
+or regions.
 
 ## 2. The one thing to understand
 
@@ -37,8 +39,9 @@ only need one half.
 ## 3. Part-of-speech matters
 
 Portuguese has heterophonic homographs: same spelling, different sound
-depending on the grammatical role. Pass the right `pos` and you get the right
-vowel.
+depending on the grammatical role. TugaLex keys 27 of them by POS. Pass the
+right `pos` and you get the right vowel. For every other word the POS does
+not change the answer.
 
 ```python
 print(lex.get_phonemes("acordo", pos="NOUN"))   # ɐˈkoɾdu  (the noun: an accord)
@@ -47,7 +50,8 @@ print(lex.get_phonemes("acordo", pos="VERB"))   # ɐˈkɔɾdu  (the verb: I wake
 
 POS tags are uppercase Universal-Dependencies style: `NOUN`, `VERB`, `ADJ`,
 `ADP`, and so on. Ask a word which tags it carries with
-`lex.possible_postags["acordo"]`, which returns `['NOUN', 'VERB']`.
+`lex.possible_postags["acordo"]`, which returns `['NOUN', 'VERB']`. A word
+outside the homograph table returns `['']`, its POS-free entry.
 
 ## 4. Pick a dialect
 
@@ -66,6 +70,7 @@ lex.lang_to_region("pt-BR")   # 'rjx'  (Brazil)
 | `pt-AO` | `lda` | Angola |
 | `pt-MZ` | `mpx` | Mozambique |
 | `pt-TL` | `dli` | Timor-Leste |
+| none | `spx` | Brazil (São Paulo) |
 
 Pass the region code straight into the lookups:
 
@@ -83,8 +88,10 @@ lex.reverse_ao1900_pt("ótimo")          # 'óptimo'        (modern to old PT-PT
 lex.reverse_ao1900_br("ato")            # 'ato'           (modern to old PT-BR)
 ```
 
-Words with no mapping pass through unchanged, so it is safe to run on whole
-sentences.
+Words with no mapping pass through unchanged. The conversion splits on
+whitespace and matches each word exactly, so a word with attached
+punctuation or a capital letter passes through unchanged too
+([#46](https://github.com/TigreGotico/tugalex/issues/46)).
 
 ---
 [Home](../README.md) · [API reference →](api.md)

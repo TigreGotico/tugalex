@@ -17,7 +17,8 @@ verbs = lex.get_ipa_map(pos="VERB", region="lbx")
 print(len(nouns), len(verbs))   # tens of thousands each
 ```
 
-To get every POS for every word, walk `possible_postags`:
+To get every POS for every word, walk `possible_postags`. A word outside the
+homograph table carries the single tag `""`, its POS-free entry:
 
 ```python
 for word, tags in list(lex.possible_postags.items())[:5]:
@@ -51,7 +52,8 @@ lex.get_phonemes("architecto")      # 'ɐɾ·ki·tˈɛ·tu'  (looked up as arqui
 
 `normalize_ao1900()` goes from old to modern spelling. The two `reverse_*`
 methods go from modern back to old, one per standard. Unmapped words pass
-through, so whole sentences are safe.
+through unchanged. Strip punctuation and lowercase the words first, because
+the lookup matches each whitespace-separated word exactly.
 
 ```python
 modern = lex.normalize_ao1900("acção óptimo")   # 'ação ótimo'
@@ -75,8 +77,10 @@ spell-checking pipeline.
 
 ## Gotchas
 
-- **POS casing.** Lookups expect uppercase tags (`NOUN`, `VERB`, `ADJ`, `ADP`).
-  A lowercase tag silently misses and returns `None`.
+- **POS casing.** The homograph table uses uppercase tags (`NOUN`, `VERB`,
+  `ADJ`, `ADP`). A lowercase tag misses the homograph table and silently
+  falls back to the POS-free regional entry: `get_phonemes("acordo", pos="noun")`
+  gives `'ɐ·kˈoɾ·du'`, not the homograph entry `'ɐˈkoɾdu'`.
 - **Unknown words return falsy, they do not raise.** `get_phonemes` returns
   `None` and `get_syllables` returns `[]` for words not in the dataset. An
   unsupported *region*, by contrast, raises `ValueError` from `get_phonemes`,
@@ -84,9 +88,15 @@ spell-checking pipeline.
 - **First touch is slow.** The first access to `ipa`, `syllables`, `regions`, or
   any method that uses them parses the large CSV. Construct one `TugaLexicon`
   and reuse it across calls.
-- **More regions than the five public dialects.** `lex.regions` also contains
-  internal codes such as `rjo`, `lbn`, `spx`, `map`, `spo`. Only the five in
-  `lang_to_region` have ISO aliases. Reach the rest with a raw `region=` value.
+- **One region more than the five public dialects.** `lex.regions` also
+  contains `spx` (São Paulo). Only the five in `lang_to_region` have ISO
+  aliases. Reach `spx` with a raw `region=` value.
+- **Two transcription styles.** The homograph table writes the stress mark
+  before the syllable (`ɐˈkoɾdu`). The regional dictionary marks syllables with
+  `·` and writes the stress mark before the vowel (`ɐ·kˈoɾ·du`).
+- **AO1990 conversion matches whole whitespace-separated words.** A word with
+  attached punctuation or a capital letter is not converted, and runs of spaces
+  become one space ([#46](https://github.com/TigreGotico/tugalex/issues/46)).
 - **Method names read `1900`.** `normalize_ao1900`, `reverse_ao1900_pt`, and
   `reverse_ao1900_br` all implement the AO1990 agreement.
 

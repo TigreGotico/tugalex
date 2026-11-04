@@ -10,10 +10,10 @@ from tugalex import TugaLexicon
 
 | Arg | Type | Default | Meaning |
 | --- | --- | --- | --- |
-| `dictionary_path` | `Optional[str]` | `None` | Path to a regional CSV. `None` uses the packaged `data/regional_dict.csv`. |
+| `dictionary_path` | `Optional[str]` | `None` | Path to a regional CSV, plain or gzip (by the `.gz` extension), with the columns `word,phones,syllables,region_code`. `None` uses the packaged `data/regional_dict.csv.gz`. |
 
 Construction loads the small CSVs eagerly (AO1990 PT/BR, homographs, archaisms).
-The large `regional_dict.csv` loads lazily on first access to phonemes,
+The large `regional_dict.csv.gz` loads lazily on first access to phonemes,
 syllables, or regions, then it is cached on the instance.
 
 ### Region codes
@@ -28,9 +28,9 @@ ISO dialect codes map to internal region codes through `lang_to_region()`:
 | `pt-MZ` | `mpx` |
 | `pt-TL` | `dli` |
 
-The dataset carries more regions than the five mapped above (for example
-`rjo`, `lbn`, `spx`, `map`, `spo`). Inspect `lex.regions` for the full set.
-Pass any of those raw codes as `region=`.
+The packaged dataset has one more region than the five mapped above: `spx`
+(São Paulo). Inspect `lex.regions` for the full set, and pass a raw code as
+`region=`.
 
 ## Lookup methods
 
@@ -55,7 +55,9 @@ dataset. Lookup order:
 1. If the word is an archaism, TugaLex first rewrites it to its modern form.
 2. If the word is a heterophonic homograph with an entry for `pos`, that
    pronunciation wins (homographs are region-independent).
-3. Otherwise TugaLex consults the regional dictionary for `region` and `pos`.
+3. Otherwise TugaLex consults the regional dictionary for `region`. That
+   dictionary has one POS-free pronunciation per word, so `pos` does not
+   change the answer.
 
 ```python
 lex.get_phonemes("acordo", pos="NOUN")   # 'ɐˈkoɾdu'
@@ -78,7 +80,7 @@ Every word available for a region, sorted. Raises `ValueError` for an unknown
 region.
 
 ```python
-len(lex.get_wordlist("lbx"))   # 53349
+len(lex.get_wordlist("lbx"))   # 53148
 ```
 
 ### `get_ipa_map(pos="NOUN", region="lbx") -> Dict[str, str]`
@@ -89,7 +91,7 @@ region.
 
 ```python
 g2p = lex.get_ipa_map(pos="NOUN")
-len(g2p)              # 32281
+len(g2p)              # 53148
 g2p["acordo"]         # 'ɐˈkoɾdu'
 ```
 
@@ -139,7 +141,31 @@ genders. `scripts/noun_gender_overrides.csv` sets the gender of forms that a
 rare loanword sense would make both-gender (`cores`: "a cor", beside the
 computing term "o core").
 
+## Given-name gender
+
+### `TugaLexicon.get_given_name_gender(name) -> Optional[str]`
+
+The grammatical gender of a given name. A static method: it needs no
+`TugaLexicon` instance. It returns `"m"` or `"f"`, `"mf"` for a name borne by
+both sexes, or `None` for a name that is not on the list. The match is exact:
+write the name as in running text, with its capital letter and accents.
+
+```python
+TugaLexicon.get_given_name_gender("Isabel")   # 'f'
+TugaLexicon.get_given_name_gender("isabel")   # None
+```
+
+The list is `tugalex/data/given_names.csv.gz`. `scripts/build_given_names.py`
+regenerates it from Wikidata and the IBGE 2010 census first names, and
+`scripts/given_name_overrides.csv` corrects the names whose Wikidata items
+mislead.
+
 ## Orthographic agreement (AO1990)
+
+The three methods split the sentence on whitespace, look up each word
+exactly as written, and join the result with single spaces. A word with
+attached punctuation or a capital letter is not converted
+([#46](https://github.com/TigreGotico/tugalex/issues/46)).
 
 ### `normalize_ao1900(sentence) -> str`
 
@@ -172,15 +198,15 @@ lex.reverse_ao1900_br("ato")   # 'ato'
 | `ipa` | `Dict[region, Dict[word, Dict[POS, str]]]` | Lazy IPA map. |
 | `syllables` | `Dict[region, Dict[word, List[str]]]` | Lazy syllable map. |
 | `regions` | `Set[str]` | All region codes present in the loaded dataset. |
-| `homographs` | `Dict[word, Dict[POS, str]]` | POS-dependent pronunciations. |
+| `homographs` | `Dict[word, Dict[POS, str]]` | POS-dependent pronunciations of the 27 heterophonic homographs. |
 | `archaic_words` | `Dict[old, new]` | Pre-20th-century spelling to modern. |
-| `possible_postags` | `Dict[word, List[str]]` | POS tags available per word (cached). |
+| `possible_postags` | `Dict[word, List[str]]` | POS tags available per word (cached). A word outside the homograph table has `['']`. |
 | `AO1990` | `Dict[old, List[str]]` | Combined PT + BR old-to-new spelling map (cached). |
 | `silent_p_words` | `Set[str]` | Words with a silent `p` (`mpc`/`mpç`/`mpt` clusters) (cached). |
 | `voiced_u_words` | `Set[str]` | Words where `u` is voiced in `gue`/`gui`/`que`/`qui` (former trema) (cached). |
 
 ```python
-sorted(lex.regions)            # ['dli', 'lbn', 'lbx', 'lda', 'map', ...]
+sorted(lex.regions)            # ['dli', 'lbx', 'lda', 'mpx', 'rjx', 'spx']
 len(lex.AO1990)                # 3985
 len(lex.silent_p_words)        # 15
 len(lex.voiced_u_words)        # 324

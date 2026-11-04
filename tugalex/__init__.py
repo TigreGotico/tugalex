@@ -289,11 +289,16 @@ class TugaLexicon:
 
         Parameters:
             word: The word to look up; matching is case-insensitive because entries are normalized to lowercase.
-            pos: Part-of-speech tag to select the transcription variant (default: "NOUN").
+            pos: Uppercase part-of-speech tag (default: "NOUN"). It selects the
+                entry of a heterophonic homograph, whose pronunciation is
+                region-independent. The regional dictionary is POS-free, so for
+                every other word (and for a tag the homograph has no entry for)
+                the POS does not change the answer.
             region: Region code identifying the dialect dataset (e.g., "lbx").
 
         Returns:
-            The phoneme string for the specified word and POS in the region, or None if no entry exists.
+            The phoneme string, or None if no entry exists. An archaic spelling
+            is rewritten to its modern form before the lookup.
 
         Raises:
             ValueError: If the region is not in the loaded dataset.
@@ -349,7 +354,7 @@ class TugaLexicon:
 
         Returns:
             dict: A mapping with keys:
-                - "syllables": list of syllable segments for the word in the region, or `None` if not found.
+                - "syllables": list of syllable segments for the word in the region, or an empty list if not found.
                 - "phonemes": phoneme transcription for the given POS and region, or `None` if not found.
         """
         return {
@@ -379,12 +384,19 @@ class TugaLexicon:
         """
         Get a flat dictionary mapping words to phonemes for a specific POS and region.
 
+        Every word of the regional dictionary appears with its POS-free
+        pronunciation. *pos* only selects which homograph-table entries
+        replace those pronunciations.
+
         Args:
-            pos (str): Part of speech filter.
+            pos (str): Uppercase part-of-speech tag for the homograph entries.
             region (str): Region code.
 
         Returns:
             Dict[str, str]: Map of {word: phonemes}.
+
+        Raises:
+            ValueError: If the region is not in the loaded dataset.
         """
         if region not in self.ipa:
             raise ValueError(f"Unsupported dialect: {region}")
@@ -409,6 +421,9 @@ class TugaLexicon:
 
         Returns:
             Dict[str, List[str]]: Map of word -> list of available POS tags.
+                A heterophonic homograph lists its homograph-table tags. Every
+                other word of the ``lbx`` dictionary lists ``[""]``, the key
+                of its POS-free entry.
         """
         homo = self.homographs
         return {
@@ -489,11 +504,12 @@ class TugaLexicon:
     @cached_property
     def voiced_u_words(self) -> Set[str]:
         """
-        Set of words containing the trema 'ü' (indicating voiced 'u' in 'gue'/'gui'/'que'/'qui'),
-        based on the Brazilian AO dictionary.
+        Set of words with a voiced 'u' in 'gue'/'gui'/'que'/'qui': the modern
+        spellings of the words whose pre-AO1990 Brazilian spelling has the
+        trema 'ü', based on the Brazilian AO dictionary.
 
         Returns:
-            Set[str]: Words with voiced 'u'.
+            Set[str]: Modern spellings of words with voiced 'u'.
         """
         # all words in acordo_ortografico_pt_BR.csv containing trema 'ü'
         return set([new_word
@@ -504,6 +520,10 @@ class TugaLexicon:
     def normalize_ao1900(self, sentence: str) -> str:
         """
         Normalize a sentence to AO1990 standards.
+
+        The sentence is split on whitespace and each word is looked up exactly
+        as written, so a word with attached punctuation or a capital letter is
+        not converted. The words are joined with single spaces.
 
         Args:
             sentence (str): Input sentence with potentially old spelling.
@@ -517,6 +537,10 @@ class TugaLexicon:
     def reverse_ao1900_pt(self, sentence: str) -> str:
         """
         Revert a sentence from AO1990 to pre-agreement PT-PT spelling.
+
+        The sentence is split on whitespace and each word is looked up exactly
+        as written, so a word with attached punctuation or a capital letter is
+        not converted. The words are joined with single spaces.
 
         Args:
             sentence (str): Input sentence in modern spelling.
@@ -535,6 +559,10 @@ class TugaLexicon:
     def reverse_ao1900_br(self, sentence: str) -> str:
         """
         Revert a sentence from AO1990 to pre-agreement PT-BR spelling.
+
+        The sentence is split on whitespace and each word is looked up exactly
+        as written, so a word with attached punctuation or a capital letter is
+        not converted. The words are joined with single spaces.
 
         Args:
             sentence (str): Input sentence in modern spelling.
@@ -557,7 +585,7 @@ if __name__ == "__main__":
     print(f"Regions available: {ph.regions}")
     print(f"Silent P words count: {len(ph.silent_p_words)}")
     print(f"Voiced U words count: {len(ph.voiced_u_words)}")
-    # Regions available: {'lda', 'mpx', 'rjo', 'rjx', 'lbx', 'lbn', 'dli', 'spx', 'map', 'spo'}
+    # Regions available: {'dli', 'lbx', 'lda', 'mpx', 'rjx', 'spx'}
     # Silent P words count: 15
     # Voiced U words count: 324
 
