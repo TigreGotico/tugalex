@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.2a3](https://github.com/TigreGotico/tugalex/tree/2.2.2a3) (2026-11-04)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.2.2a2...2.2.2a3)
+
+**Merged pull requests:**
+
+- docs: correct stale claims and link the docs pages from the README [\#48](https://github.com/TigreGotico/tugalex/pull/48) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.2.2a2](https://github.com/TigreGotico/tugalex/tree/2.2.2a2) (2026-11-02)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.2.2a1...2.2.2a2)
