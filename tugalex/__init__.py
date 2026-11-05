@@ -3,8 +3,11 @@ import gzip
 import json
 import os
 import re
+import warnings
 from functools import cached_property, lru_cache
 from typing import Dict, List, Tuple, Optional, Set, Union
+
+from tugalex.version import VERSION_MAJOR
 
 # Typing aliases for better readability
 # region -> word -> POS -> phonemes
@@ -13,6 +16,23 @@ IPA_MAP = Dict[str, Dict[str, Dict[str, str]]]
 SYLLABLE_MAP = Dict[str, Dict[str, List[str]]]
 # Word mapping (e.g., AO1990 old -> new)
 WORD_REPLACEMENT_MAP = Dict[str, List[str]]
+
+
+#: The release that removes the regional pronunciation dictionary and its phoneme API.
+DICTIONARY_REMOVAL_VERSION = f"{VERSION_MAJOR + 1}.0.0"
+
+
+def _warn_dictionary(name: str, stacklevel: int = 3) -> None:
+    warnings.warn(
+        f"TugaLexicon.{name} is deprecated and will be removed in tugalex "
+        f"{DICTIONARY_REMOVAL_VERSION}, together with the regional pronunciation "
+        "dictionary it reads. The legacy tugaphone.dialects inventories read "
+        "this dictionary and go away with it. For Portuguese pronunciation, use "
+        "orthography2ipa with the pt-PT lexicon of o2i-lexicons "
+        "(orthography2ipa.use_packaged_lexicons).",
+        DeprecationWarning,
+        stacklevel=stacklevel,
+    )
 
 
 NOUN_GENDER_PATH = os.path.join(os.path.dirname(__file__), "data", "noun_gender_exceptions.csv.gz")
@@ -66,6 +86,13 @@ class TugaLexicon:
         - pt-AO (Angola)
         - pt-MZ (Mozambique)
         - pt-TL (Timor-Leste)
+
+    The regional pronunciation dictionary and its phoneme API (``ipa``,
+    ``syllables``, ``regions``, ``possible_postags``, ``lang_to_region``,
+    ``get_phonemes``, ``get_syllables``, ``get``, ``get_wordlist`` and
+    ``get_ipa_map``) are deprecated and emit a ``DeprecationWarning``. They are
+    removed in ``DICTIONARY_REMOVAL_VERSION``. The noun and given-name gender
+    lookups and the AO1990 spelling tools stay.
     """
 
     _DIALECT_REGIONS: Dict[str, str] = {
@@ -236,9 +263,11 @@ class TugaLexicon:
 
         Returns:
             IPA_MAP: Mapping of region -> word -> POS -> phonemes.
+
+        Deprecated: removed in ``DICTIONARY_REMOVAL_VERSION``.
         """
-        if not self._ipa:
-            self._ipa, self._syllables, self._regions = self._load_lang_map(self.dictionary_path)
+        _warn_dictionary("ipa")
+        self._load_dictionary()
         return self._ipa
 
     @property
@@ -248,9 +277,11 @@ class TugaLexicon:
 
         Returns:
             SYLLABLE_MAP: Mapping of region -> word -> list of syllables.
+
+        Deprecated: removed in ``DICTIONARY_REMOVAL_VERSION``.
         """
-        if not self._syllables:
-            self._ipa, self._syllables, self._regions = self._load_lang_map(self.dictionary_path)
+        _warn_dictionary("syllables")
+        self._load_dictionary()
         return self._syllables
 
     @property
@@ -260,10 +291,16 @@ class TugaLexicon:
 
         Returns:
             Set[str]: Set of region codes (e.g., 'lbx', 'rjx').
+
+        Deprecated: removed in ``DICTIONARY_REMOVAL_VERSION``.
         """
-        if not self._regions:
-            self._ipa, self._syllables, self._regions = self._load_lang_map(self.dictionary_path)
+        _warn_dictionary("regions")
+        self._load_dictionary()
         return self._regions
+
+    def _load_dictionary(self) -> None:
+        if not self._ipa:
+            self._ipa, self._syllables, self._regions = self._load_lang_map(self.dictionary_path)
 
     def lang_to_region(self, lang: str) -> str:
         """
@@ -277,7 +314,10 @@ class TugaLexicon:
 
         Raises:
             ValueError: If the provided dialect code is not supported.
+
+        Deprecated: removed in ``DICTIONARY_REMOVAL_VERSION``.
         """
+        _warn_dictionary("lang_to_region")
         try:
             return self._DIALECT_REGIONS[lang]
         except KeyError as e:
@@ -302,8 +342,15 @@ class TugaLexicon:
 
         Raises:
             ValueError: If the region is not in the loaded dataset.
+
+        Deprecated: removed in ``DICTIONARY_REMOVAL_VERSION``.
         """
-        if region not in self.ipa:
+        _warn_dictionary("get_phonemes")
+        return self._get_phonemes(word, pos, region)
+
+    def _get_phonemes(self, word: str, pos: str, region: str) -> Optional[str]:
+        self._load_dictionary()
+        if region not in self._ipa:
             raise ValueError(f"Unsupported dialect: {region}")
         word = word.strip().lower()
 
@@ -317,7 +364,7 @@ class TugaLexicon:
 
         # the lexicon itself is POS-free: one canonical pronunciation per
         # word; POS only matters for the homographs table consulted above
-        entry = self.ipa[region].get(word, {})
+        entry = self._ipa[region].get(word, {})
         return entry.get(pos) or entry.get("")
 
     def get_syllables(self, word: str, region: str = "lbx") -> List[str]:
@@ -333,13 +380,17 @@ class TugaLexicon:
 
         Raises:
             ValueError: If the region is not in the loaded dataset.
-        """
-        # Ensure data is loaded
-        _ = self.syllables
 
-        if region not in self.syllables:
+        Deprecated: removed in ``DICTIONARY_REMOVAL_VERSION``.
+        """
+        _warn_dictionary("get_syllables")
+        return self._get_syllables(word, region)
+
+    def _get_syllables(self, word: str, region: str) -> List[str]:
+        self._load_dictionary()
+        if region not in self._syllables:
             raise ValueError(f"Unsupported dialect: {region}")
-        return self.syllables[region].get(word.strip().lower(), [])
+        return self._syllables[region].get(word.strip().lower(), [])
 
     def get(
             self, word: str, pos: str = "NOUN", region: str = "lbx"
@@ -356,10 +407,13 @@ class TugaLexicon:
             dict: A mapping with keys:
                 - "syllables": list of syllable segments for the word in the region, or an empty list if not found.
                 - "phonemes": phoneme transcription for the given POS and region, or `None` if not found.
+
+        Deprecated: removed in ``DICTIONARY_REMOVAL_VERSION``.
         """
+        _warn_dictionary("get")
         return {
-            "syllables": self.get_syllables(word, region),
-            "phonemes": self.get_phonemes(word, pos, region),
+            "syllables": self._get_syllables(word, region),
+            "phonemes": self._get_phonemes(word, pos, region),
         }
 
     def get_wordlist(self, region: str = "lbx") -> List[str]:
@@ -374,9 +428,13 @@ class TugaLexicon:
 
         Raises:
             ValueError: If the dialect is unsupported.
+
+        Deprecated: removed in ``DICTIONARY_REMOVAL_VERSION``.
         """
+        _warn_dictionary("get_wordlist")
+        self._load_dictionary()
         try:
-            return sorted(self.syllables[region].keys())
+            return sorted(self._syllables[region].keys())
         except KeyError as e:
             raise ValueError(f"Unsupported dialect: {region}") from e
 
@@ -397,12 +455,16 @@ class TugaLexicon:
 
         Raises:
             ValueError: If the region is not in the loaded dataset.
+
+        Deprecated: removed in ``DICTIONARY_REMOVAL_VERSION``.
         """
-        if region not in self.ipa:
+        _warn_dictionary("get_ipa_map")
+        self._load_dictionary()
+        if region not in self._ipa:
             raise ValueError(f"Unsupported dialect: {region}")
         homo = self.homographs
         table = {}
-        for word, entry in self.ipa[region].items():
+        for word, entry in self._ipa[region].items():
             # the lexicon is POS-free; POS only selects homograph overrides
             value = entry.get(pos) or entry.get("")
             if value:
@@ -424,12 +486,17 @@ class TugaLexicon:
                 A heterophonic homograph lists its homograph-table tags. Every
                 other word of the ``lbx`` dictionary lists ``[""]``, the key
                 of its POS-free entry.
+
+        Deprecated: removed in ``DICTIONARY_REMOVAL_VERSION``.
         """
+        # cached_property adds a frame between the caller and this getter
+        _warn_dictionary("possible_postags", stacklevel=4)
+        self._load_dictionary()
         homo = self.homographs
         return {
             **{
-                word: list(self.ipa["lbx"][word].keys())
-                for word in self.ipa["lbx"]
+                word: list(entry.keys())
+                for word, entry in self._ipa["lbx"].items()
             },
             **{
                 word: list(homo[word].keys())

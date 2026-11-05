@@ -5,6 +5,13 @@ and the packaged data.
 
 ## Build a grapheme-to-phoneme map for a model
 
+> **Deprecated.** `get_ipa_map()`, `get_phonemes()` and the dictionary views `ipa`,
+> `syllables`, `regions` and `possible_postags` emit a `DeprecationWarning`.
+> The next major release removes them, together with the legacy
+> `tugaphone.dialects` inventories that read them. For Portuguese
+> pronunciation, use orthography2ipa with the pt-PT lexicon of
+> `o2i-lexicons`.
+
 `get_ipa_map()` hands you a flat `{word: phonemes}` dictionary for one POS and
 region. This is exactly the shape a G2P training step or a TTS front-end wants.
 

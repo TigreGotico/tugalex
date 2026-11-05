@@ -34,6 +34,13 @@ The packaged dataset has one more region than the five mapped above: `spx`
 
 ## Lookup methods
 
+> **Deprecated.** These lookups and the dictionary views `ipa`,
+> `syllables`, `regions` and `possible_postags` emit a `DeprecationWarning`.
+> The next major release removes them, together with the legacy
+> `tugaphone.dialects` inventories that read them. For Portuguese
+> pronunciation, use orthography2ipa with the pt-PT lexicon of
+> `o2i-lexicons`.
+
 ### `get(word, pos="NOUN", region="lbx") -> dict`
 
 Both syllables and phonemes in one call.

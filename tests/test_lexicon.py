@@ -8,6 +8,9 @@ import pytest
 
 from tugalex import TugaLexicon
 
+# exercises the deprecated dictionary API; tests/test_deprecation.py covers the warning
+pytestmark = pytest.mark.filterwarnings(r"ignore:TugaLexicon\.\w+ is deprecated:DeprecationWarning")
+
 
 @pytest.fixture(scope="module")
 def lex():
