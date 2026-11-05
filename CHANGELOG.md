@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.0a1](https://github.com/TigreGotico/tugalex/tree/2.3.0a1) (2026-11-05)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.2.2a3...2.3.0a1)
+
+**Merged pull requests:**
+
+- feat: deprecate the regional dictionary and its phoneme API [\#50](https://github.com/TigreGotico/tugalex/pull/50) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [2.2.2a3](https://github.com/TigreGotico/tugalex/tree/2.2.2a3) (2026-11-04)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.2.2a2...2.2.2a3)
