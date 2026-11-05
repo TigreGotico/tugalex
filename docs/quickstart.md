@@ -20,6 +20,13 @@ or regions.
 
 ## 2. The one thing to understand
 
+> **Deprecated.** The phoneme and syllable lookups below and the dictionary views `ipa`,
+> `syllables`, `regions` and `possible_postags` emit a `DeprecationWarning`.
+> The next major release removes them, together with the legacy
+> `tugaphone.dialects` inventories that read them. For Portuguese
+> pronunciation, use orthography2ipa with the pt-PT lexicon of
+> `o2i-lexicons`.
+
 Everything hangs off a single object. Construct it once and reuse it. The
 heavy CSV is parsed on first access and cached on the instance.
 

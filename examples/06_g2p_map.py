@@ -1,5 +1,8 @@
 """Example — build a flat grapheme-to-phoneme map for a model front-end.
 
+This example uses the deprecated dictionary API, which emits a
+DeprecationWarning and is removed in the next major release.
+
 Run::
 
     python examples/06_g2p_map.py

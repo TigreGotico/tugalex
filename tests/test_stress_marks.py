@@ -17,6 +17,9 @@ import pytest
 
 from tugalex import TugaLexicon
 
+# exercises the deprecated dictionary API; tests/test_deprecation.py covers the warning
+pytestmark = pytest.mark.filterwarnings(r"ignore:TugaLexicon\.\w+ is deprecated:DeprecationWarning")
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REGIONS = ["lbx", "rjx", "spx", "lda", "mpx", "dli"]
 

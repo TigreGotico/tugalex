@@ -4,6 +4,16 @@
 
 It gives NLP pipelines and linguistics research a single API for the differences between Portuguese regions and historical spelling agreements.
 
+> **Deprecated: the regional pronunciation dictionary.** The phoneme and
+> syllable API (`get`, `get_phonemes`, `get_syllables`, `get_wordlist`,
+> `get_ipa_map`, `lang_to_region`, `ipa`, `syllables`, `regions` and
+> `possible_postags`) emits a `DeprecationWarning`. The next major release
+> removes it, together with the legacy `tugaphone.dialects` inventories
+> that read it. For Portuguese pronunciation, use
+> [orthography2ipa](https://github.com/TigreGotico/orthography2ipa) with the
+> pt-PT lexicon of `o2i-lexicons` (`orthography2ipa.use_packaged_lexicons`).
+> The noun gender, given-name gender and AO1990 tools stay.
+
 ---
 
 ## Supported Dialects

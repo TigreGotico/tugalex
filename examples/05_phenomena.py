@@ -1,5 +1,8 @@
 """Example — archaisms, silent 'p', and the formerly-trema voiced 'u'.
 
+This example uses the deprecated dictionary API, which emits a
+DeprecationWarning and is removed in the next major release.
+
 Run::
 
     python examples/05_phenomena.py
