@@ -55,6 +55,22 @@ lex.archaic_words["pharmacia"]      # 'farmácia'
 lex.get_phonemes("architecto")      # 'ɐɾ·ki·tˈɛ·tu'  (looked up as arquiteto)
 ```
 
+## Modernise one word for a variety
+
+`modern_spelling()` applies the archaism table and the AO1990 table of one
+variety to one word, and keeps its case. Use it in a text pipeline, one word
+at a time, after you strip the punctuation:
+
+```python
+lex.modern_spelling("Pharmacia", "pt-BR")   # 'Farmácia'
+lex.modern_spelling("kilometro", "pt-BR")   # 'quilômetro'
+```
+
+The archaism table gives a separate pt-BR form where the two standards accent
+the word differently. AO1990 Base XI, 3º, writes a stressed ⟨e⟩ or ⟨o⟩ before
+⟨m⟩ or ⟨n⟩ in a proparoxytone with an acute or a circumflex, by the vowel
+quality in each norm: `cómodo`/`cômodo`, `fenómeno`/`fenômeno`.
+
 ## Round-trip orthography across the AO1990 agreement
 
 `normalize_ao1900()` goes from old to modern spelling. The two `reverse_*`
