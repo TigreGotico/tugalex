@@ -34,7 +34,9 @@ row. The ``source`` column says where the correction comes from:
   primary the orthography gives becomes ``ˌ``, as in the Portal's own
   compounds (bate-boca ``bˌa.tɨ.bˈo.kɐ``).
 - ``drop``: the row transcribes another headword (tração holds *seleto*)
-  or is truncated.
+  or is truncated, or its only stressable vowel is [ɨ] and no dictionary
+  gives the stressed vowel (reda ``ʀɨ.dɐ``). European Portuguese has [ɨ]
+  only in unstressed syllables, so no stress mark can repair such a row.
 
 An errata row whose source row is absent stops the build, so a changed
 source is re-checked rather than patched blindly. The build also stops when

@@ -78,6 +78,25 @@ def test_tracao_is_not_seleto(lex, region):
     assert "l" not in phones, phones
 
 
+# European Portuguese has [ɨ] only in unstressed syllables.
+def test_no_errata_row_stresses_central_vowel():
+    with open(os.path.join(REPO_ROOT, "scripts", "regional_dict_errata.csv"),
+              encoding="utf-8", newline="") as fh:
+        offenders = [(r["word"], r["region_code"], r["phones"])
+                     for r in csv.DictReader(fh) if "ˈɨ" in r["phones"]]
+    assert not offenders, offenders
+
+
+def test_no_lbx_entry_stresses_central_vowel(lex):
+    offenders = {word: entry[""] for word, entry in lex.ipa["lbx"].items()
+                 if "ˈɨ" in entry[""]}
+    assert not offenders, offenders
+
+
+def test_reda_has_no_lbx_entry(lex):
+    assert lex.get_phonemes("reda", region="lbx") is None
+
+
 def _gold(path, rows):
     with open(path, "w", encoding="utf-8") as fh:
         for word, phones, syllables in rows:
