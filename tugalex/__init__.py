@@ -601,7 +601,8 @@ class TugaLexicon:
         word such as ``sector`` and ``setor``. When the agreement gives more
         than one form, the form closest to the written word is used, so no
         consonant is added or dropped that the writer did not write. A
-        capital at the start of the word, or a word in capitals, is kept.
+        word in capitals stays in capitals, and the first letter follows the
+        written word. A capital inside the table entry stays (``arco de Deus``).
 
         AO1990 removed the hyphen from some compounds, so the result can be
         several words: ``acha-de-armas`` gives ``acha de armas``.
@@ -614,7 +615,7 @@ class TugaLexicon:
         Returns:
             str: The modern spelling, or ``word`` unchanged.
         """
-        subtags = lang.replace("_", "-").lower().split("-x-")[0].split("-")
+        subtags = re.split(r"[.@]", lang)[0].replace("_", "-").lower().split("-x-")[0].split("-")
         brazilian = "br" in subtags[1:]
         lowered = word.lower()
         archaic = self.archaic_words_br if brazilian else self.archaic_words
@@ -626,9 +627,8 @@ class TugaLexicon:
             return word
         if word.isupper():
             return modern.upper()
-        if word[:1].isupper():
-            return modern[:1].upper() + modern[1:]
-        return modern
+        first = modern[:1].upper() if word[:1].isupper() else modern[:1].lower()
+        return first + modern[1:]
 
     def normalize_ao1900(self, sentence: str) -> str:
         """

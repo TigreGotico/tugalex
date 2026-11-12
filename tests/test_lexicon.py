@@ -117,6 +117,18 @@ class TestModernSpelling:
     def test_keeps_the_case_of_the_table(self, lex):
         assert lex.modern_spelling("arco-de-deus") == "arco de Deus"
 
+    @pytest.mark.parametrize("word,lang,expected", [
+        ("equinóides", "pt-PT", "equinoides"),
+        ("eqüídeos", "pt-BR", "equídeos"),
+        ("Eqüídeos", "pt-BR", "Equídeos"),
+    ])
+    def test_first_letter_follows_the_written_word(self, lex, word, lang, expected):
+        assert lex.modern_spelling(word, lang) == expected
+
+    @pytest.mark.parametrize("lang", ["pt_BR.UTF-8", "pt_BR@euro"])
+    def test_posix_locale_strings(self, lex, lang):
+        assert lex.modern_spelling("chronico", lang) == "crônico"
+
     @pytest.mark.parametrize("lang", ["pt_BR", "pt-Latn-BR", "PT-BR", "pt-BR-x-rj"])
     def test_brazilian_tags(self, lex, lang):
         assert lex.modern_spelling("chronico", lang) == "crônico"
