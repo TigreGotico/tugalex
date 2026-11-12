@@ -72,6 +72,13 @@ class TestArchaisms:
     def test_archaic_resolution(self, lex):
         assert lex.archaic_words["architecto"] == "arquiteto"
 
+    @pytest.mark.parametrize("word", ["chyme", "thesouroso", "thymia"])
+    def test_no_row_without_a_portuguese_word(self, lex, word):
+        # chyme and thymia are not Portuguese spellings: the noun is quimo,
+        # and -timia is only a combining element. Priberam has no tesouroso.
+        assert word not in lex.archaic_words
+        assert lex.modern_spelling(word) == word
+
     def test_archaic_values_have_no_trailing_whitespace(self, lex):
         for old, new in lex.archaic_words.items():
             assert old == old.strip()
@@ -90,6 +97,8 @@ class TestModernSpelling:
         ("chronico", "pt-BR", "crônico"),
         ("commodo", "pt-BR-x-sp", "cômodo"),
         ("phenomeno", "pt-AO", "fenómeno"),
+        ("Egypto", "pt-PT", "Egito"),
+        ("Egipto", "pt-PT", "Egito"),
     ])
     def test_modernises(self, lex, word, lang, expected):
         assert lex.modern_spelling(word, lang) == expected
