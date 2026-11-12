@@ -27,6 +27,9 @@ from tugalex import TugaLexicon
     ("metros", "m"), ("professor", "m"),
     # a loanword sense does not make a common noun both-gender
     ("cores", "f"), ("meta", "f"), ("média", "f"),
+    # "crises" is also the plural of the rare "cris" (eclipse, kris);
+    # MorphoBr: crise+N+F+PL
+    ("crises", "f"),
     # nouns of both genders
     ("artista", "mf"), ("artistas", "mf"), ("estudante", "mf"),
     ("capital", "mf"), ("rádio", "mf"),
