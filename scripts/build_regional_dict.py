@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Regenerate tugalex's regional dictionary from the unified Portuguese gold.
 
-Maintainer action (network). Downloads
-``TigreGotico/portuguese-unified-pronunciation-lexicon`` and rewrites
+Maintainer action (network). Downloads the JSONL of
+``TigreGotico/portuguese-unified-pronunciation-lexicon`` at ``REVISION``,
+checks its sha256 against ``SOURCE_SHA256``, and rewrites
 ``tugalex/data/regional_dict.csv.gz`` with ONLY the columns the loader
 consumes (word, phones, syllables, region_code), keeping the six Portal
 da Língua Portuguesa regions tugaphone's dialect presets read. The
@@ -17,26 +18,22 @@ fewest narrow-phonetic marks (aspiration, labialization, length …),
 which recovers the standard register of the merged standard/colloquial
 rows.
 
-The Portal data has defects the build corrects through
-``scripts/regional_dict_errata.csv``. Each errata row names one source row
-(word, region, phones) and its replacement; an empty replacement drops the
-row. The ``source`` column says where the correction comes from:
+The pinned revision carries the repairs of the cleaned
+``TigreGotico/portuguese_phonetic_lexicon``: missing stress marks placed,
+doubled primary marks demoted, broken -gem endings fixed, ``$$`` readings
+split into rows, and broken rows removed. The build corrects the defects
+that remain through ``scripts/regional_dict_errata.csv``. Each errata row
+names one source row (word, region, phones) and its replacement; an empty
+replacement drops the row. The ``source`` column says where the correction
+comes from:
 
-- ``rule``: the Portal's Lisbon row has no stress mark, mostly where a glide
-  precedes the stressed vowel (paciente ``pɐ.sjẽ.tɨ``). The mark goes on the
-  vowel the orthography stresses (written accent, else the oxytone or
-  paroxytone rule), before the vowel, as the Portal writes it.
-- ``rule+infopedia``, ``rule+wiktionary``: as ``rule``, and the dataset's
-  pt-PT row of the same word puts the stress on the same vowel.
+- ``rule+infopedia``: the Portal's Lisbon row has no stress mark where a
+  glide precedes the stressed vowel (ciente ``sjẽt``). The mark goes on the
+  vowel the orthography stresses, before the vowel, as the Portal writes it,
+  and the dataset's Infopédia pt-PT row of the same word puts the stress on
+  the same vowel.
 - ``infopedia``: the Portal mark is on the wrong syllable; the dataset's
   Infopédia pt-PT row gives the stressed syllable.
-- ``demote``: the Portal writes two primary marks; every one but the
-  primary the orthography gives becomes ``ˌ``, as in the Portal's own
-  compounds (bate-boca ``bˌa.tɨ.bˈo.kɐ``).
-- ``drop``: the row transcribes another headword (tração holds *seleto*)
-  or is truncated, or its only stressable vowel is [ɨ] and no dictionary
-  gives the stressed vowel (reda ``ʀɨ.dɐ``). European Portuguese has [ɨ]
-  only in unstressed syllables, so no stress mark can repair such a row.
 
 An errata row whose source row is absent stops the build, so a changed
 source is re-checked rather than patched blindly. The build also stops when
@@ -63,10 +60,14 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(REPO_ROOT, "tugalex", "data", "regional_dict.csv.gz")
 ERRATA = os.path.join(REPO_ROOT, "scripts", "regional_dict_errata.csv")
 
+#: the unified-lexicon revision the shipped dictionary is built from
+REVISION = "23898e1437dc77e84681bb7ce5580a9b3e2d04ba"
+#: sha256 of portuguese_pronunciation_lexicon.jsonl at REVISION
+SOURCE_SHA256 = "37805247f4fd796b9564f8e434beba67d13bb6029493f7c4eca4d4c693cc31d9"
 GOLD_URL = (
     "https://huggingface.co/datasets/TigreGotico/"
     "portuguese-unified-pronunciation-lexicon"
-    "/resolve/main/portuguese_pronunciation_lexicon.jsonl"
+    f"/resolve/{REVISION}/portuguese_pronunciation_lexicon.jsonl"
 )
 
 #: unified-dataset region tag -> tugalex internal region code
@@ -115,6 +116,8 @@ def main(argv=None) -> None:
         with urllib.request.urlopen(GOLD_URL) as resp:
             raw = resp.read()
     digest = hashlib.sha256(raw).hexdigest()
+    if not args.gold and digest != SOURCE_SHA256:
+        sys.exit(f"{GOLD_URL} has sha256 {digest}, expected {SOURCE_SHA256}")
     errata = load_errata(args.errata)
     applied = set()
 
