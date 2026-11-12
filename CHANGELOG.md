@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.1a1](https://github.com/TigreGotico/tugalex/tree/2.3.1a1) (2026-11-12)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.3.0a1...2.3.1a1)
+
+**Merged pull requests:**
+
+- fix: drop the Lisbon reda row that stresses \[ɨ\] [\#53](https://github.com/TigreGotico/tugalex/pull/53) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [2.3.0a1](https://github.com/TigreGotico/tugalex/tree/2.3.0a1) (2026-11-05)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.2.2a3...2.3.0a1)
