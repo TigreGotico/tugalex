@@ -33,8 +33,9 @@ TugaLex maps standard ISO codes to internal regional datasets:
 
 The regional dictionary ships as a slim gzip extract (word, phones,
 syllables, region) of the [unified Portuguese pronunciation lexicon](https://huggingface.co/datasets/TigreGotico/portuguese-unified-pronunciation-lexicon),
-with 53,147 to 53,148 words in each region. Regenerate it with
-`python scripts/build_regional_dict.py`. The regional dictionary has no
+with 53,142 to 53,145 words in each region. Regenerate it with
+`python scripts/build_regional_dict.py`, which reads the lexicon revision
+pinned in the script. The regional dictionary has no
 part of speech: each word has one pronunciation per region, and it answers
 every POS query. Only the heterophonic homograph table is keyed by POS.
 
@@ -116,7 +117,7 @@ TugaLexicon.get_given_name_gender("Raio")     # None
 
 TugaLex ships the following datasets under `tugalex/data/`.
 
-* `regional_dict.csv.gz`: phoneme and syllable mappings, 318,884 rows for 53,150 distinct words in six regions. `scripts/build_regional_dict.py` builds it from the [unified Portuguese pronunciation lexicon](https://huggingface.co/datasets/TigreGotico/portuguese-unified-pronunciation-lexicon) and keeps six of its [Portal da Língua Portuguesa](http://www.portaldalinguaportuguesa.org) regions. The scraped Portal data with all ten regional variants is the [`portuguese_phonetic_lexicon`](https://huggingface.co/datasets/TigreGotico/portuguese_phonetic_lexicon) dataset.
+* `regional_dict.csv.gz`: phoneme and syllable mappings, 318,860 rows for 53,146 distinct words in six regions. `scripts/build_regional_dict.py` builds it from the [unified Portuguese pronunciation lexicon](https://huggingface.co/datasets/TigreGotico/portuguese-unified-pronunciation-lexicon) and keeps six of its [Portal da Língua Portuguesa](http://www.portaldalinguaportuguesa.org) regions. The scraped Portal data with all ten regional variants is the [`portuguese_phonetic_lexicon`](https://huggingface.co/datasets/TigreGotico/portuguese_phonetic_lexicon) dataset.
 * `heterophonic_homographs.csv`: 27 words pronounced differently depending on POS, 55 rows.
 * [`acordo_ortografico_pt_PT.csv`](https://huggingface.co/datasets/TigreGotico/AO1990_pt-PT): Portugal old orthographic spellings.
 * [`acordo_ortografico_pt_BR.csv`](https://huggingface.co/datasets/TigreGotico/AO1990_pt-BR): Brazil old orthographic spellings.
