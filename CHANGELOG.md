@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.2a1](https://github.com/TigreGotico/tugalex/tree/2.3.2a1) (2026-11-12)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.3.1a1...2.3.2a1)
+
+**Merged pull requests:**
+
+- fix: build the regional dictionary from the cleaned unified lexicon [\#55](https://github.com/TigreGotico/tugalex/pull/55) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [2.3.1a1](https://github.com/TigreGotico/tugalex/tree/2.3.1a1) (2026-11-12)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.3.0a1...2.3.1a1)
