@@ -34,9 +34,6 @@ comes from:
   the same vowel.
 - ``infopedia``: the Portal mark is on the wrong syllable; the dataset's
   Infopédia pt-PT row gives the stressed syllable.
-- ``drop``: the row is truncated. The Portal writes a second reading as its
-  last syllables only (contrabordo ``kõ.tɾa.bˈɔɾ.du$$bˈoɾ.du``), and the
-  split row holds those syllables alone.
 
 An errata row whose source row is absent stops the build, so a changed
 source is re-checked rather than patched blindly. The build also stops when
@@ -64,9 +61,9 @@ OUT = os.path.join(REPO_ROOT, "tugalex", "data", "regional_dict.csv.gz")
 ERRATA = os.path.join(REPO_ROOT, "scripts", "regional_dict_errata.csv")
 
 #: the unified-lexicon revision the shipped dictionary is built from
-REVISION = "676e91fcb45280de9077ec0f895630a7de7b4a12"
+REVISION = "23898e1437dc77e84681bb7ce5580a9b3e2d04ba"
 #: sha256 of portuguese_pronunciation_lexicon.jsonl at REVISION
-SOURCE_SHA256 = "d354b428671237ca6caa27750ca2a591a303030e70dc9fcb1ac18e19b226df73"
+SOURCE_SHA256 = "37805247f4fd796b9564f8e434beba67d13bb6029493f7c4eca4d4c693cc31d9"
 GOLD_URL = (
     "https://huggingface.co/datasets/TigreGotico/"
     "portuguese-unified-pronunciation-lexicon"

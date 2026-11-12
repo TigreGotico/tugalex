@@ -31,7 +31,7 @@ def build():
 
 
 def test_build_reads_the_cleaned_lexicon_revision(build):
-    assert build.REVISION == "676e91fcb45280de9077ec0f895630a7de7b4a12"
+    assert build.REVISION == "23898e1437dc77e84681bb7ce5580a9b3e2d04ba"
     assert build.GOLD_URL.endswith(
         f"/resolve/{build.REVISION}/portuguese_pronunciation_lexicon.jsonl")
 
@@ -64,9 +64,9 @@ def test_unrepairable_word_has_no_entry(lex, word, region):
 
 # nasal vowels are written decomposed: vowel + U+0303
 @pytest.mark.parametrize("word, region, phones", [
-    ("contrabordo", "lbx", "ko\u0303·tɾa·bˈɔɾ·du"),
-    ("desbordo", "lbx", "dɨz·bˈɔɾ·du"),
-    ("contrabordo", "spx", "ko\u0303·tɽa·bˈɔɽ·du"),
+    ("contrabordo", "lbx", "ko\u0303·tɾa·bˈoɾ·du"),
+    ("desbordo", "lbx", "dɨz·bˈoɾ·du"),
+    ("contrabordo", "spx", "ko\u0303·tɽa·bˈoɽ·dʊ"),
     ("abordagem", "spx", "a·boɾ·dˈa·ʒeɲ"),
     ("descolagem", "lbx", "dɨʃ·ku·lˈa·ʒɐ̃j"),
     ("data-valor", "lbx", "dˌa·tɐ·vɐ·lˈoɾ"),
