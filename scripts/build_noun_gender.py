@@ -19,7 +19,7 @@ rule. A word gets the union of the genders of all its entries, so two
 etymologies of one spelling with different genders ("capital") give ``mf``.
 A gender with a usage label such as "obsolete" or "nonstandard" is dropped
 when the entry also gives an unlabelled gender, and an entry whose every
-sense is marginal (obsolete, archaic, dated, poetic, a misspelling) counts only
+sense is marginal (obsolete, archaic, poetic, a misspelling) counts only
 when the word has no other entry. A gender with a regional label ("Brazil",
 "Portugal") is kept, so the noun becomes ``mf``.
 
@@ -67,7 +67,7 @@ CLOSED_CLASS_POS = {"article", "pron", "det", "conj", "contraction", "character"
 # marginal noun entry ("cor" m, poetic "heart") gives no gender to a word that
 # has an ordinary noun entry ("cor" f, "colour").
 MARGINAL_SENSE_TAGS = {"alt-of", "misspelling", "misconstruction", "obsolete",
-                       "archaic", "dated", "poetic"}
+                       "archaic", "poetic"}
 # Usage labels that mark a gender as a minority use beside the standard one.
 MINORITY_LABELS = re.compile(r"obsolete|nonstandard|proscribed|rare|uncommon|"
                              r"less common|dated|derogatory|informal|see usage")
