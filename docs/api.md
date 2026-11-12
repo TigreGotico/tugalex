@@ -179,8 +179,11 @@ attached punctuation or a capital letter is not converted
 Rewrite one word to its modern spelling in the variety of `lang`. A pre-1911
 spelling maps to its modern form, and a pre-AO1990 spelling maps to its AO1990
 form. A Brazilian tag uses the pt-BR tables; every other tag uses the pt-PT
-tables. A word that is already a valid AO1990 spelling stays as written. The
-case pattern of the word is kept. Strip punctuation from the word first.
+tables. A word that is already a valid AO1990 spelling stays as written. When
+the agreement gives several forms, the form closest to the written word wins.
+A capital at the start, or a word in capitals, is kept. AO1990 removed the
+hyphen from some compounds, so the result can be several words
+(`acha-de-armas` gives `acha de armas`). Strip punctuation from the word first.
 
 ```python
 lex.modern_spelling("Acção")                 # 'Ação'

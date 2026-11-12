@@ -4,6 +4,7 @@ import json
 import os
 import re
 import warnings
+from difflib import SequenceMatcher
 from functools import cached_property, lru_cache
 from typing import Dict, List, Tuple, Optional, Set, Union
 
@@ -581,10 +582,10 @@ class TugaLexicon:
                     if 'ü' in old_word])
 
     @cached_property
-    def _ao_lowercase(self) -> Dict[bool, Dict[str, List[str]]]:
-        """The pt-PT (``False``) and pt-BR (``True``) AO1990 tables, in lowercase."""
+    def _ao_by_lowercase(self) -> Dict[bool, Dict[str, List[str]]]:
+        """The pt-PT (``False``) and pt-BR (``True``) AO1990 tables, keyed in lowercase."""
         return {
-            brazilian: {old.lower(): [new.lower() for new in news] for old, news in table.items()}
+            brazilian: {old.lower(): news for old, news in table.items()}
             for brazilian, table in ((False, self.ao_pt), (True, self.ao_br))
         }
 
@@ -594,30 +595,36 @@ class TugaLexicon:
 
         A pre-1911 etymological spelling (``pharmacia``) maps to its modern
         form, and a spelling from before the 1990 agreement (``acção``) maps to
-        its AO1990 form. The tables of the variety apply: pt-BR for a Brazilian
-        tag, pt-PT for every other tag. A word that is already a valid AO1990
-        spelling stays as written; pt-PT keeps both forms of a word such as
-        ``sector`` and ``setor``. When the agreement gives more than one form,
-        the first form in the table is used. The case pattern of the word is
-        kept.
+        its AO1990 form. The tables of the variety apply: pt-BR for a tag with
+        the region ``BR``, pt-PT for every other tag. A word that is already a
+        valid AO1990 spelling stays as written; pt-PT keeps both forms of a
+        word such as ``sector`` and ``setor``. When the agreement gives more
+        than one form, the form closest to the written word is used, so no
+        consonant is added or dropped that the writer did not write. A
+        capital at the start of the word, or a word in capitals, is kept.
+
+        AO1990 removed the hyphen from some compounds, so the result can be
+        several words: ``acha-de-armas`` gives ``acha de armas``.
 
         Args:
             word (str): One word, with no punctuation attached.
-            lang (str): The language tag of the text.
+            lang (str): The language tag of the text, such as ``pt-BR`` or
+                ``pt_BR``.
 
         Returns:
             str: The modern spelling, or ``word`` unchanged.
         """
-        brazilian = lang.lower().startswith("pt-br")
+        subtags = lang.replace("_", "-").lower().split("-x-")[0].split("-")
+        brazilian = "br" in subtags[1:]
         lowered = word.lower()
         archaic = self.archaic_words_br if brazilian else self.archaic_words
         modern = archaic.get(lowered, lowered)
-        forms = self._ao_lowercase[brazilian].get(modern, [modern])
-        if modern not in forms:
-            modern = forms[0]
+        forms = self._ao_by_lowercase[brazilian].get(modern, [modern])
+        if modern not in (form.lower() for form in forms):
+            modern = max(forms, key=lambda form: SequenceMatcher(None, lowered, form.lower()).ratio())
         if modern == lowered:
             return word
-        if len(word) > 1 and word.isupper():
+        if word.isupper():
             return modern.upper()
         if word[:1].isupper():
             return modern[:1].upper() + modern[1:]
