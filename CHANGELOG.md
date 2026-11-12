@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.0a1](https://github.com/TigreGotico/tugalex/tree/2.4.0a1) (2026-11-12)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.3.2a1...2.4.0a1)
+
+**Merged pull requests:**
+
+- feat: modern\_spelling for one word in one variety [\#57](https://github.com/TigreGotico/tugalex/pull/57) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [2.3.2a1](https://github.com/TigreGotico/tugalex/tree/2.3.2a1) (2026-11-12)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.3.1a1...2.3.2a1)
