@@ -174,6 +174,21 @@ exactly as written, and join the result with single spaces. A word with
 attached punctuation or a capital letter is not converted
 ([#46](https://github.com/TigreGotico/tugalex/issues/46)).
 
+### `modern_spelling(word, lang="pt-PT") -> str`
+
+Rewrite one word to its modern spelling in the variety of `lang`. A pre-1911
+spelling maps to its modern form, and a pre-AO1990 spelling maps to its AO1990
+form. A Brazilian tag uses the pt-BR tables; every other tag uses the pt-PT
+tables. A word that is already a valid AO1990 spelling stays as written. The
+case pattern of the word is kept. Strip punctuation from the word first.
+
+```python
+lex.modern_spelling("Acção")                 # 'Ação'
+lex.modern_spelling("chronico", "pt-PT")     # 'crónico'
+lex.modern_spelling("chronico", "pt-BR")     # 'crônico'
+lex.modern_spelling("sector")                # 'sector'  (valid in pt-PT)
+```
+
 ### `normalize_ao1900(sentence) -> str`
 
 Rewrite each word to its modern AO1990 spelling. Unknown words pass through.
@@ -206,7 +221,8 @@ lex.reverse_ao1900_br("ato")   # 'ato'
 | `syllables` | `Dict[region, Dict[word, List[str]]]` | Lazy syllable map. |
 | `regions` | `Set[str]` | All region codes present in the loaded dataset. |
 | `homographs` | `Dict[word, Dict[POS, str]]` | POS-dependent pronunciations of the 27 heterophonic homographs. |
-| `archaic_words` | `Dict[old, new]` | Pre-20th-century spelling to modern. |
+| `archaic_words` | `Dict[old, new]` | Pre-1911 spelling to its modern pt-PT spelling. |
+| `archaic_words_br` | `Dict[old, new]` | Pre-1911 spelling to its modern pt-BR spelling. |
 | `possible_postags` | `Dict[word, List[str]]` | POS tags available per word (cached). A word outside the homograph table has `['']`. |
 | `AO1990` | `Dict[old, List[str]]` | Combined PT + BR old-to-new spelling map (cached). |
 | `silent_p_words` | `Set[str]` | Words with a silent `p` (`mpc`/`mpç`/`mpt` clusters) (cached). |

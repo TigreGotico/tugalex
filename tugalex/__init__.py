@@ -135,26 +135,22 @@ class TugaLexicon:
         self.ao_pt: Dict[str, List[str]] = self._load_ao(self.ao_pt_path)
         self.ao_br: Dict[str, List[str]] = self._load_ao(self.ao_br_path)
         self.homographs: Dict[str, Dict[str, str]] = self._load_homographs(self.homographs_path)
-        self.archaic_words: Dict[str, str] = self._load_archaisms(self.archaisms_path)
+        self.archaic_words, self.archaic_words_br = self._load_archaisms(self.archaisms_path)
         # Lazy loaded attributes
         self._ipa: IPA_MAP = {}
         self._syllables: SYLLABLE_MAP = {}
         self._regions: Set[str] = set()
 
     @staticmethod
-    def _load_archaisms(path: str) -> Dict[str, str]:
-        data = {}
-        with open(path, "r", encoding="utf-8") as f:
-            for l in f.read().split("\n")[1:]:
-                if "," not in l:
-                    continue
-                l = l.replace('"', "")
-                parts = l.split(",", 2)
-                if len(parts) != 3:
-                    continue
-                old_word, new_word, _ = parts
-                data[old_word.strip()] = new_word.strip()
-        return data
+    def _load_archaisms(path: str) -> Tuple[Dict[str, str], Dict[str, str]]:
+        """Load the pre-1911 spellings as two maps to their pt-PT and pt-BR modern forms."""
+        pt: Dict[str, str] = {}
+        br: Dict[str, str] = {}
+        with open(path, "r", encoding="utf-8", newline="") as f:
+            for row in csv.DictReader(f):
+                pt[row["archaic"]] = row["modern"]
+                br[row["archaic"]] = row["modern_pt_BR"] or row["modern"]
+        return pt, br
 
     @staticmethod
     def _load_homographs(path: str) -> Dict[str, Dict[str, str]]:
@@ -583,6 +579,49 @@ class TugaLexicon:
                     for old_word, new_words in self.ao_br.items()
                     for new_word in new_words
                     if 'ü' in old_word])
+
+    @cached_property
+    def _ao_lowercase(self) -> Dict[bool, Dict[str, List[str]]]:
+        """The pt-PT (``False``) and pt-BR (``True``) AO1990 tables, in lowercase."""
+        return {
+            brazilian: {old.lower(): [new.lower() for new in news] for old, news in table.items()}
+            for brazilian, table in ((False, self.ao_pt), (True, self.ao_br))
+        }
+
+    def modern_spelling(self, word: str, lang: str = "pt-PT") -> str:
+        """
+        Return the modern spelling of one word in the variety of ``lang``.
+
+        A pre-1911 etymological spelling (``pharmacia``) maps to its modern
+        form, and a spelling from before the 1990 agreement (``acção``) maps to
+        its AO1990 form. The tables of the variety apply: pt-BR for a Brazilian
+        tag, pt-PT for every other tag. A word that is already a valid AO1990
+        spelling stays as written; pt-PT keeps both forms of a word such as
+        ``sector`` and ``setor``. When the agreement gives more than one form,
+        the first form in the table is used. The case pattern of the word is
+        kept.
+
+        Args:
+            word (str): One word, with no punctuation attached.
+            lang (str): The language tag of the text.
+
+        Returns:
+            str: The modern spelling, or ``word`` unchanged.
+        """
+        brazilian = lang.lower().startswith("pt-br")
+        lowered = word.lower()
+        archaic = self.archaic_words_br if brazilian else self.archaic_words
+        modern = archaic.get(lowered, lowered)
+        forms = self._ao_lowercase[brazilian].get(modern, [modern])
+        if modern not in forms:
+            modern = forms[0]
+        if modern == lowered:
+            return word
+        if len(word) > 1 and word.isupper():
+            return modern.upper()
+        if word[:1].isupper():
+            return modern[:1].upper() + modern[1:]
+        return modern
 
     def normalize_ao1900(self, sentence: str) -> str:
         """

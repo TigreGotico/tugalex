@@ -78,6 +78,45 @@ class TestArchaisms:
             assert new == new.strip()
 
 
+class TestModernSpelling:
+    @pytest.mark.parametrize("word,lang,expected", [
+        ("pharmacia", "pt-PT", "farmácia"),
+        ("acção", "pt-PT", "ação"),
+        ("vôo", "pt-BR", "voo"),
+        ("lingüiça", "pt-BR", "linguiça"),
+        ("recepção", "pt-PT", "receção"),
+        ("idéia", "pt-BR", "ideia"),
+        ("chronico", "pt-PT", "crónico"),
+        ("chronico", "pt-BR", "crônico"),
+        ("commodo", "pt-BR-x-sp", "cômodo"),
+        ("phenomeno", "pt-AO", "fenómeno"),
+    ])
+    def test_modernises(self, lex, word, lang, expected):
+        assert lex.modern_spelling(word, lang) == expected
+
+    @pytest.mark.parametrize("word,expected", [
+        ("Acção", "Ação"),
+        ("ACÇÃO", "AÇÃO"),
+        ("Pharmacia", "Farmácia"),
+    ])
+    def test_keeps_case(self, lex, word, expected):
+        assert lex.modern_spelling(word) == expected
+
+    @pytest.mark.parametrize("word", ["casa", "acupunctura", "acupuntura", "facto", "Lisboa", "A", ""])
+    def test_valid_spelling_unchanged(self, lex, word):
+        assert lex.modern_spelling(word) == word
+
+    def test_each_variety_uses_its_own_table(self, lex):
+        # recepção is the AO1990 pt-BR spelling and a pre-AO1990 pt-PT spelling.
+        assert lex.modern_spelling("recepção", "pt-BR") == "recepção"
+        assert lex.modern_spelling("lingüiça", "pt-PT") == "lingüiça"
+
+    def test_brazilian_form_only_where_accent_differs(self, lex):
+        differ = {old for old in lex.archaic_words if lex.archaic_words[old] != lex.archaic_words_br[old]}
+        assert differ == {"chronico", "chronometro", "kilometro", "photometro", "pseudonymo",
+                          "thermometro", "phenomeno", "anonymo", "chronica", "commodo"}
+
+
 class TestAO1990:
     def test_normalize(self, lex):
         assert lex.normalize_ao1900("acção óptimo") == "ação ótimo"
