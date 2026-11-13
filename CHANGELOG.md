@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.3a1](https://github.com/TigreGotico/tugalex/tree/2.4.3a1) (2026-11-13)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.2a1...2.4.3a1)
+
+**Merged pull requests:**
+
+- fix: add the Portal entries pai and mãe to the regional dictionary [\#63](https://github.com/TigreGotico/tugalex/pull/63) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [2.4.2a1](https://github.com/TigreGotico/tugalex/tree/2.4.2a1) (2026-11-12)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.1a1...2.4.2a1)
