@@ -136,9 +136,12 @@ def test_build_applies_errata(build, tmp_path):
         ("paciente", "lbx", "pɐ|sjẽt", "pɐ|sjˈẽt", "rule+infopedia"),
         ("tração", "lbx", "sɨ|lˈɛ|tu", "", "drop"),
     ])
+    (tmp_path / "additions.csv").write_text(
+        "word,region_code,phones,syllables,source,portal_id\n", encoding="utf-8")
     build.main(["--gold", str(tmp_path / "gold.jsonl"),
                 "--out", str(tmp_path / "out.csv.gz"),
-                "--errata", str(tmp_path / "errata.csv")])
+                "--errata", str(tmp_path / "errata.csv"),
+                "--additions", str(tmp_path / "additions.csv")])
     assert _built(tmp_path / "out.csv.gz") == {
         "paciente": "pɐ|sjˈẽt", "tração": "tɾɐ|sˈɐ̃w"}
 

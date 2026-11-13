@@ -35,6 +35,14 @@ comes from:
 - ``infopedia``: the Portal mark is on the wrong syllable; the dataset's
   Infopédia pt-PT row gives the stressed syllable.
 
+The pinned revision also lacks Portal entries that the Portal itself lists
+(pai, mãe). ``scripts/regional_dict_additions.csv`` adds them: one row per
+word and region, with the phones and syllables to ship. The ``source`` value
+``portal`` means the row copies the standard (padrão) transcription of the
+Portal da Língua Portuguesa Dicionário Fonético entry that ``portal_id``
+names (``?action=fonetica&act=details&id=<portal_id>``). An addition for a
+word and region that the source already has stops the build.
+
 An errata row whose source row is absent stops the build, so a changed
 source is re-checked rather than patched blindly. The build also stops when
 a Lisbon entry of two or more syllables has a reading without exactly one
@@ -59,6 +67,7 @@ import urllib.request
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(REPO_ROOT, "tugalex", "data", "regional_dict.csv.gz")
 ERRATA = os.path.join(REPO_ROOT, "scripts", "regional_dict_errata.csv")
+ADDITIONS = os.path.join(REPO_ROOT, "scripts", "regional_dict_additions.csv")
 
 #: the unified-lexicon revision the shipped dictionary is built from
 REVISION = "23898e1437dc77e84681bb7ce5580a9b3e2d04ba"
@@ -92,6 +101,13 @@ def load_errata(path: str) -> dict:
                 for r in csv.DictReader(fh)}
 
 
+def load_additions(path: str) -> dict:
+    """(word, region_code) -> (phones, syllables) of entries the source lacks."""
+    with open(path, encoding="utf-8", newline="") as fh:
+        return {(r["word"], r["region_code"]): (r["phones"], r["syllables"])
+                for r in csv.DictReader(fh)}
+
+
 def stress_offenders(rows, regions=STRESS_CHECKED_REGIONS) -> list:
     """Rows of ``regions`` with two or more syllables and a reading (``$$``
     separates readings) that lacks exactly one primary mark."""
@@ -107,6 +123,7 @@ def main(argv=None) -> None:
                         "JSONL (default: download it)")
     parser.add_argument("--out", default=OUT)
     parser.add_argument("--errata", default=ERRATA)
+    parser.add_argument("--additions", default=ADDITIONS)
     args = parser.parse_args(argv)
     if args.gold:
         with open(args.gold, "rb") as fh:
@@ -153,17 +170,24 @@ def main(argv=None) -> None:
         cand = (phones, (r.get("syllables") or "").strip())
         if key not in best or canonical_rank(cand[0]) < canonical_rank(best[key][0]):
             best[key] = cand
-    rows = sorted((w, ph, syl, reg)
-                  for (w, reg), (ph, syl) in best.items())
     stale = sorted(set(errata) - applied)
     if stale:
         sys.exit(f"{len(stale)} errata rows match no source row, "
                  f"e.g. {stale[0]}; re-check them against the source")
+    additions = load_additions(args.additions)
+    present = sorted(set(additions) & set(best))
+    if present:
+        sys.exit(f"{len(present)} additions are in the source, "
+                 f"e.g. {present[0]}; remove them from the additions")
+    best.update(additions)
+    rows = sorted((w, ph, syl, reg)
+                  for (w, reg), (ph, syl) in best.items())
     offenders = stress_offenders(rows)
     if offenders:
         sys.exit(f"{len(offenders)} entries lack exactly one primary mark, "
                  f"e.g. {offenders[:5]}; add errata rows for them")
     print(f"source rows corrected by errata: {len(applied)}", file=sys.stderr)
+    print(f"entries added: {len(additions)}", file=sys.stderr)
 
     buf = io.StringIO()
     buf.write(f"# source sha256={digest}\n")
