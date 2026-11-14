@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.4a1](https://github.com/TigreGotico/tugalex/tree/2.4.4a1) (2026-11-14)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.3a1...2.4.4a1)
+
+**Merged pull requests:**
+
+- fix: add the inflected pre-1911 forms missing from archaisms.csv [\#67](https://github.com/TigreGotico/tugalex/pull/67) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.4.3a1](https://github.com/TigreGotico/tugalex/tree/2.4.3a1) (2026-11-13)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.2a1...2.4.3a1)
