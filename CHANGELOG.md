@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.6a1](https://github.com/TigreGotico/tugalex/tree/2.4.6a1) (2026-11-14)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.5a1...2.4.6a1)
+
+**Merged pull requests:**
+
+- fix: follow the VOP for the bissector and perfectibilidade rows [\#72](https://github.com/TigreGotico/tugalex/pull/72) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.4.5a1](https://github.com/TigreGotico/tugalex/tree/2.4.5a1) (2026-11-14)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.4a1...2.4.5a1)
