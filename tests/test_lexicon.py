@@ -289,6 +289,70 @@ class TestAO1990:
                       if any("ü" in n for n in news)}
         assert with_trema == {}
 
+    @pytest.mark.parametrize("old,new", [
+        ("correcta", ["correta"]),
+        ("correctas", ["corretas"]),
+        ("colectivas", ["coletivas"]),
+        ("eléctricas", ["elétricas"]),
+        ("nocturna", ["noturna"]),
+    ])
+    def test_inflections_drop_the_consonant_of_their_lemma(self, lex, old, new):
+        """VOP (papers/linguistics/pt/vop-tugalex-ao/): lemma 88481 "correto - adjetivo",
+        forms correto correta corretos corretas; lemma 108409 "coletivo", variante AO :
+        colectivo ( Brasil); lemma 1480 "elétrico", variante AO : eléctrico ( Brasil);
+        lemma 117865 "noturno", forms noturno noturna. Priberam: correta "feminino
+        singular de correcto correto", coletivas "feminino plural de colectivo coletivo"."""
+        assert lex.ao_pt[old] == new
+
+    def test_inflection_of_a_dual_cell_keeps_both_forms(self, lex):
+        """VOP lemma 121101 "setorial - adjetivo", forms setorial setoriais, "variante AO
+        de : sectorial", a pair valid in Portugal (Base IV 1º c). Priberam, setoriais:
+        "masculino e feminino plural de sectorial setorial"."""
+        assert lex.ao_pt["sectorial"] == ["sectorial", "setorial"]
+        assert lex.ao_pt["sectoriais"] == ["sectoriais", "setoriais"]
+        assert lex.modern_spelling("sectoriais") == "sectoriais"
+
+    def test_vop_single_spelling_wins_over_priberam_dual(self, lex):
+        """VOP lemma 91422 "infecioso - adjetivo", forms infecioso infeciosa, "variante
+        AO : infeccioso ( Brasil)": the c form is valid in Brazil only. Priberam gives
+        the pt-PT header "infeccioso ou infecioso"; the VOP comes first."""
+        assert lex.ao_pt["infecciosa"] == ["infeciosa"]
+
+    def test_vop_dual_spelling_wins_over_priberam_single(self, lex):
+        """VOP lemma 78024 "retal - adjetivo", forms retal retais, "variante AO :
+        rectal", a pair valid in Portugal. Priberam, retais: "Grafia alterada pelo
+        Acordo Ortográfico de 1990: retal"; the VOP comes first."""
+        assert lex.ao_pt["rectais"] == ["retais", "rectais"]
+
+    def test_feminine_that_is_another_word_is_not_listed(self, lex):
+        """Priberam, tetas: "feminino plural de teta", so tetas is no feminine of teto."""
+        assert "tectas" not in lex.ao_pt
+
+    @pytest.mark.parametrize("old", ["contracta", "contractas", "contractos", "retractos"])
+    def test_dual_inflection_whose_bare_form_is_another_word_is_not_listed(self, lex, old):
+        """A dual cell makes a converter write the full form for every bare form it meets.
+        Priberam reads contrata and contratas as forms of contratar, contratos also as the
+        noun contrato, and retratos as the noun retrato (papers/linguistics/pt/
+        priberam_contrata.html, _contratas, _contratos, _retratos)."""
+        assert old not in lex.ao_pt
+
+    @pytest.mark.parametrize("old", ["tractos", "edictais", "correctores"])
+    def test_inflection_whose_new_form_is_another_noun_is_not_listed(self, lex, old):
+        """The AO1990 form is also a noun that never had the consonant, so a reverse
+        conversion would write "maus tractos". Priberam entries: tratos, "trato" beside
+        "tracto"; editais, "edital" beside "edictal"; corretores, "corretor" beside
+        "corrector" (papers/linguistics/pt/priberam_tratos.html, _editais, _corretoras)."""
+        assert old not in lex.ao_pt
+
+    def test_inflection_with_a_rare_verb_reading_is_listed(self, lex):
+        """VOP lemma 92989 "ator - nome masculino", forms ator atores. Priberam reads atores
+        only as a form of atorar, a rare verb; the frequent noun reading keeps the row."""
+        assert lex.ao_pt["actores"] == ["atores"]
+
+    def test_modern_spelling_of_an_inflection(self, lex):
+        """VOP lemma 88481 "correto - adjetivo", forms correto correta corretos corretas."""
+        assert lex.modern_spelling("Correctas") == "Corretas"
+
 
 class TestPhenomena:
     def test_silent_p_words(self, lex):
