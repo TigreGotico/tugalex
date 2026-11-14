@@ -216,6 +216,14 @@ class TestAO1990:
         # tetas is the plural of teta, not a feminine of teto (Priberam, tetas).
         assert "tectas" not in lex.ao_pt
 
+    @pytest.mark.parametrize("old", ["contracta", "contractas", "contractos", "retractos"])
+    def test_dual_inflection_whose_bare_form_is_another_word_is_not_listed(self, lex, old):
+        # A dual cell makes a converter write the full form for every bare form it meets.
+        # Priberam reads contrata and contratas as forms of contratar, contratos also as
+        # the noun contrato, and retratos as the noun retrato (papers/linguistics/pt/
+        # priberam_contrata.html, _contratas, _contratos, _retratos).
+        assert old not in lex.ao_pt
+
     def test_modern_spelling_of_an_inflection(self, lex):
         assert lex.modern_spelling("Correctas") == "Corretas"
 
