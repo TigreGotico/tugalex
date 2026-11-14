@@ -122,6 +122,60 @@ class TestArchaisms:
         # and the initial sc of scisma and scintilar (Base XI).
         assert word not in lex.archaic_words
 
+    @pytest.mark.parametrize("word", ["kilo", "kilos", "kilolitro", "kilometro"])
+    def test_1911_kilo_is_not_an_archaism(self, lex, word):
+        """The 1911 Formulário, Base I, exception 2.ª, keeps K "na forma international
+        kilo, que todavia se poderá escrever quilo". So kilo, kilos and kilolitro are
+        1911 spellings, and kilometro lacks only the accent of the 1911 kilómetro
+        (Base XXVI marks every proparoxytone). The VOP still lists kilo (lemma 131442,
+        "variante de: quilo")."""
+        assert word not in lex.archaic_words
+        assert lex.modern_spelling(word) == word
+
+    def test_1911_kilo_keeps_the_double_m_row(self, lex):
+        """Base VII of the 1911 Formulário doubles no consonant that is not pronounced
+        double, so kilogramma stays a pre-1911 form of the 1911 kilograma."""
+        assert lex.archaic_words["kilogramma"] == "quilograma"
+
+    @pytest.mark.parametrize("word", ["scena", "sciencia"])
+    def test_1911_initial_sc_is_not_an_archaism(self, lex, word):
+        """The 1911 Formulário, Base XI: "É conservado o grupo inicial sc, das seguintes
+        palavras e seus derivados e afins, em que o s é mudo: scena, sciência, scetro,
+        scéptico, scisma, scisão, sciático, scintilar, scelerado". scena is the 1911 form,
+        and sciencia lacks only the accent of sciência."""
+        assert word not in lex.archaic_words
+
+    def test_identical_spelling_is_not_an_archaism(self, lex):
+        """inflexão is the current pt-PT spelling: VOP lemma 124692 "inflexão - nome
+        feminino", and Priberam "inflexão ... nome feminino"."""
+        assert "inflexão" not in lex.archaic_words
+
+    @pytest.mark.parametrize("word", ["kermesse", "ritornello"])
+    def test_current_loanword_is_not_an_archaism(self, lex, word):
+        """A modern pt-PT text can still write these loanwords. VOP lemma 49589:
+        "ritornello ... estrangeirismo; língua de origem: italiano - forma adaptada:
+        ritornelo". The VOP lacks kermesse, and Priberam has "kermesse ... nome feminino.
+        O mesmo que quermesse. Origem: palavra francesa"."""
+        assert word not in lex.archaic_words
+
+    @pytest.mark.parametrize("word", ["homme", "caballo", "balza"])
+    def test_foreign_word_is_not_an_archaism(self, lex, word):
+        """Neither the VOP nor Priberam holds these words. homme is French: the 14 books
+        have it only in a Musset line ("Et l'homme doit mourir où commence le Dieu",
+        Gutenberg 23400) and in "ci-devant jeun'homme" (Gutenberg 24401). balza occurs
+        only in an Italian aria ("Pieno d'amor / Mi balza il cor", Gutenberg 23400).
+        caballo is Spanish and occurs in none of the books; the pre-1911 Portuguese
+        form is the row cavallo."""
+        assert word not in lex.archaic_words
+        assert lex.modern_spelling(word) == word
+
+    def test_pre_1911_ue_verb_form_stays(self, lex):
+        """attribue is the pre-1911 Portuguese spelling of atribui. Base VII of the 1911
+        Formulário writes atribuir with one t, and Base XIII abolishes ue for the
+        diphthong ui "quer em nomes, quer em formas verbais". Os Maias (Gutenberg 40409)
+        has "como quem attribue tudo á malicia dos Destinos"."""
+        assert lex.archaic_words["attribue"] == "atribui"
+
     @pytest.mark.parametrize("word", ["profetiza", "tenue", "terreo", "ignez", "brizas"])
     def test_current_word_is_not_an_archaism(self, lex, word):
         # Priberam has profetiza (profetizar), ténue, térreo and briza; the IRN list admits Ignez.
@@ -236,7 +290,7 @@ class TestModernSpelling:
             "hygienicos": "higiênicos", "incommodo": "incômodo", "incommodos": "incômodos",
             "incommódo": "incômodo", "incómmodo": "incômodo", "indemnisar": "indenizar",
             "indemnisação": "indenização", "insomnia": "insônia", "insomnias": "insônias",
-            "jeronymo": "jerônimo", "kilometro": "quilômetro", "millenio": "milênio",
+            "jeronymo": "jerônimo", "millenio": "milênio",
             "omnibus": "ônibus", "phenix": "fênix", "phenomeno": "fenômeno",
             "phenomenos": "fenômenos", "philarmonica": "filarmônica",
             "philarmonicas": "filarmônicas", "photometro": "fotômetro", "poney": "pônei",
