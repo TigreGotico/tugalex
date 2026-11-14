@@ -4,6 +4,8 @@ These tests intentionally exercise only the small data files
 (AO1990 PT/BR, homographs, archaisms). The phoneme/syllable maps live in a
 ~49 MB CSV and are loaded lazily; covering them is left to an opt-in heavy test.
 """
+import re
+
 import pytest
 
 from tugalex import TugaLexicon
@@ -79,6 +81,46 @@ class TestArchaisms:
         assert word not in lex.archaic_words
         assert lex.modern_spelling(word) == word
 
+    @pytest.mark.parametrize("archaic,modern", [
+        ("della", "dela"),
+        ("nella", "nela"),
+        ("daquelle", "daquele"),
+        ("naquelle", "naquele"),
+        ("dalli", "dali"),
+        ("fallava", "falava"),
+        ("fallando", "falando"),
+        ("appareça", "apareça"),
+        ("attrahiu", "atraiu"),
+        ("offendeis", "ofendeis"),
+        ("collecção", "coleção"),
+    ])
+    def test_inflected_pre_1911_forms(self, lex, archaic, modern):
+        # The modern forms are the Priberam entries: "dela", contraction of de and ela;
+        # "falava", imperfect of falar; "colecção", AO1990 spelling coleção.
+        assert lex.archaic_words[archaic] == modern
+        assert lex.modern_spelling(archaic) == modern
+
+    @pytest.mark.parametrize("archaic,modern", [
+        ("Affonso", "Afonso"),
+        ("Thereza", "Teresa"),
+        ("Josepha", "Josefa"),
+    ])
+    def test_given_names_keep_the_capital(self, lex, archaic, modern):
+        # The IRN list of admitted given names has Afonso (Afonso Henriques), Infopédia has
+        # Teresa, and Josefa follows Base VI of the 1911 Formulário (ph → f).
+        assert lex.modern_spelling(archaic) == modern
+
+    @pytest.mark.parametrize("word", ["infecciona", "accionistas", "optimo", "caracteristica"])
+    def test_pre_ao1990_spelling_is_not_an_archaism(self, lex, word):
+        # infecciona and accionistas are the 1945 spellings; optimo and caracteristica
+        # lack only the accent of óptimo and característica.
+        assert word not in lex.archaic_words
+
+    def test_dual_spelling_keeps_the_consonant(self, lex):
+        # Priberam: pt-PT writes característica or caraterística after AO1990; the c form is written.
+        assert lex.archaic_words["characteristica"] == "característica"
+        assert lex.modern_spelling("characterizar") == "caracterizar"
+
     def test_archaic_values_have_no_trailing_whitespace(self, lex):
         for old, new in lex.archaic_words.items():
             assert old == old.strip()
@@ -150,10 +192,23 @@ class TestModernSpelling:
         assert lex.modern_spelling("recepção", "pt-BR") == "recepção"
         assert lex.modern_spelling("lingüiça", "pt-PT") == "lingüiça"
 
-    def test_brazilian_form_only_where_accent_differs(self, lex):
+    def test_brazilian_form_only_where_accent_or_ao1990_consonant_differs(self, lex):
+        # pt-BR writes ê/ô where pt-PT writes é/ó (crónico, crônico) and keeps a c/p that AO1990
+        # dropped in pt-PT (aceção, acepção). Priberam gives conosco and indenizar as the
+        # Brazilian forms of connosco and indemnizar.
+        by_letter = {"comnosco": "conosco", "indemnisar": "indenizar", "indemnisação": "indenização"}
         differ = {old for old in lex.archaic_words if lex.archaic_words[old] != lex.archaic_words_br[old]}
-        assert differ == {"chronico", "chronometro", "kilometro", "photometro", "pseudonymo",
-                          "thermometro", "phenomeno", "anonymo", "chronica", "commodo"}
+        assert {"chronico", "chronometro", "kilometro", "photometro", "pseudonymo", "thermometro",
+                "phenomeno", "anonymo", "chronica", "commodo", "accepção", "chronicas"} <= differ
+        silent = re.compile(r"(?<=[aeiouáéíóú])[cp](?=[tcç])")
+        for old in differ:
+            pt, br = lex.archaic_words[old], lex.archaic_words_br[old]
+            if old in by_letter:
+                assert br == by_letter[old]
+                continue
+            assert silent.sub("", br.translate(str.maketrans("êô", "éó"))) == silent.sub("", pt), old
+        assert lex.modern_spelling("chronicas", "pt-BR") == "crônicas"
+        assert lex.modern_spelling("accepção", "pt-BR") == "acepção"
 
 
 class TestAO1990:
