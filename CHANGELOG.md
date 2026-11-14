@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.5a1](https://github.com/TigreGotico/tugalex/tree/2.4.5a1) (2026-11-14)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.4a1...2.4.5a1)
+
+**Merged pull requests:**
+
+- fix: add the feminines and plurals of the AO1990 pt-PT c/p rows [\#68](https://github.com/TigreGotico/tugalex/pull/68) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.4.4a1](https://github.com/TigreGotico/tugalex/tree/2.4.4a1) (2026-11-14)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.3a1...2.4.4a1)
