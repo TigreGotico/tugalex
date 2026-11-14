@@ -21,7 +21,8 @@ hypocrisia,hipocrisia,,y→i + h→h
 hypothese,hipótese,,y→i + h→h
 kalendario,calendário,,k→c
 katholico,católico,,k→c
-kilogramma,quilograma,,mm→m
+kilogramma,quilograma,,k→qu + mm→m
+kilometro,quilómetro,quilômetro,k→qu
 litteral,literal,,tt→t
 litterario,literário,,tt→t
 litteratura,literatura,,tt→t
@@ -244,6 +245,7 @@ aquelle,aquele,,ll→l
 molle,mole,,ll→l
 abbade,abade,,bb→b
 sabbado,sábado,,bb→b
+sciencia,ciência,,silent consonant
 psalmo,salmo,,ps→s
 damno,dano,,mn→n
 somno,sono,,mn→n

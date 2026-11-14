@@ -4,6 +4,7 @@ These tests intentionally exercise only the small data files
 (AO1990 PT/BR, homographs, archaisms). The phoneme/syllable maps live in a
 ~49 MB CSV and are loaded lazily; covering them is left to an opt-in heavy test.
 """
+import csv
 import re
 
 import pytest
@@ -122,28 +123,39 @@ class TestArchaisms:
         # and the initial sc of scisma and scintilar (Base XI).
         assert word not in lex.archaic_words
 
-    @pytest.mark.parametrize("word", ["kilo", "kilos", "kilolitro", "kilometro"])
+    @pytest.mark.parametrize("word", ["kilo", "kilos", "kilolitro"])
     def test_1911_kilo_is_not_an_archaism(self, lex, word):
         """The 1911 Formulário, Base I, exception 2.ª, keeps K "na forma international
         kilo, que todavia se poderá escrever quilo". So kilo, kilos and kilolitro are
-        1911 spellings, and kilometro lacks only the accent of the 1911 kilómetro
-        (Base XXVI marks every proparoxytone). The VOP still lists kilo (lemma 131442,
-        "variante de: quilo")."""
+        1911 spellings. VOP lemma 131442 still lists kilo: "kilo - nome masculino ...
+        variante de: quilo. Nota: Embora atestada em pelo menos uma fonte de referência
+        lexicográfica, esta grafia não está de acordo com o recomendado na legislação e
+        usado pela comunidade científica, quilo"."""
         assert word not in lex.archaic_words
-        assert lex.modern_spelling(word) == word
 
     def test_1911_kilo_keeps_the_double_m_row(self, lex):
-        """Base VII of the 1911 Formulário doubles no consonant that is not pronounced
-        double, so kilogramma stays a pre-1911 form of the 1911 kilograma."""
+        """Base VII of the 1911 Formulário: "Nenhuma consoante se duplicará no interior ou
+        fim de vocábulo, senão quando a pronunciação assim o exija". The mm of kilogramma
+        is not pronounced double, so the 1911 form has one m, and kilogramma is a
+        pre-1911 form. The note names both changes to the modern quilograma."""
         assert lex.archaic_words["kilogramma"] == "quilograma"
+        with open(lex.archaisms_path, encoding="utf-8", newline="") as f:
+            notes = {row["archaic"]: row["notes"] for row in csv.DictReader(f)}
+        assert notes["kilogramma"] == "k→qu + mm→m"
 
-    @pytest.mark.parametrize("word", ["scena", "sciencia"])
-    def test_1911_initial_sc_is_not_an_archaism(self, lex, word):
+    @pytest.mark.parametrize("archaic,modern", [("sciencia", "ciência"), ("kilometro", "quilómetro")])
+    def test_unaccented_pre_1911_form_stays(self, lex, archaic, modern):
+        """Before 1911 these words had no accent. 1911 writes sciência (Base XI prints it:
+        "scena, sciência, scetro") and kilómetro (Base XXVI: "Todos os vocábulos cuja
+        sílaba predominante seja a antepenúltima terão essa sílaba marcada com o
+        competente acento escrito"). So the unaccented forms are pre-1911 spellings."""
+        assert lex.archaic_words[archaic] == modern
+
+    def test_1911_initial_sc_is_not_an_archaism(self, lex):
         """The 1911 Formulário, Base XI: "É conservado o grupo inicial sc, das seguintes
         palavras e seus derivados e afins, em que o s é mudo: scena, sciência, scetro,
-        scéptico, scisma, scisão, sciático, scintilar, scelerado". scena is the 1911 form,
-        and sciencia lacks only the accent of sciência."""
-        assert word not in lex.archaic_words
+        scéptico, scisma, scisão, sciático, scintilar, scelerado". scena is the 1911 form."""
+        assert "scena" not in lex.archaic_words
 
     def test_identical_spelling_is_not_an_archaism(self, lex):
         """inflexão is the current pt-PT spelling: VOP lemma 124692 "inflexão - nome
@@ -290,7 +302,7 @@ class TestModernSpelling:
             "hygienicos": "higiênicos", "incommodo": "incômodo", "incommodos": "incômodos",
             "incommódo": "incômodo", "incómmodo": "incômodo", "indemnisar": "indenizar",
             "indemnisação": "indenização", "insomnia": "insônia", "insomnias": "insônias",
-            "jeronymo": "jerônimo", "millenio": "milênio",
+            "jeronymo": "jerônimo", "kilometro": "quilômetro", "millenio": "milênio",
             "omnibus": "ônibus", "phenix": "fênix", "phenomeno": "fenômeno",
             "phenomenos": "fenômenos", "philarmonica": "filarmônica",
             "philarmonicas": "filarmônicas", "photometro": "fotômetro", "poney": "pônei",
