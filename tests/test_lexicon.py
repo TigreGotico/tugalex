@@ -191,6 +191,34 @@ class TestAO1990:
                       if any("ü" in n for n in news)}
         assert with_trema == {}
 
+    # Priberam analyses of the AO1990 forms: correta "feminino singular de correcto
+    # correto", corretas "feminino plural de correcto correto", coletivas "feminino plural
+    # de colectivo coletivo", elétricas "feminino plural de eléctrico elétrico", noturna
+    # "feminino singular de nocturno noturno" (papers/linguistics/pt/priberam_*.html).
+    @pytest.mark.parametrize("old,new", [
+        ("correcta", ["correta"]),
+        ("correctas", ["corretas"]),
+        ("colectivas", ["coletivas"]),
+        ("eléctricas", ["elétricas"]),
+        ("nocturna", ["noturna"]),
+    ])
+    def test_inflections_drop_the_consonant_of_their_lemma(self, lex, old, new):
+        assert lex.ao_pt[old] == new
+
+    def test_inflection_of_a_dual_cell_keeps_both_forms(self, lex):
+        # sectorial is a pt-PT dual cell (Base IV 1º c); Priberam, setoriais: "masculino e
+        # feminino plural de sectorial setorial", "Dupla grafia ... setorial ou sectorial".
+        assert lex.ao_pt["sectorial"] == ["sectorial", "setorial"]
+        assert lex.ao_pt["sectoriais"] == ["sectoriais", "setoriais"]
+        assert lex.modern_spelling("sectoriais") == "sectoriais"
+
+    def test_feminine_that_is_another_word_is_not_listed(self, lex):
+        # tetas is the plural of teta, not a feminine of teto (Priberam, tetas).
+        assert "tectas" not in lex.ao_pt
+
+    def test_modern_spelling_of_an_inflection(self, lex):
+        assert lex.modern_spelling("Correctas") == "Corretas"
+
 
 class TestPhenomena:
     def test_silent_p_words(self, lex):
