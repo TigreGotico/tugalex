@@ -127,6 +127,12 @@ class TestArchaisms:
         # Priberam has profetiza (profetizar), ténue, térreo and briza; the IRN list admits Ignez.
         assert word not in lex.archaic_words
 
+    @pytest.mark.parametrize("word", ["apparecerão", "assignarão", "cahirão", "sahião"])
+    def test_homograph_is_not_an_archaism(self, lex, word):
+        # Before 1911, -rão wrote both the future and the preterite: pg22044 has apparecerão
+        # for apareceram. sahião there is the imperfect saíam, not the noun saião.
+        assert word not in lex.archaic_words
+
     @pytest.mark.parametrize("archaic,modern", [("pélla", "pela"), ("pêllo", "pelo")])
     def test_modern_form_is_the_ao1990_form(self, lex, archaic, modern):
         # The tugalex AO1990 table maps péla to pela and pêlo to pelo.
