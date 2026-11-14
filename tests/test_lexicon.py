@@ -324,6 +324,24 @@ class TestAO1990:
         Acordo Ortográfico de 1990: retal"; the VOP comes first."""
         assert lex.ao_pt["rectais"] == ["retais", "rectais"]
 
+    def test_brazil_only_variant_is_no_pt_pt_spelling(self, lex):
+        """VOP lemma 107241 "bissetor - adjetivo", forms bissetor bissetriz bissetores
+        bissetrizes, "variante AO : bissector ( Brasil)"; lemma 25915 "bissector -
+        adjetivo" carries the label Brasil. pt-PT writes bissetor only (Base IV 1º b).
+        Priberam gives the pt-PT header "bissetor ou bissector"; the VOP comes first."""
+        assert lex.ao_pt["bissector"] == ["bissetor"]
+        assert lex.ao_pt["bissectores"] == ["bissetores"]
+        assert lex.modern_spelling("bissector") == "bissetor"
+
+    def test_pair_valid_in_portugal_keeps_both_forms(self, lex):
+        """VOP lemma 191936 "perfetibilidade - nome feminino", forms perfetibilidade
+        perfetibilidades, "variante AO : perfectibilidade", with no Brasil tag; lemma
+        14837 "perfectibilidade" has no label (Base IV 1º c). Priberam, pt-PT: "Dupla
+        grafia pelo Acordo Ortográfico de 1990: perfetibilidade"."""
+        assert lex.ao_pt["perfectibilidade"] == ["perfetibilidade", "perfectibilidade"]
+        assert lex.ao_pt["perfectibilidades"] == ["perfetibilidades", "perfectibilidades"]
+        assert lex.modern_spelling("perfectibilidade") == "perfectibilidade"
+
     def test_feminine_that_is_another_word_is_not_listed(self, lex):
         """Priberam, tetas: "feminino plural de teta", so tetas is no feminine of teto."""
         assert "tectas" not in lex.ao_pt
