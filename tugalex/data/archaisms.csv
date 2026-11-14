@@ -912,7 +912,6 @@ chlorotica,clorótica,,ch→c
 cholera,cólera,,ch→c
 choral,coral,,ch→c
 chrismam,crismam,,ch→c
-chrisostomo,crisóstomo,,ch→c
 christandade,cristandade,,ch→c
 christianismo,cristianismo,,ch→c
 christina,cristina,,ch→c
@@ -955,7 +954,6 @@ sepulchraes,sepulcrais,,ch→c + ae→ai
 chorographico,corográfico,,ch→c + ph→f
 chrysantemos,crisântemos,,ch→c + y→i
 chrysologo,crisólogo,,ch→c + y→i
-chrysostomo,crisóstomo,,ch→c + y→i
 chrysanthemos,crisântemos,,ch→c + y→i + th→t
 alchimista,alquimista,,ch→qu
 anarchia,anarquia,,ch→qu
@@ -1023,7 +1021,6 @@ resolveo,resolveu,,eo→eu
 seo,seu,,eo→eu
 sobreceo,sobrecéu,,eo→eu
 solideo,solidéu,,eo→eu
-terreo,terréu,,eo→eu
 veo,véu,,eo→eu
 affabilidade,afabilidade,,ff→f
 affadigou,afadigou,,ff→f
@@ -1501,7 +1498,6 @@ assignou,assinou,,gn→n
 assignára,assinara,,gn→n
 signalzinho,sinalzinho,,gn→n
 signaes,sinais,,gn→n + ae→ai
-ignez,inês,,gn→n + z→s
 abahuladas,abauladas,,h dropped
 abrahão,abraão,,h dropped
 abstrahidamente,abstraidamente,,h dropped
@@ -1509,7 +1505,6 @@ abstrahido,abstraído,,h dropped
 ahi,aí,,h dropped
 alahude,alaúde,,h dropped
 atahide,ataíde,,h dropped
-bahia,baía,,h dropped
 bahiana,baiana,,h dropped
 bahias,baías,,h dropped
 bahu,baú,,h dropped
@@ -1787,7 +1782,6 @@ polkava,polcava,,k→c
 cakexia,caquexia,,k→qu
 fakir,faquir,,k→qu
 kilos,quilos,,k→qu
-nankim,nanquim,,k→qu
 acairellada,acairelada,,ll→l
 acastelladas,acasteladas,,ll→l
 acastellado,acastelado,,ll→l
@@ -2117,7 +2111,6 @@ collaram,colaram,,ll→l
 collares,colares,,ll→l
 collarinho,colarinho,,ll→l
 collarinhos,colarinhos,,ll→l
-collatino,colatino,,ll→l
 collava,colava,,ll→l
 collavam,colavam,,ll→l
 collaço,colaço,,ll→l
@@ -2181,7 +2174,6 @@ constellações,constelações,,ll→l
 corollario,corolário,,ll→l
 corollas,corolas,,ll→l
 coronella,coronela,,ll→l
-corvello,corvelo,,ll→l
 costella,costela,,ll→l
 costellas,costelas,,ll→l
 costelleta,costeleta,,ll→l
@@ -2549,7 +2541,6 @@ janellas,janelas,,ll→l
 janelleira,janeleira,,ll→l
 janellinha,janelinha,,ll→l
 janellinhas,janelinhas,,ll→l
-lamella,lamela,,ll→l
 lapella,lapela,,ll→l
 lapellas,lapelas,,ll→l
 limpadella,limpadela,,ll→l
@@ -2564,7 +2555,6 @@ mallogro,malogro,,ll→l
 maninêllo,maninelo,,ll→l
 manivella,manivela,,ll→l
 marcella,marcela,,ll→l
-marcellino,marcelino,,ll→l
 marmellada,marmelada,,ll→l
 marmelleiro,marmeleiro,,ll→l
 martelladas,marteladas,,ll→l
@@ -2579,7 +2569,6 @@ melancollico,melancólico,,ll→l
 melladas,meladas,,ll→l
 melliflua,melíflua,,ll→l
 mellifluos,melífluos,,ll→l
-mello,melo,,ll→l
 mellodrama,melodrama,,ll→l
 mellíflua,melíflua,,ll→l
 metallica,metálica,,ll→l
@@ -2702,7 +2691,6 @@ polluir,poluir,,ll→l
 polluiram,poluíram,,ll→l
 porcellana,porcelana,,ll→l
 porcellanas,porcelanas,,ll→l
-portella,portela,,ll→l
 portello,portelo,,ll→l
 procella,procela,,ll→l
 propellido,propelido,,ll→l
@@ -2713,8 +2701,8 @@ pupilla,pupila,,ll→l
 pupillas,pupilas,,ll→l
 pupillo,pupilo,,ll→l
 pusillanime,pusilânime,,ll→l
-pélla,péla,,ll→l
-pêllo,pêlo,,ll→l
+pélla,pela,,ll→l
+pêllo,pelo,,ll→l
 pêllos,pêlos,,ll→l
 quadrella,quadrela,,ll→l
 quadrellas,quadrelas,,ll→l
@@ -2726,9 +2714,7 @@ reallumiado,realumiado,,ll→l
 rebellado,rebelado,,ll→l
 rebellião,rebelião,,ll→l
 rebelliões,rebeliões,,ll→l
-rebello,rebelo,,ll→l
 recollocou,recolocou,,ll→l
-redondella,redondela,,ll→l
 regallados,regalados,,ll→l
 regallou,regalou,,ll→l
 relles,reles,,ll→l
@@ -2754,7 +2740,6 @@ repelliu,repeliu,,ll→l
 repellão,repelão,,ll→l
 repellões,repelões,,ll→l
 retornello,retornelo,,ll→l
-rilhafolles,rilhafoles,,ll→l
 ritornello,ritornelo,,ll→l
 rodella,rodela,,ll→l
 rodellas,rodelas,,ll→l
@@ -2833,7 +2818,6 @@ vacillação,vacilação,,ll→l
 vacillações,vacilações,,ll→l
 vacillou,vacilou,,ll→l
 valla,vala,,ll→l
-vallada,valada,,ll→l
 vallado,valado,,ll→l
 vallados,valados,,ll→l
 vallas,valas,,ll→l
@@ -2848,8 +2832,6 @@ vella,vela,,ll→l
 vellas,velas,,ll→l
 velleidade,veleidade,,ll→l
 velleidades,veleidades,,ll→l
-velleira,veleira,,ll→l
-velloso,veloso,,ll→l
 velludilho,veludilho,,ll→l
 velludilhos,veludilhos,,ll→l
 velludo,veludo,,ll→l
@@ -2863,10 +2845,8 @@ villania,vilania,,ll→l
 villanias,vilanias,,ll→l
 villar,vilar,,ll→l
 villares,vilares,,ll→l
-villarinho,vilarinho,,ll→l
 villas,vilas,,ll→l
 villegiatura,vilegiatura,,ll→l
-villela,vilela,,ll→l
 villezas,vilezas,,ll→l
 villico,vilico,,ll→l
 villipendiar,vilipendiar,,ll→l
@@ -3040,35 +3020,6 @@ consummir,consumir,,mm→m
 consummou,consumou,,mm→m
 consummára,consumara,,mm→m
 descommunalmente,descomunalmente,,mm→m
-desemmalar,desemalar,,mm→m
-emmagrecem,emagrecem,,mm→m
-emmagrecendo,emagrecendo,,mm→m
-emmagrecer,emagrecer,,mm→m
-emmagrecera,emagrecera,,mm→m
-emmagreceram,emagreceram,,mm→m
-emmagrecia,emagrecia,,mm→m
-emmalando,emalando,,mm→m
-emmalar,emalar,,mm→m
-emmaranha,emaranha,,mm→m
-emmaranhada,emaranhada,,mm→m
-emmaranhado,emaranhado,,mm→m
-emmaranham,emaranham,,mm→m
-emmaranhando,emaranhando,,mm→m
-emmaranhára,emaranhara,,mm→m
-emmoldurado,emoldurado,,mm→m
-emmolduravam,emolduravam,,mm→m
-emmudecendo,emudecendo,,mm→m
-emmudecer,emudecer,,mm→m
-emmudecera,emudecera,,mm→m
-emmudeceram,emudeceram,,mm→m
-emmudeceu,emudeceu,,mm→m
-emmudecia,emudecia,,mm→m
-emmudecida,emudecida,,mm→m
-emmudecido,emudecido,,mm→m
-emmudecidos,emudecidos,,mm→m
-emmurchecendo,emurchecendo,,mm→m
-emmurchecia,emurchecia,,mm→m
-emmurchecida,emurchecida,,mm→m
 encommenda,encomenda,,mm→m
 encommendado,encomendado,,mm→m
 encommendar,encomendar,,mm→m
@@ -3348,7 +3299,6 @@ promptos,prontos,,mp→n
 redemptor,redentor,,mp→n
 redemptora,redentora,,mp→n
 redempção,redenção,,mp→n
-sumptuario,suntuário,,mp→n
 amphibios,anfíbios,,m→n + ph→f
 amphiguri,anfiguri,,m→n + ph→f
 amphião,anfião,,m→n + ph→f
@@ -3437,37 +3387,7 @@ desannuviado,desanuviado,,nn→n
 desannuviar,desanuviar,,nn→n
 desannuviou,desanuviou,,nn→n
 encanniçado,encaniçado,,nn→n
-ennegrece,enegrece,,nn→n
-ennegrecendo,enegrecendo,,nn→n
-ennegrecer,enegrecer,,nn→n
-ennegrecera,enegrecera,,nn→n
-ennegreceu,enegreceu,,nn→n
-ennegrecia,enegrecia,,nn→n
-ennegreciam,enegreciam,,nn→n
-ennegrecida,enegrecida,,nn→n
-ennegrecido,enegrecido,,nn→n
-ennegrecidos,enegrecidos,,nn→n
-ennegrecimento,enegrecimento,,nn→n
-ennevoada,enevoada,,nn→n
-ennevoadamente,enevoadamente,,nn→n
-ennevoado,enevoado,,nn→n
-ennevoados,enevoados,,nn→n
-ennevoaram,enevoaram,,nn→n
-ennevoava,enevoava,,nn→n
-ennevoavam,enevoavam,,nn→n
-ennevoára,enevoara,,nn→n
-ennobrece,enobrece,,nn→n
-ennobrecidas,enobrecidas,,nn→n
-ennobrecido,enobrecido,,nn→n
-ennodoar,enodoar,,nn→n
-ennodôa,enodoa,,nn→n
-ennovelado,enovelado,,nn→n
-ennovelados,enovelados,,nn→n
-ennovelou,enovelou,,nn→n
-ennublada,enublada,,nn→n
-ennublados,enublados,,nn→n
 filigrannas,filigranas,,nn→n
-goianna,goiana,,nn→n
 grannel,granel,,nn→n
 innatas,inatas,,nn→n
 innefavel,inefável,,nn→n
@@ -3596,7 +3516,6 @@ espheras,esferas,,ph→f
 estrophe,estrofe,,ph→f
 estrophes,estrofes,,ph→f
 euphonicos,eufónicos,eufônicos,ph→f
-euphrasia,eufrásia,,ph→f
 geographica,geográfica,,ph→f
 geographicamente,geograficamente,,ph→f
 geographicas,geográficas,,ph→f
@@ -3609,7 +3528,6 @@ golpho,golfo,,ph→f
 golphos,golfos,,ph→f
 griphos,grifos,,ph→f
 hemispherica,hemisférica,,ph→f
-josepha,josefa,,ph→f
 josephina,josefina,,ph→f
 mephistophelica,mefistofélica,,ph→f
 mephiticas,mefíticas,,ph→f
@@ -3719,7 +3637,6 @@ propheticos,proféticos,,ph→f
 raphael,rafael,,ph→f
 raphaela,rafaela,,ph→f
 saphiras,safiras,,ph→f
-sapho,safo,,ph→f
 sarcophago,sarcófago,,ph→f
 seraphica,seráfica,,ph→f
 seraphico,seráfico,,ph→f
@@ -4173,38 +4090,6 @@ rhuibarbo,ruibarbo,,rh→r
 rhum,rum,,rh→r
 rhyma,rima,,rh→r + y→i
 rhytmo,ritmo,,rh→r + y→i
-scelerado,celerado,,sc→c
-scelerados,celerados,,sc→c
-scenario,cenário,,sc→c
-scenas,cenas,,sc→c
-scentelha,centelha,,sc→c
-scentelhas,centelhas,,sc→c
-scetro,cetro,,sc→c
-sciatica,ciática,,sc→c
-sciencias,ciências,,sc→c
-scientificamente,cientificamente,,sc→c
-scientificos,científicos,,sc→c
-scintila,cintila,,sc→c
-scintilando,cintilando,,sc→c
-scintilante,cintilante,,sc→c
-scintilava,cintilava,,sc→c
-scintilavam,cintilavam,,sc→c
-scintilação,cintilação,,sc→c
-scintilou,cintilou,,sc→c
-scisma,cisma,,sc→c
-scismadas,cismadas,,sc→c
-scismador,cismador,,sc→c
-scismadora,cismadora,,sc→c
-scismadoras,cismadoras,,sc→c
-scismando,cismando,,sc→c
-scismar,cismar,,sc→c
-scismasse,cismasse,,sc→c
-scismatica,cismática,,sc→c
-scismava,cismava,,sc→c
-scismei,cismei,,sc→c
-scismo,cismo,,sc→c
-scismou,cismou,,sc→c
-sciência,ciência,,sc→c
 scintilla,cintila,,sc→c + ll→l
 scintillam,cintilam,,sc→c + ll→l
 scintillante,cintilante,,sc→c + ll→l
@@ -4216,11 +4101,7 @@ scintillavam,cintilavam,,sc→c + ll→l
 scintillação,cintilação,,sc→c + ll→l
 scintillações,cintilações,,sc→c + ll→l
 scintillou,cintilou,,sc→c + ll→l
-scepticismo,ceticismo,,sc→c + silent consonant
-sceptico,cético,,sc→c + silent consonant
-scepticos,céticos,,sc→c + silent consonant
 sceptro,cetro,,sc→c + silent consonant
-scéptica,cética,,sc→c + silent consonant
 adscripticio,adscritício,,silent consonant
 anedocta,anedota,,silent consonant
 anedoctas,anedotas,,silent consonant
@@ -4291,7 +4172,6 @@ dictames,ditames,,silent consonant
 dictando,ditando,,silent consonant
 dictar,ditar,,silent consonant
 dicte,dite,,silent consonant
-dicterio,ditério,,silent consonant
 dictou,ditou,,silent consonant
 districtal,distrital,,silent consonant
 districto,distrito,,silent consonant
@@ -4330,7 +4210,6 @@ fructas,frutas,,silent consonant
 fructeiros,fruteiros,,silent consonant
 fructo,fruto,,silent consonant
 fructos,frutos,,silent consonant
-fructuoso,frutuoso,,silent consonant
 indescriptivel,indescritível,,silent consonant
 indestructivel,indestrutível,,silent consonant
 indiscripção,indiscrição,,silent consonant
@@ -4443,7 +4322,6 @@ transcripto,transcrito,,silent consonant
 transcripções,transcrições,,silent consonant
 victima,vítima,,silent consonant
 victimar,vitimar,,silent consonant
-victor,vítor,,silent consonant
 victoria,vitória,,silent consonant
 victoriar,vitoriar,,silent consonant
 victoriosamente,vitoriosamente,,silent consonant
@@ -4573,8 +4451,7 @@ homeopathia,homeopatia,,th→t
 homeopathicas,homeopáticas,,th→t
 isthmicos,ístmicos,,th→t
 isthmo,istmo,,th→t
-ithericia,iterícia,,th→t
-jacintho,jacinto,,th→t
+ithericia,icterícia,,th→t
 lethal,letal,,th→t
 lethargo,letargo,,th→t
 lutherana,luterana,,th→t
@@ -4595,7 +4472,6 @@ methodo,método,,th→t
 methodos,métodos,,th→t
 misanthropia,misantropia,,th→t
 mithologia,mitologia,,th→t
-mithra,mitra,,th→t
 monolitho,monólito,,th→t
 monolithos,monólitos,,th→t
 murthal,murtal,,th→t
@@ -4613,7 +4489,6 @@ pathologico,patológico,,th→t
 pinacotheca,pinacoteca,,th→t
 posthuma,póstuma,,th→t
 posthumo,póstumo,,th→t
-prometheu,prometeu,,th→t
 rithmo,ritmo,,th→t
 rithmos,ritmos,,th→t
 terebinthina,terebintina,,th→t
@@ -4646,7 +4521,6 @@ thesouros,tesouros,,th→t
 theutonicos,teutónicos,teutônicos,th→t
 thiago,tiago,,th→t
 thisico,tísico,,th→t
-thomar,tomar,,th→t
 thomé,tomé,,th→t
 thorax,tórax,,th→t
 threno,treno,,th→t
@@ -4680,7 +4554,6 @@ etherisações,eterizações,,th→t + s→z
 amethysta,ametista,,th→t + y→i
 amethystas,ametistas,,th→t + y→i
 ethymologia,etimologia,,th→t + y→i
-thyrso,tirso,,th→t + y→i
 carthaginezas,cartaginesas,,th→t + z→s
 carthaginezes,cartagineses,,th→t + z→s
 thereza,teresa,,th→t + z→s
@@ -4793,7 +4666,6 @@ batter,bater,,tt→t
 bemditto,bendito,,tt→t
 benditto,bendito,,tt→t
 bottinas,botinas,,tt→t
-cattete,catete,,tt→t
 cheviotte,cheviote,,tt→t
 combatter,combater,,tt→t
 comettem,cometem,,tt→t
@@ -4902,7 +4774,6 @@ mettido,metido,,tt→t
 mettidos,metidos,,tt→t
 metto,meto,,tt→t
 mettêra,metera,,tt→t
-netto,neto,,tt→t
 omittir,omitir,,tt→t
 omitto,omito,,tt→t
 ottomanas,otomanas,,tt→t
@@ -5033,7 +4904,6 @@ influe,influi,,ue→ui
 instrue,instrui,,ue→ui
 possue,possui,,ue→ui
 substitue,substitui,,ue→ui
-tenue,tenui,,ue→ui
 landaw,landau,,w→u
 rewolver,revólver,,w→v
 walsa,valsa,,w→v
@@ -5048,7 +4918,6 @@ abysmava,abismava,,y→i
 abysmos,abismos,,y→i
 abysmou,abismou,,y→i
 abysmára,abismara,,y→i
-abyssinia,abissínia,,y→i
 acrysolado,acrisolado,,y→i
 alypio,alípio,,y→i
 amygdalas,amígdalas,,y→i
@@ -5067,12 +4936,10 @@ assyrios,assírios,,y→i
 asylo,asilo,,y→i
 aymaras,aimarás,,y→i
 ayres,aires,,y→i
-babylonia,babilónia,babilônia,y→i
 babylonicos,babilónicos,babilônicos,y→i
 barytono,barítono,,y→i
 barytonos,barítonos,,y→i
 bayonetas,baionetas,,y→i
-bayão,baião,,y→i
 bycicleta,bicicleta,,y→i
 byzantino,bizantino,,y→i
 cataclysmo,cataclismo,,y→i
@@ -5129,9 +4996,7 @@ estylos,estilos,,y→i
 etymologia,etimologia,,y→i
 eucalypto,eucalipto,,y→i
 eucalyptos,eucaliptos,,y→i
-fayal,faial,,y→i
 glycerina,glicerina,,y→i
-goyana,goiana,,y→i
 gyravam,giravam,,y→i
 gyria,gíria,,y→i
 hegyra,hégira,,y→i
@@ -5232,15 +5097,12 @@ paroxysmo,paroxismo,,y→i
 payo,paio,,y→i
 peristylo,peristilo,,y→i
 perystilo,peristilo,,y→i
-polycarpo,policarpo,,y→i
 polynesias,polinésias,,y→i
 poney,pónei,pônei,y→i
 presbyteriana,presbiteriana,,y→i
 presbyterio,presbitério,,y→i
 presbytero,presbítero,,y→i
 prototypo,protótipo,,y→i
-psyche,psiché,,y→i
-psyché,psiché,,y→i
 psycologicos,psicológicos,,y→i
 pyjamas,pijamas,,y→i
 pyndarica,pindárica,,y→i
@@ -5289,7 +5151,6 @@ syrias,sírias,,y→i
 syrtes,sirtes,,y→i
 systemas,sistemas,,y→i
 systematica,sistemática,,y→i
-taquary,taquari,,y→i
 tilbury,tílburi,,y→i
 troya,troia,,y→i
 tylburi,tílburi,,y→i
@@ -5301,7 +5162,6 @@ typico,típico,,y→i
 typicos,típicos,,y→i
 typos,tipos,,y→i
 tyrio,tírio,,y→i
-tyro,tiro,,y→i
 tyrolesa,tirolesa,,y→i
 tyrso,tirso,,y→i
 tysico,tísico,,y→i
@@ -5341,8 +5201,6 @@ symptomas,sintomas,,y→i + mp→n
 lymphatico,linfático,,y→i + m→n + ph→f
 lymphaticos,linfáticos,,y→i + m→n + ph→f
 nymphas,ninfas,,y→i + m→n + ph→f
-cayenna,caiena,,y→i + nn→n
-goyanna,goiana,,y→i + nn→n
 tyranna,tirana,,y→i + nn→n
 tyrannia,tirania,,y→i + nn→n
 tyrannias,tiranias,,y→i + nn→n
@@ -5454,7 +5312,6 @@ braguez,braguês,,z→s
 braz,brás,,z→s
 braza,brasa,,z→s
 brazas,brasas,,z→s
-brizas,brisas,,z→s
 burguez,burguês,,z→s
 burgueza,burguesa,,z→s
 burguezes,burgueses,,z→s
@@ -5509,7 +5366,6 @@ freguezas,freguesas,,z→s
 freguezes,fregueses,,z→s
 friza,frisa,,z→s
 frizas,frisas,,z→s
-garcez,garcês,,z→s
 gaulez,gaulês,,z→s
 gaulezas,gaulesas,,z→s
 genovez,genovês,,z→s
@@ -5537,7 +5393,6 @@ lez,lés,,z→s
 leza,lesa,,z→s
 lilaz,lilás,,z→s
 lilazes,lilases,,z→s
-liz,lis,,z→s
 liza,lisa,,z→s
 lizas,lisas,,z→s
 luiz,luís,,z→s
@@ -5571,7 +5426,6 @@ preciza,precisa,,z→s
 precizas,precisas,,z→s
 princeza,princesa,,z→s
 princezas,princesas,,z→s
-profetiza,profetisa,,z→s
 profuzas,profusas,,z→s
 propoz,propôs,,z→s
 propuz,propus,,z→s
@@ -5586,8 +5440,6 @@ pôz,pôs,,z→s
 raza,rasa,,z→s
 recompoz,recompôs,,z→s
 repôz,repôs,,z→s
-revez,revés,,z→s
-revéz,revés,,z→s
 roza,rosa,,z→s
 rêz,rês,,z→s
 satanaz,satanás,,z→s
