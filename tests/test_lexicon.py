@@ -4,6 +4,8 @@ These tests intentionally exercise only the small data files
 (AO1990 PT/BR, homographs, archaisms). The phoneme/syllable maps live in a
 ~49 MB CSV and are loaded lazily; covering them is left to an opt-in heavy test.
 """
+import re
+
 import pytest
 
 from tugalex import TugaLexicon
@@ -79,6 +81,63 @@ class TestArchaisms:
         assert word not in lex.archaic_words
         assert lex.modern_spelling(word) == word
 
+    @pytest.mark.parametrize("archaic,modern", [
+        ("della", "dela"),
+        ("nella", "nela"),
+        ("daquelle", "daquele"),
+        ("naquelle", "naquele"),
+        ("dalli", "dali"),
+        ("fallava", "falava"),
+        ("fallando", "falando"),
+        ("appareça", "apareça"),
+        ("attrahiu", "atraiu"),
+        ("offendeis", "ofendeis"),
+        ("collecção", "coleção"),
+    ])
+    def test_inflected_pre_1911_forms(self, lex, archaic, modern):
+        # The modern forms are the Priberam entries: "dela", contraction of de and ela;
+        # "falava", imperfect of falar; "colecção", AO1990 spelling coleção.
+        assert lex.archaic_words[archaic] == modern
+        assert lex.modern_spelling(archaic) == modern
+
+    @pytest.mark.parametrize("archaic,modern", [
+        ("Affonso", "Afonso"),
+        ("Thereza", "Teresa"),
+        ("Accacio", "Acácio"),
+    ])
+    def test_given_names_keep_the_capital(self, lex, archaic, modern):
+        # The IRN list of admitted given names has Afonso (Afonso Henriques). Priberam gives
+        # "Teresa, antropónimo" and "Acácio, antropónimo" as the origin of teresa and acácio.
+        assert lex.modern_spelling(archaic) == modern
+
+    @pytest.mark.parametrize("word", ["infecciona", "accionistas", "optimo", "caracteristica"])
+    def test_pre_ao1990_spelling_is_not_an_archaism(self, lex, word):
+        # infecciona and accionistas are the 1945 spellings; optimo and caracteristica
+        # lack only the accent of óptimo and característica.
+        assert word not in lex.archaic_words
+
+    @pytest.mark.parametrize("word", ["emmudecer", "ennegrecer", "scisma", "scintilava"])
+    def test_1911_spelling_is_not_an_archaism(self, lex, word):
+        # The 1911 Formulário keeps mm and nn where pronounced (Base VII: emmalar, ennegrecer)
+        # and the initial sc of scisma and scintilar (Base XI).
+        assert word not in lex.archaic_words
+
+    @pytest.mark.parametrize("word", ["profetiza", "tenue", "terreo", "ignez", "brizas"])
+    def test_current_word_is_not_an_archaism(self, lex, word):
+        # Priberam has profetiza (profetizar), ténue, térreo and briza; the IRN list admits Ignez.
+        assert word not in lex.archaic_words
+
+    @pytest.mark.parametrize("archaic,modern", [("pélla", "pela"), ("pêllo", "pelo")])
+    def test_modern_form_is_the_ao1990_form(self, lex, archaic, modern):
+        # The tugalex AO1990 table maps péla to pela and pêlo to pelo.
+        assert lex.archaic_words[archaic] == modern
+
+    def test_dual_spelling_keeps_the_consonant(self, lex):
+        # Priberam: pt-PT writes característica or caraterística after AO1990; the c form is written.
+        assert lex.archaic_words["characteristica"] == "característica"
+        assert lex.modern_spelling("characterizar") == "caracterizar"
+        assert lex.archaic_words["ithericia"] == "icterícia"
+
     def test_archaic_values_have_no_trailing_whitespace(self, lex):
         for old, new in lex.archaic_words.items():
             assert old == old.strip()
@@ -150,11 +209,44 @@ class TestModernSpelling:
         assert lex.modern_spelling("recepção", "pt-BR") == "recepção"
         assert lex.modern_spelling("lingüiça", "pt-PT") == "lingüiça"
 
-    def test_brazilian_form_only_where_accent_differs(self, lex):
-        differ = {old for old in lex.archaic_words if lex.archaic_words[old] != lex.archaic_words_br[old]}
-        assert differ == {"chronico", "chronometro", "kilometro", "photometro", "pseudonymo",
-                          "thermometro", "phenomeno", "anonymo", "chronica", "commodo"}
-
+    def test_brazilian_form_only_where_accent_or_ao1990_consonant_differs(self, lex):
+        # The pt-BR forms are the Priberam "Grafia no Brasil" notes: pt-BR writes ê/ô where
+        # pt-PT writes é/ó (crónico, crônico) and keeps a c/p that AO1990 dropped in pt-PT
+        # (aceção, acepção). Priberam gives conosco and indenizar for connosco and indemnizar.
+        expected = {
+            "accepção": "acepção", "anonyma": "anônima", "anonymas": "anônimas",
+            "anonymo": "anônimo", "anonymos": "anônimos", "architectonica": "arquitetônica",
+            "architectonico": "arquitetônico", "attonita": "atônita", "attonito": "atônito",
+            "attonitos": "atônitos", "authomato": "autômato", "babylonicos": "babilônicos",
+            "blasphemia": "blasfêmia", "blasphemias": "blasfêmias", "bohemia": "boêmia",
+            "bohemias": "boêmias", "bohemio": "boêmio", "character": "caráter",
+            "chronica": "crônica", "chronicas": "crônicas", "chronico": "crônico",
+            "chronometro": "cronômetro", "commoda": "cômoda", "commodas": "cômodas",
+            "commodo": "cômodo", "commodos": "cômodos", "comnosco": "conosco",
+            "conjecturaes": "conjecturais", "decennio": "decênio", "ephemera": "efêmera",
+            "ephemeras": "efêmeras", "ephemero": "efêmero", "ephemeros": "efêmeros",
+            "euphonicos": "eufônicos", "excepcionaes": "excepcionais", "hellenica": "helênica",
+            "homonymo": "homônimo", "hygienica": "higiênica", "hygienicas": "higiênicas",
+            "hygienicos": "higiênicos", "incommodo": "incômodo", "incommodos": "incômodos",
+            "incommódo": "incômodo", "incómmodo": "incômodo", "indemnisar": "indenizar",
+            "indemnisação": "indenização", "insomnia": "insônia", "insomnias": "insônias",
+            "jeronymo": "jerônimo", "kilometro": "quilômetro", "millenio": "milênio",
+            "omnibus": "ônibus", "phenix": "fênix", "phenomeno": "fenômeno",
+            "phenomenos": "fenômenos", "philarmonica": "filarmônica",
+            "philarmonicas": "filarmônicas", "photometro": "fotômetro", "poney": "pônei",
+            "pseudonymo": "pseudônimo", "synonimos": "sinônimos", "synonymas": "sinônimas",
+            "synonymos": "sinônimos", "thermometro": "termômetro", "theutonicos": "teutônicos",
+        }
+        differ = {old: lex.archaic_words_br[old] for old in lex.archaic_words
+                  if lex.archaic_words[old] != lex.archaic_words_br[old]}
+        assert differ == expected
+        by_letter = {"comnosco", "indemnisar", "indemnisação"}
+        silent = re.compile(r"(?<=[aeiouáéíóú])[cp](?=[tcç])")
+        for old in differ.keys() - by_letter:
+            pt, br = lex.archaic_words[old], differ[old]
+            assert silent.sub("", br.translate(str.maketrans("êô", "éó"))) == silent.sub("", pt), old
+        assert lex.modern_spelling("chronicas", "pt-BR") == "crônicas"
+        assert lex.modern_spelling("accepção", "pt-BR") == "acepção"
 
 class TestAO1990:
     def test_normalize(self, lex):
