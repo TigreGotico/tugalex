@@ -1,0 +1,42 @@
+name: Downstream Tests
+
+# desacordo_ortografico reads tugalex's spelling tables. This job runs its
+# test suite against the tugalex of the pull request.
+on:
+  pull_request:
+    branches: [dev, master, main]
+  workflow_dispatch:
+
+jobs:
+  desacordo_ortografico:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - name: Checkout tugalex
+        uses: actions/checkout@v7
+        with:
+          path: tugalex
+      - name: Checkout desacordo_ortografico
+        uses: actions/checkout@v7
+        with:
+          repository: TigreGotico/desacordo_ortografico
+          ref: dev
+          path: desacordo
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install uv
+        run: pip install uv
+      - name: Install tugalex and desacordo_ortografico
+        run: |
+          uv venv --python "$(which python)" .venv
+          uv pip install --python .venv --prerelease=allow ./tugalex "./desacordo[test]"
+          uv pip freeze --python .venv | grep -E '^(tugalex|desacordo)'
+      - name: Run desacordo_ortografico tests
+        working-directory: desacordo
+        run: ../.venv/bin/python -m pytest tests
