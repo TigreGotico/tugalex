@@ -4,6 +4,7 @@ These tests intentionally exercise only the small data files
 (AO1990 PT/BR, homographs, archaisms). The phoneme/syllable maps live in a
 ~49 MB CSV and are loaded lazily; covering them is left to an opt-in heavy test.
 """
+import csv
 import re
 
 import pytest
@@ -121,6 +122,71 @@ class TestArchaisms:
         # The 1911 Formulário keeps mm and nn where pronounced (Base VII: emmalar, ennegrecer)
         # and the initial sc of scisma and scintilar (Base XI).
         assert word not in lex.archaic_words
+
+    @pytest.mark.parametrize("word", ["kilo", "kilos", "kilolitro"])
+    def test_1911_kilo_is_not_an_archaism(self, lex, word):
+        """The 1911 Formulário, Base I, exception 2.ª, keeps K "na forma international
+        kilo, que todavia se poderá escrever quilo". So kilo, kilos and kilolitro are
+        1911 spellings. VOP lemma 131442 still lists kilo: "kilo - nome masculino ...
+        variante de: quilo. Nota: Embora atestada em pelo menos uma fonte de referência
+        lexicográfica, esta grafia não está de acordo com o recomendado na legislação e
+        usado pela comunidade científica, quilo"."""
+        assert word not in lex.archaic_words
+
+    def test_1911_kilo_keeps_the_double_m_row(self, lex):
+        """Base VII of the 1911 Formulário: "Nenhuma consoante se duplicará no interior ou
+        fim de vocábulo, senão quando a pronunciação assim o exija". The mm of kilogramma
+        is not pronounced double, so the 1911 form has one m, and kilogramma is a
+        pre-1911 form. The note names both changes to the modern quilograma."""
+        assert lex.archaic_words["kilogramma"] == "quilograma"
+        with open(lex.archaisms_path, encoding="utf-8", newline="") as f:
+            notes = {row["archaic"]: row["notes"] for row in csv.DictReader(f)}
+        assert notes["kilogramma"] == "k→qu + mm→m"
+
+    @pytest.mark.parametrize("archaic,modern", [("sciencia", "ciência"), ("kilometro", "quilómetro")])
+    def test_unaccented_pre_1911_form_stays(self, lex, archaic, modern):
+        """Before 1911 these words had no accent. 1911 writes sciência (Base XI prints it:
+        "scena, sciência, scetro") and kilómetro (Base XXVI: "Todos os vocábulos cuja
+        sílaba predominante seja a antepenúltima terão essa sílaba marcada com o
+        competente acento escrito"). So the unaccented forms are pre-1911 spellings."""
+        assert lex.archaic_words[archaic] == modern
+
+    def test_1911_initial_sc_is_not_an_archaism(self, lex):
+        """The 1911 Formulário, Base XI: "É conservado o grupo inicial sc, das seguintes
+        palavras e seus derivados e afins, em que o s é mudo: scena, sciência, scetro,
+        scéptico, scisma, scisão, sciático, scintilar, scelerado". scena is the 1911 form."""
+        assert "scena" not in lex.archaic_words
+
+    def test_identical_spelling_is_not_an_archaism(self, lex):
+        """inflexão is the current pt-PT spelling: VOP lemma 124692 "inflexão - nome
+        feminino", and Priberam "inflexão ... nome feminino"."""
+        assert "inflexão" not in lex.archaic_words
+
+    @pytest.mark.parametrize("word", ["kermesse", "ritornello"])
+    def test_current_loanword_is_not_an_archaism(self, lex, word):
+        """A modern pt-PT text can still write these loanwords. VOP lemma 49589:
+        "ritornello ... estrangeirismo; língua de origem: italiano - forma adaptada:
+        ritornelo". The VOP lacks kermesse, and Priberam has "kermesse ... nome feminino.
+        O mesmo que quermesse. Origem: palavra francesa"."""
+        assert word not in lex.archaic_words
+
+    @pytest.mark.parametrize("word", ["homme", "caballo", "balza"])
+    def test_foreign_word_is_not_an_archaism(self, lex, word):
+        """Neither the VOP nor Priberam holds these words. homme is French: the 14 books
+        have it only in a Musset line ("Et l'homme doit mourir où commence le Dieu",
+        Gutenberg 23400) and in "ci-devant jeun'homme" (Gutenberg 24401). balza occurs
+        only in an Italian aria ("Pieno d'amor / Mi balza il cor", Gutenberg 23400).
+        caballo is Spanish and occurs in none of the books; the pre-1911 Portuguese
+        form is the row cavallo."""
+        assert word not in lex.archaic_words
+        assert lex.modern_spelling(word) == word
+
+    def test_pre_1911_ue_verb_form_stays(self, lex):
+        """attribue is the pre-1911 Portuguese spelling of atribui. Base VII of the 1911
+        Formulário writes atribuir with one t, and Base XIII abolishes ue for the
+        diphthong ui "quer em nomes, quer em formas verbais". Os Maias (Gutenberg 40409)
+        has "como quem attribue tudo á malicia dos Destinos"."""
+        assert lex.archaic_words["attribue"] == "atribui"
 
     @pytest.mark.parametrize("word", ["profetiza", "tenue", "terreo", "ignez", "brizas"])
     def test_current_word_is_not_an_archaism(self, lex, word):

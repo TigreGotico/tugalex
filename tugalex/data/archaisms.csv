@@ -2,7 +2,6 @@ archaic,modern,modern_pt_BR,notes
 architecta,arquiteta,,ch→qu
 architecto,arquiteto,,ch→qu
 architectura,arquitetura,,ch→qu
-caballo,cavalo,,ll→l + b→v
 caravella,caravela,,ll→l
 chorographia,corografia,,ch→c
 chromatico,cromático,,ch→c
@@ -20,11 +19,9 @@ grammatico,gramático,,mm→m
 hypnose,hipnose,,y→i + h→h
 hypocrisia,hipocrisia,,y→i + h→h
 hypothese,hipótese,,y→i + h→h
-inflexão,inflexão,,archaic identical spelling kept
 kalendario,calendário,,k→c
 katholico,católico,,k→c
-kilogramma,quilograma,,k→qu
-kilolitro,quilolitro,,k→qu
+kilogramma,quilograma,,k→qu + mm→m
 kilometro,quilómetro,quilômetro,k→qu
 litteral,literal,,tt→t
 litterario,literário,,tt→t
@@ -249,7 +246,6 @@ molle,mole,,ll→l
 abbade,abade,,bb→b
 sabbado,sábado,,bb→b
 sciencia,ciência,,silent consonant
-scena,cena,,silent consonant
 psalmo,salmo,,ps→s
 damno,dano,,mn→n
 somno,sono,,mn→n
@@ -266,9 +262,7 @@ prohibir,proibir,,h dropped
 deshonra,desonra,,h dropped
 hombro,ombro,,h dropped
 hervas,ervas,,h dropped
-kilo,quilo,,k→qu / w→v
 kiosque,quiosque,,k→qu / w→v
-kermesse,quermesse,,k→qu / w→v
 wagon,vagão,,k→qu / w→v
 acabaes,acabais,,ae→ai
 agiotae,agiotai,,ae→ai
@@ -1777,7 +1771,6 @@ polkas,polcas,,k→c
 polkava,polcava,,k→c
 cakexia,caquexia,,k→qu
 fakir,faquir,,k→qu
-kilos,quilos,,k→qu
 acairellada,acairelada,,ll→l
 acastelladas,acasteladas,,ll→l
 acastellado,acastelado,,ll→l
@@ -2736,7 +2729,6 @@ repelliu,repeliu,,ll→l
 repellão,repelão,,ll→l
 repellões,repelões,,ll→l
 retornello,retornelo,,ll→l
-ritornello,ritornelo,,ll→l
 rodella,rodela,,ll→l
 rodellas,rodelas,,ll→l
 rodellinhas,rodelinhas,,ll→l
@@ -3063,7 +3055,6 @@ gomma,goma,,mm→m
 grammas,gramas,,mm→m
 grammaticos,gramáticos,,mm→m
 grammaticão,gramaticão,,mm→m
-homme,home,,mm→m
 immaculada,imaculada,,mm→m
 immaculadas,imaculadas,,mm→m
 immaculado,imaculado,,mm→m
@@ -5297,7 +5288,6 @@ atraza,atrasa,,z→s
 atráz,atrás,,z→s
 aza,asa,,z→s
 azas,asas,,z→s
-balza,balsa,,z→s
 baroneza,baronesa,,z→s
 baronezas,baronesas,,z→s
 bazes,bases,,z→s
