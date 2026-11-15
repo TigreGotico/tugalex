@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.7a1](https://github.com/TigreGotico/tugalex/tree/2.4.7a1) (2026-11-15)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.6a1...2.4.7a1)
+
+**Merged pull requests:**
+
+- fix: drop archaisms.csv rows that are not pre-1911 spellings [\#74](https://github.com/TigreGotico/tugalex/pull/74) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.4.6a1](https://github.com/TigreGotico/tugalex/tree/2.4.6a1) (2026-11-14)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.5a1...2.4.6a1)
