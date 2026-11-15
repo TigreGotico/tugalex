@@ -91,7 +91,7 @@ region.
 
 ```python
 g2p = lex.get_ipa_map(pos="NOUN")
-len(g2p)              # 53148
+len(g2p)              # 53147
 g2p["acordo"]         # 'ɐˈkoɾdu'
 ```
 
@@ -178,10 +178,11 @@ mislead.
 
 ## Orthographic agreement (AO1990)
 
-The three methods split the sentence on whitespace, look up each word
-exactly as written, and join the result with single spaces. A word with
-attached punctuation or a capital letter is not converted
-([#46](https://github.com/TigreGotico/tugalex/issues/46)).
+`normalize_ao1900` and the two `reverse_*` methods split the sentence on
+whitespace, look up each word exactly as written, and join the result with
+single spaces. A word with attached punctuation or a capital letter is not
+converted ([#46](https://github.com/TigreGotico/tugalex/issues/46)).
+`modern_spelling` takes one word and keeps its case.
 
 ### `modern_spelling(word, lang="pt-PT") -> str`
 
@@ -243,7 +244,7 @@ lex.reverse_ao1900_br("ato")   # 'ato'
 
 ```python
 sorted(lex.regions)            # ['dli', 'lbx', 'lda', 'mpx', 'rjx', 'spx']
-len(lex.AO1990)                # 3985
+len(lex.AO1990)                # 5474
 len(lex.silent_p_words)        # 15
 len(lex.voiced_u_words)        # 324
 lex.possible_postags["acordo"] # ['NOUN', 'VERB']
