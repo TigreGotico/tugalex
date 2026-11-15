@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.8a2](https://github.com/TigreGotico/tugalex/tree/2.4.8a2) (2026-11-15)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.8a1...2.4.8a2)
+
+**Merged pull requests:**
+
+- ci: run desacordo\_ortografico tests against the PR's tugalex [\#78](https://github.com/TigreGotico/tugalex/pull/78) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [2.4.8a1](https://github.com/TigreGotico/tugalex/tree/2.4.8a1) (2026-11-15)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.7a1...2.4.8a1)
