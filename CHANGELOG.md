@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.8a1](https://github.com/TigreGotico/tugalex/tree/2.4.8a1) (2026-11-15)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.7a1...2.4.8a1)
+
+**Merged pull requests:**
+
+- fix: add pre-1911 m-before-consonant spellings \(Formulário 1911 Base XV\) [\#76](https://github.com/TigreGotico/tugalex/pull/76) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.4.7a1](https://github.com/TigreGotico/tugalex/tree/2.4.7a1) (2026-11-15)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.6a1...2.4.7a1)
