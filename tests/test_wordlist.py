@@ -1,4 +1,5 @@
 """The word list reads its own words-only file and is not deprecated."""
+import gzip
 import importlib.util
 import os
 import warnings
@@ -54,10 +55,12 @@ def test_wordlist_holds_the_words_of_the_regional_dictionary(region):
 
 
 def test_words_file_is_the_build_output(build, tmp_path):
+    # compare the CSV, not the gzip bytes: the gzip header's OS byte
+    # differs between Python versions
     out = tmp_path / "words.csv.gz"
     build.main(["--dictionary", DICTIONARY, "--out", str(out)])
-    with open(WORDS, "rb") as shipped:
-        assert out.read_bytes() == shipped.read()
+    with gzip.open(out) as built, gzip.open(WORDS) as shipped:
+        assert built.read() == shipped.read()
 
 
 def test_wordlist_returns_a_copy():

@@ -10,7 +10,8 @@ keys of the dictionary for that region.
 
 The output is a gzip-compressed CSV with a ``word,regions`` header, sorted by
 word, with the region codes space-separated and sorted. The gzip header
-carries no timestamp, so the same input gives the same bytes::
+carries no timestamp, so the same input and Python version give the same
+bytes::
 
     python scripts/build_wordlist.py [--dictionary PATH] [--out PATH]
 """
