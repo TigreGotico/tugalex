@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.9a3](https://github.com/TigreGotico/tugalex/tree/2.4.9a3) (2026-11-15)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.9a2...2.4.9a3)
+
+**Merged pull requests:**
+
+- docs: sync README and docs with dev [\#84](https://github.com/TigreGotico/tugalex/pull/84) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.4.9a2](https://github.com/TigreGotico/tugalex/tree/2.4.9a2) (2026-11-15)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.9a1...2.4.9a2)
