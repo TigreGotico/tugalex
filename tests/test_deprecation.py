@@ -1,7 +1,9 @@
 """The regional dictionary and its phoneme API warn before their removal.
 
-The gender lookups and the AO1990 spelling tools are not deprecated, and
-tugaphone calls them on every text it normalises, so they must stay silent.
+The word list, the gender lookups and the AO1990 spelling tools are not
+deprecated. tugaphone calls the gender and AO1990 tools on every text it
+normalises, and desacordo_ortografico reads the word list, so they must stay
+silent.
 """
 import warnings
 
@@ -34,7 +36,6 @@ DEPRECATED = {
     "get_phonemes": lambda lex: lex.get_phonemes("casa"),
     "get_syllables": lambda lex: lex.get_syllables("casa"),
     "get": lambda lex: lex.get("casa"),
-    "get_wordlist": lambda lex: lex.get_wordlist(),
     "get_ipa_map": lambda lex: lex.get_ipa_map(),
 }
 
@@ -63,6 +64,7 @@ KEPT = {
     "constructor": lambda lex: TugaLexicon(),
     "get_noun_gender": lambda lex: TugaLexicon.get_noun_gender("casa"),
     "get_given_name_gender": lambda lex: TugaLexicon.get_given_name_gender("Isabel"),
+    "get_wordlist": lambda lex: lex.get_wordlist(),
     "AO1990": lambda lex: lex.AO1990,
     "silent_p_words": lambda lex: lex.silent_p_words,
     "voiced_u_words": lambda lex: lex.voiced_u_words,

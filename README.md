@@ -5,14 +5,15 @@
 It gives NLP pipelines and linguistics research a single API for the differences between Portuguese regions and historical spelling agreements.
 
 > **Deprecated: the regional pronunciation dictionary.** The phoneme and
-> syllable API (`get`, `get_phonemes`, `get_syllables`, `get_wordlist`,
-> `get_ipa_map`, `lang_to_region`, `ipa`, `syllables`, `regions` and
-> `possible_postags`) emits a `DeprecationWarning`. The next major release
+> syllable API (`get`, `get_phonemes`, `get_syllables`, `get_ipa_map`,
+> `lang_to_region`, `ipa`, `syllables`, `regions` and `possible_postags`)
+> emits a `DeprecationWarning`. The next major release
 > removes it, together with the legacy `tugaphone.dialects` inventories
 > that read it. For Portuguese pronunciation, use
 > [orthography2ipa](https://github.com/TigreGotico/orthography2ipa) with the
 > pt-PT lexicon of `o2i-lexicons` (`orthography2ipa.use_packaged_lexicons`).
-> The noun gender, given-name gender and AO1990 tools stay.
+> The word list (`get_wordlist`), the noun gender, given-name gender and
+> AO1990 tools stay.
 
 ---
 
@@ -33,7 +34,7 @@ TugaLex maps standard ISO codes to internal regional datasets:
 
 The regional dictionary ships as a slim gzip extract (word, phones,
 syllables, region) of the [unified Portuguese pronunciation lexicon](https://huggingface.co/datasets/TigreGotico/portuguese-unified-pronunciation-lexicon),
-with 53,142 to 53,145 words in each region. Regenerate it with
+with 53,144 to 53,147 words in each region. Regenerate it with
 `python scripts/build_regional_dict.py`, which reads the lexicon revision
 pinned in the script. The regional dictionary has no
 part of speech: each word has one pronunciation per region, and it answers
@@ -117,7 +118,8 @@ TugaLexicon.get_given_name_gender("Raio")     # None
 
 TugaLex ships the following datasets under `tugalex/data/`.
 
-* `regional_dict.csv.gz`: phoneme and syllable mappings, 318,860 rows for 53,146 distinct words in six regions. `scripts/build_regional_dict.py` builds it from the [unified Portuguese pronunciation lexicon](https://huggingface.co/datasets/TigreGotico/portuguese-unified-pronunciation-lexicon) and keeps six of its [Portal da Língua Portuguesa](http://www.portaldalinguaportuguesa.org) regions. The scraped Portal data with all ten regional variants is the [`portuguese_phonetic_lexicon`](https://huggingface.co/datasets/TigreGotico/portuguese_phonetic_lexicon) dataset.
+* `regional_dict.csv.gz`: phoneme and syllable mappings, 318,872 rows for 53,148 distinct words in six regions. `scripts/build_regional_dict.py` builds it from the [unified Portuguese pronunciation lexicon](https://huggingface.co/datasets/TigreGotico/portuguese-unified-pronunciation-lexicon) and keeps six of its [Portal da Língua Portuguesa](http://www.portaldalinguaportuguesa.org) regions. The scraped Portal data with all ten regional variants is the [`portuguese_phonetic_lexicon`](https://huggingface.co/datasets/TigreGotico/portuguese_phonetic_lexicon) dataset.
+* `words.csv.gz`: the word forms of `regional_dict.csv.gz` with the regions that list each one, and no pronunciations. `get_wordlist` reads it, and it stays when the regional dictionary goes. `scripts/build_wordlist.py` builds it from the regional dictionary.
 * `heterophonic_homographs.csv`: 27 words pronounced differently depending on POS, 55 rows.
 * [`acordo_ortografico_pt_PT.csv`](https://huggingface.co/datasets/TigreGotico/AO1990_pt-PT): Portugal old orthographic spellings.
 * [`acordo_ortografico_pt_BR.csv`](https://huggingface.co/datasets/TigreGotico/AO1990_pt-BR): Brazil old orthographic spellings.
@@ -176,7 +178,7 @@ Runnable scripts for each feature are in [`examples/`](examples).
 | --- | --- |
 | `tugalex/__init__.py` | the `TugaLexicon` class and the noun-gender suffix rules |
 | `tugalex/data/` | the packaged datasets |
-| `scripts/` | the build scripts for `regional_dict.csv.gz`, `noun_gender_exceptions.csv.gz` and `given_names.csv.gz`, and their override files |
+| `scripts/` | the build scripts for `regional_dict.csv.gz`, `words.csv.gz`, `noun_gender_exceptions.csv.gz` and `given_names.csv.gz`, and their override files |
 | `tests/` | the pytest suite |
 | `examples/` | one runnable script per feature |
 | `*.ipynb` | analysis notebooks for the phonetic lexicon and the AO1990 tables |

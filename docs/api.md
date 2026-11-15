@@ -14,7 +14,9 @@ from tugalex import TugaLexicon
 
 Construction loads the small CSVs eagerly (AO1990 PT/BR, homographs, archaisms).
 The large `regional_dict.csv.gz` loads lazily on first access to phonemes,
-syllables, or regions, then it is cached on the instance.
+syllables, or regions, then it is cached on the instance. A custom
+`dictionary_path` is deprecated with the dictionary: `get_wordlist` warns
+when it reads one.
 
 ### Region codes
 
@@ -81,15 +83,6 @@ case-insensitive. Raises `ValueError` if `region` is not in the loaded dataset.
 lex.get_syllables("casa")    # ['ca', 'sa']
 ```
 
-### `get_wordlist(region="lbx") -> List[str]`
-
-Every word available for a region, sorted. Raises `ValueError` for an unknown
-region.
-
-```python
-len(lex.get_wordlist("lbx"))   # 53148
-```
-
 ### `get_ipa_map(pos="NOUN", region="lbx") -> Dict[str, str]`
 
 A flat `{word: phonemes}` map for one POS and region, merging the regional
@@ -109,6 +102,22 @@ unsupported dialect.
 
 ```python
 lex.lang_to_region("pt-BR")   # 'rjx'
+```
+
+## Word list
+
+### `get_wordlist(region="lbx") -> List[str]`
+
+Every word form known for a region, lowercase and sorted. Raises `ValueError`
+for an unknown region. The word list is not deprecated. With the packaged
+dictionary it reads `tugalex/data/words.csv.gz`, which holds the word forms of
+the regional dictionary and no pronunciations, and it does not warn. With a
+custom `dictionary_path` it returns the words of that dictionary and emits the
+dictionary `DeprecationWarning`.
+
+```python
+len(lex.get_wordlist("lbx"))   # 53147
+len(lex.get_wordlist("spx"))   # 53145
 ```
 
 ## Noun gender
