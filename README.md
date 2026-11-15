@@ -79,6 +79,14 @@ lex.reverse_ao1900_pt("ótimo")         # 'óptimo'
 
 The conversion splits on whitespace and matches each word exactly, so a word with attached punctuation or a capital letter is not converted ([#46](https://github.com/TigreGotico/tugalex/issues/46)).
 
+`modern_spelling` rewrites one word to its modern spelling in one variety. It applies the archaism table and then the AO1990 table, and keeps the case of the word:
+
+```python
+lex.modern_spelling("Pharmacia", "pt-BR")   # 'Farmácia'
+lex.modern_spelling("chronico", "pt-PT")    # 'crónico'
+lex.modern_spelling("chronico", "pt-BR")    # 'crônico'
+```
+
 ### 3. Linguistic Insights
 
 TugaLex identifies specific linguistic phenomena programmatically:
@@ -156,7 +164,7 @@ TugaLex is one piece of the TigreGotico Portuguese NLP stack:
 * [bifonia](https://github.com/TigreGotico/bifonia): picks the reading of a heterophonic homograph by meaning, including the same-POS pairs that the TugaLex homograph table cannot separate.
 * [tugamorph](https://github.com/TigreGotico/tugamorph): rule-based morphological analyzer for Portuguese.
 * [tugatagger](https://github.com/TigreGotico/tugatagger): Part-of-Speech tagging wrapper for Portuguese. Its `lexicon` extra installs TugaLex.
-* [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico): detects and converts between Portuguese orthographies, including the AO1990 reform.
+* [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico): detects and converts between Portuguese orthographies, including the AO1990 reform. It reads the TugaLex word list, and its spelling table holds the rows of the TugaLex AO1990 and archaism lists.
 
 ---
 
@@ -189,7 +197,7 @@ uv pip install --python .venv/bin/python --prerelease=allow -e ".[test]"
 .venv/bin/python -m pytest tests
 ```
 
-CI runs the same suite on Python 3.11 to 3.14 (`.github/workflows/build-tests.yml`). The build scripts download their sources, so run them only to regenerate a dataset. Each row of `scripts/given_name_overrides.csv` carries its evidence in the `reason` column.
+CI runs the same suite on Python 3.11 to 3.14 (`.github/workflows/build-tests.yml`). On each pull request, `.github/workflows/downstream-tests.yml` installs the TugaLex of the pull request with desacordo_ortografico from its `dev` branch and runs the desacordo_ortografico suite on the same Python versions. A `DeprecationWarning` fails that job. The build scripts download their sources, so run them only to regenerate a dataset. Each row of `scripts/given_name_overrides.csv` carries its evidence in the `reason` column.
 
 ---
 
