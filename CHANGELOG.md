@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.9a1](https://github.com/TigreGotico/tugalex/tree/2.4.9a1) (2026-11-15)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.8a2...2.4.9a1)
+
+**Merged pull requests:**
+
+- fix: keep get\_wordlist without a deprecation warning [\#80](https://github.com/TigreGotico/tugalex/pull/80) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [2.4.8a2](https://github.com/TigreGotico/tugalex/tree/2.4.8a2) (2026-11-15)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.8a1...2.4.8a2)
