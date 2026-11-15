@@ -39,4 +39,4 @@ jobs:
           uv pip freeze --python .venv | grep -E '^(tugalex|desacordo)'
       - name: Run desacordo_ortografico tests
         working-directory: desacordo
-        run: ../.venv/bin/python -m pytest tests
+        run: ../.venv/bin/python -m pytest tests -W error::DeprecationWarning
