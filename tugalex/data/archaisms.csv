@@ -4648,7 +4648,7 @@ attrito,atrito,,tt→t
 attritos,atritos,,tt→t
 attrição,atrição,,tt→t
 batter,bater,,tt→t
-bemditto,bendito,,tt→t
+bemditto,bendito,,m→n + tt→t
 benditto,bendito,,tt→t
 bottinas,botinas,,tt→t
 cheviotte,cheviote,,tt→t
@@ -5453,3 +5453,75 @@ réo,réu,,éo→éu
 réos,réus,,éo→éu
 véo,véu,,éo→éu
 véos,véus,,éo→éu
+alemtejana,alentejana,,m→n
+alemtejanos,alentejanos,,m→n
+bemdita,bendita,,m→n
+bemditas,benditas,,m→n
+bemdito,bendito,,m→n
+bemditos,benditos,,m→n
+bemdizem,bendizem,,m→n
+bemdizer,bendizer,,m→n
+bemdiziam,bendiziam,,m→n
+bemfazeja,benfazeja,,m→n
+bemfazejas,benfazejas,,m→n
+bemfeitor,benfeitor,,m→n
+bemfeitora,benfeitora,,m→n
+bemfeitores,benfeitores,,m→n
+bemfeitorias,benfeitorias,,m→n
+bemquerença,benquerença,,m→n
+bemquista,benquista,,m→n
+circumda,circunda,,m→n
+circumdado,circundado,,m→n
+circumdará,circundará,,m→n
+circumdava,circundava,,m→n
+circumdavam,circundavam,,m→n
+circumdou,circundou,,m→n
+circumferencia,circunferência,,m→n
+circumflexos,circunflexos,,m→n
+circumflexões,circunflexões,,m→n
+circumgirou,circungirou,,m→n
+circumjacentes,circunjacentes,,m→n
+circumloquio,circunlóquio,,m→n
+circumspecta,circunspecta,,m→n
+circumspectamente,circunspectamente,,m→n
+circumspecto,circunspecto,,m→n
+circumspectos,circunspectos,,m→n
+circumstancia,circunstância,,m→n
+circumstancias,circunstâncias,,m→n
+circumstantes,circunstantes,,m→n
+circumvagando,circunvagando,,m→n
+circumvagou,circunvagou,,m→n
+comfissão,confissão,,m→n
+comquanto,conquanto,,m→n
+comsigo,consigo,,m→n
+comtanto,contanto,,m→n
+comtempla,contempla,,m→n
+comtempladas,contempladas,,m→n
+comtemplava,contemplava,,m→n
+comtigo,contigo,,m→n
+comtudo,contudo,,m→n
+comvosco,convosco,,m→n
+desemlapar,desenlapar,,m→n
+emfim,enfim,,m→n
+emquanto,enquanto,,m→n
+emtanto,entanto,,m→n
+homemzarrão,homenzarrão,,m→n
+homemzinho,homenzinho,,m→n
+imcomparavel,incomparável,,m→n
+imcomparável,incomparável,,m→n
+semsabor,sensabor,,m→n
+semsabores,sensabores,,m→n
+semsaboria,sensaboria,,m→n
+semsaborias,sensaborias,,m→n
+semsaborona,sensaborona,,m→n
+semsaborão,sensaborão,,m→n
+semsaborões,sensaborões,,m→n
+triumvirato,triunvirato,,m→n
+circumvallava,circunvalava,,m→n + ll→l
+circumvallação,circunvalação,,m→n + ll→l
+circumvallo,circunvalo,,m→n + ll→l
+circumvisinhas,circunvizinhas,,m→n + s→z
+circumvisinhos,circunvizinhos,,m→n + s→z
+homemsinho,homenzinho,,m→n + s→z
+bemdittas,benditas,,m→n + tt→t
+septemtrional,setentrional,,silent consonant + m→n

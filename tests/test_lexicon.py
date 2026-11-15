@@ -210,6 +210,33 @@ class TestArchaisms:
         assert lex.modern_spelling("characterizar") == "caracterizar"
         assert lex.archaic_words["ithericia"] == "icterícia"
 
+    @pytest.mark.parametrize("archaic", ["comsigo", "comtigo", "comquanto", "emquanto", "emfim", "bemdito"])
+    def test_pre_1911_m_before_consonant(self, lex, archaic):
+        """The 1911 Formulário, Base XV: "No interior dos vocábulos é a nasalidade da vogal
+        expressa por m antes de b, p, m, e por n em qualquer outra situação, [...] assim
+        escreveremos circunstância, circunscrever, conquanto, com n, e não com m". The
+        modern form is the key with that m written n, in pt-PT and in pt-BR."""
+        modern = re.sub(r"(?<=[aeiou])m(?=[^aeioubpm])", "n", archaic)
+        assert modern != archaic
+        assert lex.archaic_words[archaic] == modern
+        assert lex.modern_spelling(archaic) == modern
+        assert lex.modern_spelling(archaic, "pt-BR") == modern
+
+    def test_base_xv_example_words(self, lex):
+        # Base XV prints circunstância and conquanto; the VOP lists consigo and enquanto.
+        assert "comsigo" in lex.archaic_words
+        assert lex.modern_spelling("comsigo") == "consigo"
+        assert lex.modern_spelling("emquanto") == "enquanto"
+        assert lex.modern_spelling("comquanto") == "conquanto"
+        assert lex.modern_spelling("circumstancia") == "circunstância"
+
+    @pytest.mark.parametrize("word", ["comprar", "embora", "amnistia"])
+    def test_m_that_base_xv_keeps_is_not_an_archaism(self, lex, word):
+        """Base XV keeps m before b and p (comprar, embora). The m of amnistia marks no
+        nasal vowel, so Base XV does not apply; the VOP writes amnistia."""
+        assert word not in lex.archaic_words
+        assert lex.modern_spelling(word) == word
+
     def test_archaic_values_have_no_trailing_whitespace(self, lex):
         for old, new in lex.archaic_words.items():
             assert old == old.strip()
