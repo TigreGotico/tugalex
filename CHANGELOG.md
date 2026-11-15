@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.9a2](https://github.com/TigreGotico/tugalex/tree/2.4.9a2) (2026-11-15)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.9a1...2.4.9a2)
+
+**Merged pull requests:**
+
+- ci: fail the downstream desacordo job on deprecation warnings [\#82](https://github.com/TigreGotico/tugalex/pull/82) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [2.4.9a1](https://github.com/TigreGotico/tugalex/tree/2.4.9a1) (2026-11-15)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.4.8a2...2.4.9a1)
@@ -233,6 +241,43 @@
 **Merged pull requests:**
 
 - chore: Configure Renovate [\#9](https://github.com/TigreGotico/tugalex/pull/9) ([renovate[bot]](https://github.com/apps/renovate))
+
+## [0.0.3](https://github.com/TigreGotico/tugalex/tree/0.0.3) (2026-05-30)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.0.3a1...0.0.3)
+
+## [0.0.3a1](https://github.com/TigreGotico/tugalex/tree/0.0.3a1) (2026-05-29)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.0.2...0.0.3a1)
+
+**Merged pull requests:**
+
+- docs: add docs/ and examples/ [\#10](https://github.com/TigreGotico/tugalex/pull/10) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.0.2](https://github.com/TigreGotico/tugalex/tree/0.0.2) (2026-02-25)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.0.2a2...0.0.2)
+
+**Merged pull requests:**
+
+- Release 0.0.2a2 [\#5](https://github.com/TigreGotico/tugalex/pull/5) ([github-actions[bot]](https://github.com/apps/github-actions))
+
+## [0.0.2a2](https://github.com/TigreGotico/tugalex/tree/0.0.2a2) (2026-02-25)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/0.0.2a1...0.0.2a2)
+
+**Merged pull requests:**
+
+- chore: move hardcoded wordlists to .csv files [\#4](https://github.com/TigreGotico/tugalex/pull/4) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.0.2a1](https://github.com/TigreGotico/tugalex/tree/0.0.2a1) (2026-02-25)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/e428ebe5267d0e31f9da592deb26d66d756611a0...0.0.2a1)
+
+**Merged pull requests:**
+
+- Release 0.0.2a1 [\#3](https://github.com/TigreGotico/tugalex/pull/3) ([github-actions[bot]](https://github.com/apps/github-actions))
+- fix: Support homograph and archaic word resolution in phoneme lookup [\#1](https://github.com/TigreGotico/tugalex/pull/1) ([JarbasAl](https://github.com/JarbasAl))
 
 
 
