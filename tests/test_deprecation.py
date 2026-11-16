@@ -7,12 +7,14 @@ and the gender lookups are not deprecated: desacordo_ortografico reads the word
 list and text2spoken reads the gender lookups, so they must stay silent.
 """
 import hashlib
+import importlib
 import warnings
 from pathlib import Path
 
 import pytest
 
 import tugalex
+import tugalex.version
 from tugalex import TugaLexicon
 from tugalex.version import VERSION_MAJOR
 
@@ -103,6 +105,22 @@ def test_spelling_api_warns_once_at_the_caller(name):
 
 def test_spelling_removal_version_is_the_next_major():
     assert tugalex.SPELLING_REMOVAL_VERSION == f"{VERSION_MAJOR + 1}.0.0"
+
+
+@pytest.fixture
+def major_5(monkeypatch):
+    """tugalex imported again as if version.py said VERSION_MAJOR = 5."""
+    monkeypatch.setattr(tugalex.version, "VERSION_MAJOR", 5)
+    yield importlib.reload(tugalex)
+    monkeypatch.undo()
+    importlib.reload(tugalex)
+
+
+def test_spelling_removal_version_follows_version_py(major_5):
+    assert major_5.SPELLING_REMOVAL_VERSION == "6.0.0"
+    deprecations = _recorded(lambda: major_5.TugaLexicon().ao_pt)
+    assert len(deprecations) == 1
+    assert "will be removed in tugalex 6.0.0." in str(deprecations[0].message)
 
 
 def test_spelling_api_returns_the_frozen_tables(lex):
