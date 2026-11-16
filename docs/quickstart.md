@@ -87,6 +87,11 @@ lex.get_phonemes("acordo", pos="NOUN", region="rjx")
 
 ## 5. Orthographic agreement (AO1990)
 
+> **Deprecated.** desacordo_ortografico owns the spelling table. These methods emit a
+> `DeprecationWarning` and return the frozen TugaLex tables. The next major
+> release removes them. Use `desacordo_ortografico.convert(text, source, target)`,
+> or the rows of its `data/spelling.json`.
+
 Convert between pre-agreement and modern spelling in both directions:
 
 ```python

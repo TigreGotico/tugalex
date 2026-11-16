@@ -1,5 +1,8 @@
 """Example — convert spelling across the AO1990 orthographic agreement.
 
+The spelling accessors are deprecated: they emit a DeprecationWarning and are
+removed in the next major release. desacordo_ortografico.convert replaces them.
+
 Run::
 
     python examples/04_ao1990.py

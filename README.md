@@ -12,8 +12,19 @@ It gives NLP pipelines and linguistics research a single API for the differences
 > that read it. For Portuguese pronunciation, use
 > [orthography2ipa](https://github.com/TigreGotico/orthography2ipa) with the
 > pt-PT lexicon of `o2i-lexicons` (`orthography2ipa.use_packaged_lexicons`).
-> The word list (`get_wordlist`), the noun gender, given-name gender and
-> AO1990 tools stay.
+
+> **Deprecated: the spelling accessors.** desacordo_ortografico owns the
+> spelling table. `archaic_words`, `archaic_words_br`, `ao_pt`, `ao_br`,
+> `AO1990`, `silent_p_words`, `voiced_u_words`, `modern_spelling`,
+> `normalize_ao1900`, `reverse_ao1900_pt` and `reverse_ao1900_br` emit a
+> `DeprecationWarning` and return the frozen TugaLex tables. The next major
+> release removes them. Use
+> [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico):
+> `convert(text, source, target)` converts text, and its
+> `data/spelling.json` holds the rows of the archaism and AO1990 tables.
+>
+> The word list (`get_wordlist`), the noun gender and the given-name gender
+> stay.
 
 ---
 
@@ -67,6 +78,8 @@ verb_phonemes = lex.get_phonemes("acordo", pos="NOUN")
 
 ### 2. Orthographic Agreement (AO1990)
 
+These methods are deprecated. Use `desacordo_ortografico.convert` instead.
+
 Convert text between pre-agreement and post-agreement (AO1990) spelling for Portugal and Brazil.
 
 * **Normalize:** Old spelling to modern spelling.
@@ -89,7 +102,7 @@ lex.modern_spelling("chronico", "pt-BR")    # 'crônico'
 
 ### 3. Linguistic Insights
 
-TugaLex identifies specific linguistic phenomena programmatically:
+TugaLex identifies specific linguistic phenomena programmatically. The archaism, silent-letter and voiced-u sets are deprecated with the spelling accessors.
 
 * **Homographs:** Words that change pronunciation with POS (e.g., *acordo* the noun `ɐˈkoɾdu` vs *acordo* the verb `ɐˈkɔɾdu`). Two readings with the same POS, such as *sede* thirst vs headquarters, need [bifonia](https://github.com/TigreGotico/bifonia).
 * **Archaic Words:** Mapping 19th-century etymological spellings to modern ones.
@@ -164,7 +177,7 @@ TugaLex is one piece of the TigreGotico Portuguese NLP stack:
 * [bifonia](https://github.com/TigreGotico/bifonia): picks the reading of a heterophonic homograph by meaning, including the same-POS pairs that the TugaLex homograph table cannot separate.
 * [tugamorph](https://github.com/TigreGotico/tugamorph): rule-based morphological analyzer for Portuguese.
 * [tugatagger](https://github.com/TigreGotico/tugatagger): Part-of-Speech tagging wrapper for Portuguese. Its `lexicon` extra installs TugaLex.
-* [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico): detects and converts between Portuguese orthographies, including the AO1990 reform. It reads the TugaLex word list, and its spelling table holds the rows of the TugaLex AO1990 and archaism lists.
+* [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico): detects and converts between Portuguese orthographies, including the AO1990 reform. It reads the TugaLex word list, and its spelling table holds the archaism and AO1990 rows that the deprecated TugaLex spelling accessors return.
 
 ---
 

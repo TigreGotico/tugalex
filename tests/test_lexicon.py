@@ -11,7 +11,7 @@ import pytest
 
 from tugalex import TugaLexicon
 
-# exercises the deprecated dictionary API; tests/test_deprecation.py covers the warning
+# exercises the deprecated dictionary and spelling API; tests/test_deprecation.py covers the warnings
 pytestmark = pytest.mark.filterwarnings(r"ignore:TugaLexicon\.\w+ is deprecated:DeprecationWarning")
 
 

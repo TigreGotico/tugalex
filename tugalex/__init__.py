@@ -37,6 +37,38 @@ def _warn_dictionary(name: str, stacklevel: int = 3) -> None:
     )
 
 
+#: The release that removes the archaism and AO1990 spelling accessors.
+SPELLING_REMOVAL_VERSION = f"{VERSION_MAJOR + 1}.0.0"
+
+_TABLE = "desacordo_ortografico/data/spelling.json"
+_TO_AO1990 = 'desacordo_ortografico.convert(text, source, "ao1990-pt") or "ao1990-br"'
+
+# The desacordo_ortografico name that replaces each deprecated spelling accessor.
+_SPELLING_REPLACEMENTS: Dict[str, str] = {
+    "archaic_words": f"the etymological rows of {_TABLE}",
+    "archaic_words_br": f"the etymological rows of {_TABLE}",
+    "ao_pt": f"the pt_1973 rows of {_TABLE}",
+    "ao_br": f"the br_1971 rows of {_TABLE}",
+    "AO1990": f"the pt_1973 and br_1971 rows of {_TABLE}",
+    "silent_p_words": f"the pt_1973 rows of {_TABLE}",
+    "voiced_u_words": f"the br_1971 rows of {_TABLE}",
+    "modern_spelling": _TO_AO1990,
+    "normalize_ao1900": _TO_AO1990,
+    "reverse_ao1900_pt": 'desacordo_ortografico.convert(text, "ao1990-pt", "pt_1973")',
+    "reverse_ao1900_br": 'desacordo_ortografico.convert(text, "ao1990-br", "br_1971")',
+}
+
+
+def _warn_spelling(name: str) -> None:
+    warnings.warn(
+        f"TugaLexicon.{name} is deprecated and will be removed in tugalex "
+        f"{SPELLING_REMOVAL_VERSION}. desacordo_ortografico owns the spelling "
+        f"tables: use {_SPELLING_REPLACEMENTS[name]}.",
+        DeprecationWarning,
+        stacklevel=3,
+    )
+
+
 NOUN_GENDER_PATH = os.path.join(os.path.dirname(__file__), "data", "noun_gender_exceptions.csv.gz")
 GIVEN_NAMES_PATH = os.path.join(os.path.dirname(__file__), "data", "given_names.csv.gz")
 WORDLIST_PATH = os.path.join(os.path.dirname(__file__), "data", "words.csv.gz")
@@ -106,8 +138,17 @@ class TugaLexicon:
     ``syllables``, ``regions``, ``possible_postags``, ``lang_to_region``,
     ``get_phonemes``, ``get_syllables``, ``get`` and ``get_ipa_map``) are
     deprecated and emit a ``DeprecationWarning``. They are removed in
-    ``DICTIONARY_REMOVAL_VERSION``. The word list (``get_wordlist``), the noun
-    and given-name gender lookups and the AO1990 spelling tools stay.
+    ``DICTIONARY_REMOVAL_VERSION``.
+
+    The archaism and AO1990 spelling accessors (``archaic_words``,
+    ``archaic_words_br``, ``ao_pt``, ``ao_br``, ``AO1990``, ``silent_p_words``,
+    ``voiced_u_words``, ``modern_spelling``, ``normalize_ao1900``,
+    ``reverse_ao1900_pt`` and ``reverse_ao1900_br``) are deprecated too. They
+    return the frozen tugalex tables and are removed in
+    ``SPELLING_REMOVAL_VERSION``. desacordo_ortografico owns the spelling table.
+
+    The word list (``get_wordlist``) and the noun and given-name gender lookups
+    stay.
     """
 
     _DIALECT_REGIONS: Dict[str, str] = {
@@ -145,10 +186,10 @@ class TugaLexicon:
             os.path.dirname(__file__), "data", "archaisms.csv"
         )
 
-        self.ao_pt: Dict[str, List[str]] = self._load_ao(self.ao_pt_path)
-        self.ao_br: Dict[str, List[str]] = self._load_ao(self.ao_br_path)
+        self._ao_pt: Dict[str, List[str]] = self._load_ao(self.ao_pt_path)
+        self._ao_br: Dict[str, List[str]] = self._load_ao(self.ao_br_path)
         self.homographs: Dict[str, Dict[str, str]] = self._load_homographs(self.homographs_path)
-        self.archaic_words, self.archaic_words_br = self._load_archaisms(self.archaisms_path)
+        self._archaic_words, self._archaic_words_br = self._load_archaisms(self.archaisms_path)
         # Lazy loaded attributes
         self._ipa: IPA_MAP = {}
         self._syllables: SYLLABLE_MAP = {}
@@ -363,7 +404,7 @@ class TugaLexicon:
             raise ValueError(f"Unsupported dialect: {region}")
         word = word.strip().lower()
 
-        archaic = self.archaic_words
+        archaic = self._archaic_words
         if word in archaic:
             word = archaic[word]
 
@@ -562,31 +603,85 @@ class TugaLexicon:
         """
         return _given_names().get(name)
 
-    @cached_property
+    @property
+    def archaic_words(self) -> Dict[str, str]:
+        """
+        Pre-1911 spelling -> its modern pt-PT spelling, from ``archaisms.csv``.
+
+        Deprecated: removed in ``SPELLING_REMOVAL_VERSION``.
+        """
+        _warn_spelling("archaic_words")
+        return self._archaic_words
+
+    @property
+    def archaic_words_br(self) -> Dict[str, str]:
+        """
+        Pre-1911 spelling -> its modern pt-BR spelling, from ``archaisms.csv``.
+
+        Deprecated: removed in ``SPELLING_REMOVAL_VERSION``.
+        """
+        _warn_spelling("archaic_words_br")
+        return self._archaic_words_br
+
+    @property
+    def ao_pt(self) -> Dict[str, List[str]]:
+        """
+        Pre-AO1990 pt-PT spelling -> its AO1990 spellings.
+
+        Deprecated: removed in ``SPELLING_REMOVAL_VERSION``.
+        """
+        _warn_spelling("ao_pt")
+        return self._ao_pt
+
+    @property
+    def ao_br(self) -> Dict[str, List[str]]:
+        """
+        Pre-AO1990 pt-BR spelling -> its AO1990 spellings.
+
+        Deprecated: removed in ``SPELLING_REMOVAL_VERSION``.
+        """
+        _warn_spelling("ao_br")
+        return self._ao_br
+
+    @property
     def AO1990(self) -> Dict[str, List[str]]:
         """
         Get a combined dictionary of Old -> New spelling for PT and BR (AO1990).
+
+        Deprecated: removed in ``SPELLING_REMOVAL_VERSION``.
         """
-        return {
-            **self.ao_pt, **self.ao_br
-        }
+        _warn_spelling("AO1990")
+        return self._ao1990
 
     @cached_property
+    def _ao1990(self) -> Dict[str, List[str]]:
+        return {
+            **self._ao_pt, **self._ao_br
+        }
+
+    @property
     def silent_p_words(self) -> Set[str]:
         """
         Set of words where 'p' is silent (common in mpc/mpç/mpt clusters before AO1990).
 
         Returns:
             Set[str]: Words containing silent 'p'.
+
+        Deprecated: removed in ``SPELLING_REMOVAL_VERSION``.
         """
+        _warn_spelling("silent_p_words")
+        return self._silent_p_words
+
+    @cached_property
+    def _silent_p_words(self) -> Set[str]:
         clusters = ["mpc", "mpç", "mpt"]
         return set([old_word
                     for c in clusters
-                    for old_word, new_words in self.AO1990.items()
+                    for old_word, new_words in self._ao1990.items()
                     for new_word in new_words
                     if c in old_word and c not in new_word])
 
-    @cached_property
+    @property
     def voiced_u_words(self) -> Set[str]:
         """
         Set of words with a voiced 'u' in 'gue'/'gui'/'que'/'qui': the modern
@@ -595,10 +690,17 @@ class TugaLexicon:
 
         Returns:
             Set[str]: Modern spellings of words with voiced 'u'.
+
+        Deprecated: removed in ``SPELLING_REMOVAL_VERSION``.
         """
+        _warn_spelling("voiced_u_words")
+        return self._voiced_u_words
+
+    @cached_property
+    def _voiced_u_words(self) -> Set[str]:
         # all words in acordo_ortografico_pt_BR.csv containing trema 'ü'
         return set([new_word
-                    for old_word, new_words in self.ao_br.items()
+                    for old_word, new_words in self._ao_br.items()
                     for new_word in new_words
                     if 'ü' in old_word])
 
@@ -607,7 +709,7 @@ class TugaLexicon:
         """The pt-PT (``False``) and pt-BR (``True``) AO1990 tables, keyed in lowercase."""
         return {
             brazilian: {old.lower(): news for old, news in table.items()}
-            for brazilian, table in ((False, self.ao_pt), (True, self.ao_br))
+            for brazilian, table in ((False, self._ao_pt), (True, self._ao_br))
         }
 
     def modern_spelling(self, word: str, lang: str = "pt-PT") -> str:
@@ -635,11 +737,14 @@ class TugaLexicon:
 
         Returns:
             str: The modern spelling, or ``word`` unchanged.
+
+        Deprecated: removed in ``SPELLING_REMOVAL_VERSION``.
         """
+        _warn_spelling("modern_spelling")
         subtags = re.split(r"[.@]", lang)[0].replace("_", "-").lower().split("-x-")[0].split("-")
         brazilian = "br" in subtags[1:]
         lowered = word.lower()
-        archaic = self.archaic_words_br if brazilian else self.archaic_words
+        archaic = self._archaic_words_br if brazilian else self._archaic_words
         modern = archaic.get(lowered, lowered)
         forms = self._ao_by_lowercase[brazilian].get(modern, [modern])
         if modern not in (form.lower() for form in forms):
@@ -664,8 +769,11 @@ class TugaLexicon:
 
         Returns:
             str: Sentence with words replaced by their AO1990 equivalents.
+
+        Deprecated: removed in ``SPELLING_REMOVAL_VERSION``.
         """
-        words = [self.AO1990.get(w, [w])[0] for w in sentence.split()]
+        _warn_spelling("normalize_ao1900")
+        words = [self._ao1990.get(w, [w])[0] for w in sentence.split()]
         return " ".join(words)
 
     def reverse_ao1900_pt(self, sentence: str) -> str:
@@ -681,9 +789,12 @@ class TugaLexicon:
 
         Returns:
             str: Sentence using pre-AO1990 PT spelling.
+
+        Deprecated: removed in ``SPELLING_REMOVAL_VERSION``.
         """
+        _warn_spelling("reverse_ao1900_pt")
         reverse: Dict[str, str] = {}
-        for old_word, new_words in self.ao_pt.items():
+        for old_word, new_words in self._ao_pt.items():
             for new_word in new_words:
                 reverse[new_word] = old_word
 
@@ -703,9 +814,12 @@ class TugaLexicon:
 
         Returns:
             str: Sentence using pre-AO1990 BR spelling.
+
+        Deprecated: removed in ``SPELLING_REMOVAL_VERSION``.
         """
+        _warn_spelling("reverse_ao1900_br")
         reverse: Dict[str, str] = {}
-        for old_word, new_words in self.ao_br.items():
+        for old_word, new_words in self._ao_br.items():
             for new_word in new_words:
                 reverse[new_word] = old_word
 
