@@ -1,7 +1,8 @@
 """Example — archaisms, silent 'p', and the formerly-trema voiced 'u'.
 
-This example uses the deprecated dictionary API, which emits a
-DeprecationWarning and is removed in the next major release.
+This example uses the deprecated dictionary API and the deprecated spelling
+accessors. Both emit a DeprecationWarning and are removed in the next major
+release. desacordo_ortografico owns the spelling table.
 
 Run::
 

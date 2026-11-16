@@ -178,6 +178,11 @@ mislead.
 
 ## Orthographic agreement (AO1990)
 
+> **Deprecated.** desacordo_ortografico owns the spelling table. `modern_spelling`, `normalize_ao1900` and the two `reverse_*` methods emit a
+> `DeprecationWarning` and return the frozen TugaLex tables. The next major
+> release removes them. Use `desacordo_ortografico.convert(text, source, target)`,
+> or the rows of its `data/spelling.json`.
+
 `normalize_ao1900` and the two `reverse_*` methods split the sentence on
 whitespace, look up each word exactly as written, and join the result with
 single spaces. A word with attached punctuation or a capital letter is not
@@ -235,12 +240,14 @@ lex.reverse_ao1900_br("ato")   # 'ato'
 | `syllables` | `Dict[region, Dict[word, List[str]]]` | Lazy syllable map. |
 | `regions` | `Set[str]` | All region codes present in the loaded dataset. |
 | `homographs` | `Dict[word, Dict[POS, str]]` | POS-dependent pronunciations of the 27 heterophonic homographs. |
-| `archaic_words` | `Dict[old, new]` | Pre-1911 spelling to its modern pt-PT spelling. |
-| `archaic_words_br` | `Dict[old, new]` | Pre-1911 spelling to its modern pt-BR spelling. |
+| `archaic_words` | `Dict[old, new]` | Pre-1911 spelling to its modern pt-PT spelling. Deprecated. |
+| `archaic_words_br` | `Dict[old, new]` | Pre-1911 spelling to its modern pt-BR spelling. Deprecated. |
+| `ao_pt` | `Dict[old, List[str]]` | Pre-AO1990 pt-PT spelling to its AO1990 spellings. Deprecated. |
+| `ao_br` | `Dict[old, List[str]]` | Pre-AO1990 pt-BR spelling to its AO1990 spellings. Deprecated. |
 | `possible_postags` | `Dict[word, List[str]]` | POS tags available per word (cached). A word outside the homograph table has `['']`. |
-| `AO1990` | `Dict[old, List[str]]` | Combined PT + BR old-to-new spelling map (cached). |
-| `silent_p_words` | `Set[str]` | Words with a silent `p` (`mpc`/`mpç`/`mpt` clusters) (cached). |
-| `voiced_u_words` | `Set[str]` | Words where `u` is voiced in `gue`/`gui`/`que`/`qui` (former trema) (cached). |
+| `AO1990` | `Dict[old, List[str]]` | Combined PT + BR old-to-new spelling map (cached). Deprecated. |
+| `silent_p_words` | `Set[str]` | Words with a silent `p` (`mpc`/`mpç`/`mpt` clusters) (cached). Deprecated. |
+| `voiced_u_words` | `Set[str]` | Words where `u` is voiced in `gue`/`gui`/`que`/`qui` (former trema) (cached). Deprecated. |
 
 ```python
 sorted(lex.regions)            # ['dli', 'lbx', 'lda', 'mpx', 'rjx', 'spx']

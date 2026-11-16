@@ -47,6 +47,11 @@ The full table is `lex.homographs`, shaped as `{word: {POS: ipa}}`.
 
 ## Archaisms fold into pronunciation automatically
 
+> **Deprecated.** desacordo_ortografico owns the spelling table. `archaic_words` and the other spelling accessors emit a
+> `DeprecationWarning` and return the frozen TugaLex tables. The next major
+> release removes them. Use `desacordo_ortografico.convert(text, source, target)`,
+> or the rows of its `data/spelling.json`.
+
 When you ask for the phonemes of a pre-20th-century spelling, TugaLex rewrites
 it to its modern form first, so you still get a transcription:
 
@@ -56,6 +61,11 @@ lex.get_phonemes("architecto")      # 'ɐɾ·ki·tˈɛ·tu'  (looked up as arqui
 ```
 
 ## Modernise one word for a variety
+
+> **Deprecated.** desacordo_ortografico owns the spelling table. `modern_spelling()` and the other spelling accessors emit a
+> `DeprecationWarning` and return the frozen TugaLex tables. The next major
+> release removes them. Use `desacordo_ortografico.convert(text, source, target)`,
+> or the rows of its `data/spelling.json`.
 
 `modern_spelling()` applies the archaism table and the AO1990 table of one
 variety to one word, and keeps its case. Use it in a text pipeline, one word
@@ -73,6 +83,11 @@ quality in each norm: `cómodo`/`cômodo`, `fenómeno`/`fenômeno`.
 
 ## Round-trip orthography across the AO1990 agreement
 
+> **Deprecated.** desacordo_ortografico owns the spelling table. These methods emit a
+> `DeprecationWarning` and return the frozen TugaLex tables. The next major
+> release removes them. Use `desacordo_ortografico.convert(text, source, target)`,
+> or the rows of its `data/spelling.json`.
+
 `normalize_ao1900()` goes from old to modern spelling. The two `reverse_*`
 methods go from modern back to old, one per standard. Unmapped words pass
 through unchanged. Strip punctuation and lowercase the words first, because
@@ -87,6 +102,11 @@ PT and BR diverge. A word can revert differently per standard, which is why
 there are two reverse methods instead of one.
 
 ## Detect spelling phenomena
+
+> **Deprecated.** desacordo_ortografico owns the spelling table. These sets emit a
+> `DeprecationWarning` and return the frozen TugaLex tables. The next major
+> release removes them. Use `desacordo_ortografico.convert(text, source, target)`,
+> or the rows of its `data/spelling.json`.
 
 Two cached sets expose AO1990-related phenomena directly:
 

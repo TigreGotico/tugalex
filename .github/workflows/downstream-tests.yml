@@ -1,7 +1,7 @@
 name: Downstream Tests
 
-# desacordo_ortografico reads tugalex's spelling tables. This job runs its
-# test suite against the tugalex of the pull request.
+# desacordo_ortografico reads the tugalex word list. This job runs its test
+# suite against the tugalex of the pull request.
 on:
   pull_request:
     branches: [dev, master, main]
