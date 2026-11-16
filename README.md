@@ -1,30 +1,52 @@
-# TugaLex 🗣️
+# TugaLex
 
-**TugaLex** is a comprehensive lexicon handler and linguistic utility for Portuguese dialects. It provides deep data on phoneme transcription (IPA), syllable segmentation, and historical/modern orthographic rules.
+**TugaLex** is a lexicon handler and linguistic utility for Portuguese dialects. It provides data on phoneme transcription (IPA), syllable segmentation, and historical and modern orthographic rules.
 
-Designed for NLP pipelines and linguistics research, it allows you to handle the complexities of Portuguese across different regions and historical agreements with a unified API.
+It gives NLP pipelines and linguistics research a single API for the differences between Portuguese regions and historical spelling agreements.
+
+> **Deprecated: the regional pronunciation dictionary.** The phoneme and
+> syllable API (`get`, `get_phonemes`, `get_syllables`, `get_ipa_map`,
+> `lang_to_region`, `ipa`, `syllables`, `regions` and `possible_postags`)
+> emits a `DeprecationWarning`. The next major release
+> removes it, together with the legacy `tugaphone.dialects` inventories
+> that read it. For Portuguese pronunciation, use
+> [orthography2ipa](https://github.com/TigreGotico/orthography2ipa) with the
+> pt-PT lexicon of `o2i-lexicons` (`orthography2ipa.use_packaged_lexicons`).
+> The word list (`get_wordlist`), the noun gender, given-name gender and
+> AO1990 tools stay.
 
 ---
 
-## 🌍 Supported Dialects
+## Supported Dialects
 
 TugaLex maps standard ISO codes to internal regional datasets:
 
 | ISO Code | Internal Code | Region |
 | --- | --- | --- |
-| `pt-PT` | `lbx` | Portugal |
-| `pt-BR` | `rjx` | Brazil |
-| `pt-AO` | `lda` | Angola |
-| `pt-MZ` | `mpx` | Mozambique |
-| `pt-TL` | `dli` | Timor-Leste |
+| `pt-PT` | `lbx` | Portugal (Lisbon) |
+| `pt-BR` | `rjx` | Brazil (Rio de Janeiro) |
+| n/a | `spx` | Brazil (São Paulo) |
+| `pt-AO` | `lda` | Angola (Luanda) |
+| `pt-MZ` | `mpx` | Mozambique (Maputo) |
+| `pt-TL` | `dli` | Timor-Leste (Díli) |
+
+`spx` has no ISO alias. Pass it as `region="spx"`.
+
+The regional dictionary ships as a slim gzip extract (word, phones,
+syllables, region) of the [unified Portuguese pronunciation lexicon](https://huggingface.co/datasets/TigreGotico/portuguese-unified-pronunciation-lexicon),
+with 53,144 to 53,147 words in each region. Regenerate it with
+`python scripts/build_regional_dict.py`, which reads the lexicon revision
+pinned in the script. The regional dictionary has no
+part of speech: each word has one pronunciation per region, and it answers
+every POS query. Only the heterophonic homograph table is keyed by POS.
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 ### 1. Phonemes & Syllables
 
-Retrieve IPA transcriptions and syllable breaks based on the word's Part-of-Speech (POS) and specific region.
+Retrieve IPA transcriptions and syllable breaks for a word in a region. For the 27 heterophonic homographs, the part of speech (POS) selects the pronunciation.
 
 ```python
 from tugalex import TugaLexicon
@@ -45,32 +67,140 @@ verb_phonemes = lex.get_phonemes("acordo", pos="NOUN")
 
 ### 2. Orthographic Agreement (AO1990)
 
-Effortlessly convert text between pre-agreement and post-agreement (AO1990) standards for both Portugal and Brazil.
+Convert text between pre-agreement and post-agreement (AO1990) spelling for Portugal and Brazil.
 
-* **Normalize:** Old spelling → Modern spelling.
-* **Reverse:** Modern spelling → Old regional spelling (PT or BR).
+* **Normalize:** Old spelling to modern spelling.
+* **Reverse:** Modern spelling to old regional spelling (PT or BR).
 
 ```python
-normalized = lex.normalize_ao1900(sentence)
+lex.normalize_ao1900("acção óptimo")   # 'ação ótimo'
+lex.reverse_ao1900_pt("ótimo")         # 'óptimo'
+```
+
+The conversion splits on whitespace and matches each word exactly, so a word with attached punctuation or a capital letter is not converted ([#46](https://github.com/TigreGotico/tugalex/issues/46)).
+
+`modern_spelling` rewrites one word to its modern spelling in one variety. It applies the archaism table and then the AO1990 table, and keeps the case of the word:
+
+```python
+lex.modern_spelling("Pharmacia", "pt-BR")   # 'Farmácia'
+lex.modern_spelling("chronico", "pt-PT")    # 'crónico'
+lex.modern_spelling("chronico", "pt-BR")    # 'crônico'
 ```
 
 ### 3. Linguistic Insights
 
 TugaLex identifies specific linguistic phenomena programmatically:
 
-* **Homographs:** Words that change pronunciation based on POS (e.g., *sede* (thirst) vs *sede* (headquarters)).
+* **Homographs:** Words that change pronunciation with POS (e.g., *acordo* the noun `ɐˈkoɾdu` vs *acordo* the verb `ɐˈkɔɾdu`). Two readings with the same POS, such as *sede* thirst vs headquarters, need [bifonia](https://github.com/TigreGotico/bifonia).
 * **Archaic Words:** Mapping 19th-century etymological spellings to modern ones.
-* **Silent Letters:** Identifying words with silent 'p' or 'c' common before the 1990 agreement.
+* **Silent Letters:** Identifying words with a silent 'p' in the `mpc`/`mpç`/`mpt` clusters of pre-1990 spelling. Silent 'c' detection does not exist ([#2](https://github.com/TigreGotico/tugalex/issues/2)).
 * **Voiced 'u':** Detecting words where 'u' is pronounced in 'gue/gui/que/qui' clusters (formerly marked with a trema `ü`).
+
+### 4. Noun Gender
+
+Get the grammatical gender of a Portuguese common noun, singular or plural.
+Suffix rules decide most nouns, and a list of exceptions decides the rest.
+
+```python
+TugaLexicon.get_noun_gender("lei")       # 'f'
+TugaLexicon.get_noun_gender("dias")      # 'm'
+TugaLexicon.get_noun_gender("artista")   # 'mf' (both genders)
+```
+
+### 5. Given-Name Gender
+
+Get the grammatical gender of a given name, written as in running text.
+The list holds regnal names, the Brazilian census names that match a
+Wikidata given name, and the Wikidata given names marked Portuguese.
+
+```python
+TugaLexicon.get_given_name_gender("Isabel")   # 'f'
+TugaLexicon.get_given_name_gender("Afonso")   # 'm'
+TugaLexicon.get_given_name_gender("Darci")    # 'mf' (both genders)
+TugaLexicon.get_given_name_gender("Raio")     # None
+```
 
 ---
 
-## 📂 Datasets
+## Datasets
 
-TugaLex ships the following datasets which contain over 100,000 entries sourced from the [Portal da Língua Portuguesa](http://www.portaldalinguaportuguesa.org).
+TugaLex ships the following datasets under `tugalex/data/`.
 
-* [`regional_dict.csv`](https://huggingface.co/datasets/TigreGotico/portuguese_phonetic_lexicon): Phoneme and syllable mappings.
-* [`heterophonic_homographs.csv`](https://huggingface.co/datasets/TigreGotico/heterophonic_homographs_pt): words pronounced differently depending on postag.
+* `regional_dict.csv.gz`: phoneme and syllable mappings, 318,872 rows for 53,148 distinct words in six regions. `scripts/build_regional_dict.py` builds it from the [unified Portuguese pronunciation lexicon](https://huggingface.co/datasets/TigreGotico/portuguese-unified-pronunciation-lexicon) and keeps six of its [Portal da Língua Portuguesa](http://www.portaldalinguaportuguesa.org) regions. The scraped Portal data with all ten regional variants is the [`portuguese_phonetic_lexicon`](https://huggingface.co/datasets/TigreGotico/portuguese_phonetic_lexicon) dataset.
+* `words.csv.gz`: the word forms of `regional_dict.csv.gz` with the regions that list each one, and no pronunciations. `get_wordlist` reads it, and it stays when the regional dictionary goes. `scripts/build_wordlist.py` builds it from the regional dictionary.
+* `heterophonic_homographs.csv`: 27 words pronounced differently depending on POS, 55 rows.
 * [`acordo_ortografico_pt_PT.csv`](https://huggingface.co/datasets/TigreGotico/AO1990_pt-PT): Portugal old orthographic spellings.
 * [`acordo_ortografico_pt_BR.csv`](https://huggingface.co/datasets/TigreGotico/AO1990_pt-BR): Brazil old orthographic spellings.
 * [`archaisms.csv`](https://huggingface.co/datasets/TigreGotico/archaisms_pt): normalized words from before the 20th century.
+
+`noun_gender_exceptions.csv.gz` lists the nouns whose gender the suffix rules
+get wrong or do not cover, and the nouns of both genders.
+`scripts/build_noun_gender.py` regenerates it from the noun genders of the
+English Wiktionary.
+
+`given_names.csv.gz` lists given names with their gender.
+`scripts/build_given_names.py` regenerates it from Wikidata (CC0) and the IBGE
+2010 census first names published by datasets-br/prenomes (ODC-PDDL-1.0).
+`scripts/given_name_overrides.csv` corrects the names whose Wikidata items
+mislead, each with its evidence.
+
+---
+
+## Install
+
+```bash
+pip install --pre tugalex
+```
+
+TugaLex publishes alpha releases from the `dev` branch. Use `--pre` to get the API that this README describes. TugaLex has no third-party runtime dependencies. All datasets ship inside the package under `tugalex/data/`.
+
+---
+
+## Related Projects
+
+TugaLex is one piece of the TigreGotico Portuguese NLP stack:
+
+* [tugaphone](https://github.com/TigreGotico/tugaphone): phonemizes arbitrary Portuguese text across dialects, using TugaLex plus a rule-based fallback. tugaphone depends on TugaLex.
+* [bifonia](https://github.com/TigreGotico/bifonia): picks the reading of a heterophonic homograph by meaning, including the same-POS pairs that the TugaLex homograph table cannot separate.
+* [tugamorph](https://github.com/TigreGotico/tugamorph): rule-based morphological analyzer for Portuguese.
+* [tugatagger](https://github.com/TigreGotico/tugatagger): Part-of-Speech tagging wrapper for Portuguese. Its `lexicon` extra installs TugaLex.
+* [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico): detects and converts between Portuguese orthographies, including the AO1990 reform. It reads the TugaLex word list, and its spelling table holds the rows of the TugaLex AO1990 and archaism lists.
+
+---
+
+## Documentation
+
+Read the pages in this order. Each page links to the next one.
+
+1. [`docs/quickstart.md`](docs/quickstart.md): install, the first lookups, dialects and AO1990.
+2. [`docs/api.md`](docs/api.md): every public method and property.
+3. [`docs/advanced.md`](docs/advanced.md): recipes and gotchas.
+
+Runnable scripts for each feature are in [`examples/`](examples).
+
+---
+
+## Development
+
+| path | contents |
+| --- | --- |
+| `tugalex/__init__.py` | the `TugaLexicon` class and the noun-gender suffix rules |
+| `tugalex/data/` | the packaged datasets |
+| `scripts/` | the build scripts for `regional_dict.csv.gz`, `words.csv.gz`, `noun_gender_exceptions.csv.gz` and `given_names.csv.gz`, and their override files |
+| `tests/` | the pytest suite |
+| `examples/` | one runnable script per feature |
+| `*.ipynb` | analysis notebooks for the phonetic lexicon and the AO1990 tables |
+
+```bash
+uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python --prerelease=allow -e ".[test]"
+.venv/bin/python -m pytest tests
+```
+
+CI runs the same suite on Python 3.11 to 3.14 (`.github/workflows/build-tests.yml`). On each pull request, `.github/workflows/downstream-tests.yml` installs the TugaLex of the pull request with desacordo_ortografico from its `dev` branch and runs the desacordo_ortografico suite on the same Python versions. A `DeprecationWarning` fails that job. The build scripts download their sources, so run them only to regenerate a dataset. Each row of `scripts/given_name_overrides.csv` carries its evidence in the `reason` column.
+
+---
+
+## License
+
+TugaLex is released under the [Apache License 2.0](LICENSE).

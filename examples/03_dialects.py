@@ -1,5 +1,8 @@
 """Example — the same word across Portuguese dialects.
 
+This example uses the deprecated dictionary API, which emits a
+DeprecationWarning and is removed in the next major release.
+
 Run::
 
     python examples/03_dialects.py

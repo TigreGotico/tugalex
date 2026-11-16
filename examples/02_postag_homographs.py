@@ -1,5 +1,8 @@
 """Example — part-of-speech changes the pronunciation (heterophonic homographs).
 
+This example uses the deprecated dictionary API, which emits a
+DeprecationWarning and is removed in the next major release.
+
 Run::
 
     python examples/02_postag_homographs.py

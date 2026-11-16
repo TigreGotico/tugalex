@@ -1,5 +1,8 @@
 """Example — phonemes and syllables for a Portuguese word.
 
+This example uses the deprecated dictionary API, which emits a
+DeprecationWarning and is removed in the next major release.
+
 Run::
 
     python examples/01_lookup.py
