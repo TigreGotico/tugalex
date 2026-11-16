@@ -132,6 +132,9 @@ def test_spelling_api_returns_the_frozen_tables(lex):
         assert lex.ao_pt["acção"] == ["ação"]
         assert lex.ao_br["idéia"] == ["ideia"]
         assert lex.AO1990["acção"] == ["ação"]
+        # both tables hold intersectar; the pt-BR row wins the merge
+        assert lex.ao_pt["intersectar"] == ["intersetar", "intersectar"]
+        assert lex.AO1990["intersectar"] == ["intersetar"]
         assert "peremptório" in lex.silent_p_words
         assert "frequente" in lex.voiced_u_words
         assert lex.modern_spelling("Pharmacia", "pt-BR") == "Farmácia"
