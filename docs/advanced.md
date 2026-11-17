@@ -47,72 +47,103 @@ The full table is `lex.homographs`, shaped as `{word: {POS: ipa}}`.
 
 ## Archaisms fold into pronunciation automatically
 
-> **Deprecated.** desacordo_ortografico owns the spelling table. `archaic_words` and the other spelling accessors emit a
-> `DeprecationWarning` and return the frozen TugaLex tables. The next major
-> release removes them. Use `desacordo_ortografico.convert(text, source, target)`,
-> or the rows of its `data/spelling.json`.
+> **Deprecated.** `get_phonemes()` belongs to the deprecated dictionary API.
+> The archaism table `archaic_words` is deprecated with the spelling
+> accessors, and TugaLex 3.0.0 removes it. Its replacement is the etymological
+> rows of `desacordo_ortografico/data/spelling.json`.
 
 When you ask for the phonemes of a pre-20th-century spelling, TugaLex rewrites
 it to its modern form first, so you still get a transcription:
 
 ```python
-lex.archaic_words["pharmacia"]      # 'farmácia'
 lex.get_phonemes("architecto")      # 'ɐɾ·ki·tˈɛ·tu'  (looked up as arquiteto)
 ```
 
-## Modernise one word for a variety
+The lookup reads the archaism table without a spelling warning.
 
-> **Deprecated.** desacordo_ortografico owns the spelling table. `modern_spelling()` and the other spelling accessors emit a
-> `DeprecationWarning` and return the frozen TugaLex tables. The next major
-> release removes them. Use `desacordo_ortografico.convert(text, source, target)`,
-> or the rows of its `data/spelling.json`.
+## Modernise text for a variety
 
-`modern_spelling()` applies the archaism table and the AO1990 table of one
-variety to one word, and keeps its case. Use it in a text pipeline, one word
-at a time, after you strip the punctuation:
+> **Deprecated.** `modern_spelling()` emits a `DeprecationWarning`, and
+> TugaLex 3.0.0 removes it. Its replacement is
+> `desacordo_ortografico.convert(text, source, "ao1990-pt") or "ao1990-br"`.
+
+`desacordo_ortografico.convert()` rewrites a whole text from one norm to
+another. Pass `etymological` as the source for a pre-1911 spelling and
+`pt_1973` or `br_1971` for a pre-AO1990 spelling. Punctuation and capitals
+stay, so you do not split the text into words first:
 
 ```python
-lex.modern_spelling("Pharmacia", "pt-BR")   # 'Farmácia'
-lex.modern_spelling("kilometro", "pt-BR")   # 'quilômetro'
+from desacordo_ortografico import convert
+
+convert("Pharmacia", "etymological", "ao1990-br")   # 'Farmácia'
+convert("kilometro", "etymological", "ao1990-br")   # 'quilômetro'
+convert("chronico", "etymological", "ao1990-pt")    # 'crónico'
+convert("chronico", "etymological", "ao1990-br")    # 'crônico'
 ```
 
-The archaism table gives a separate pt-BR form where the two standards accent
-the word differently. AO1990 Base XI, 3º, writes a stressed ⟨e⟩ or ⟨o⟩ before
-⟨m⟩ or ⟨n⟩ in a proparoxytone with an acute or a circumflex, by the vowel
-quality in each norm: `cómodo`/`cômodo`, `fenómeno`/`fenômeno`.
+The two norms accent some words differently. AO1990 Base XI, 3º, writes a
+stressed ⟨e⟩ or ⟨o⟩ before ⟨m⟩ or ⟨n⟩ in a proparoxytone with an acute or a
+circumflex, by the vowel quality in each norm: `cómodo`/`cômodo`,
+`fenómeno`/`fenômeno`.
 
 ## Round-trip orthography across the AO1990 agreement
 
-> **Deprecated.** desacordo_ortografico owns the spelling table. These methods emit a
-> `DeprecationWarning` and return the frozen TugaLex tables. The next major
-> release removes them. Use `desacordo_ortografico.convert(text, source, target)`,
-> or the rows of its `data/spelling.json`.
+> **Deprecated.** `normalize_ao1900()`, `reverse_ao1900_pt()` and
+> `reverse_ao1900_br()` emit a `DeprecationWarning`, and TugaLex 3.0.0
+> removes them. Their replacements are
+> `desacordo_ortografico.convert(text, source, "ao1990-pt") or "ao1990-br"`,
+> `desacordo_ortografico.convert(text, "ao1990-pt", "pt_1973")` and
+> `desacordo_ortografico.convert(text, "ao1990-br", "br_1971")`.
 
-`normalize_ao1900()` goes from old to modern spelling. The two `reverse_*`
-methods go from modern back to old, one per standard. Unmapped words pass
-through unchanged. Strip punctuation and lowercase the words first, because
-the lookup matches each whitespace-separated word exactly.
+`convert()` goes from old to modern spelling and back, one norm for each
+standard. Unmapped words pass through unchanged:
 
 ```python
-modern = lex.normalize_ao1900("acção óptimo")   # 'ação ótimo'
-back_pt = lex.reverse_ao1900_pt("ótimo")         # 'óptimo'
+from desacordo_ortografico import convert
+
+modern = convert("acção óptimo", "pt_1973", "ao1990-pt")   # 'ação ótimo'
+back_pt = convert("ótimo", "ao1990-pt", "pt_1973")         # 'óptimo'
+back_br = convert("ótimo", "ao1990-br", "br_1971")         # 'ótimo'
 ```
 
-PT and BR diverge. A word can revert differently per standard, which is why
-there are two reverse methods instead of one.
+PT and BR diverge. A word can revert differently per standard, so each
+standard has its own pre-AO1990 norm.
 
 ## Detect spelling phenomena
 
-> **Deprecated.** desacordo_ortografico owns the spelling table. These sets emit a
-> `DeprecationWarning` and return the frozen TugaLex tables. The next major
-> release removes them. Use `desacordo_ortografico.convert(text, source, target)`,
-> or the rows of its `data/spelling.json`.
+> **Deprecated.** `silent_p_words` and `voiced_u_words` emit a
+> `DeprecationWarning`, and TugaLex 3.0.0 removes them. Their replacements
+> are the pt_1973 rows and the br_1971 rows of
+> `desacordo_ortografico/data/spelling.json`.
 
-Two cached sets expose AO1990-related phenomena directly:
+Each row of the desacordo_ortografico spelling table maps `form`, written in
+the norm `era`, to `value`, written in the norm `target`. A cell with two
+AO1990 forms joins them with `|`. These two sets hold the same words as the
+deprecated TugaLex sets:
 
 ```python
-sorted(lex.silent_p_words)[:3]    # words with a silent p, e.g. 'assimptota'
-sorted(lex.voiced_u_words)[:3]    # words that used to carry the trema ü
+import json
+from importlib.resources import files
+
+table = files("desacordo_ortografico").joinpath("data/spelling.json")
+rows = json.loads(table.read_text(encoding="utf-8"))["rows"]
+
+silent_p = {
+    row["form"]
+    for row in rows
+    if row["era"] == "pt_1973"
+    for cluster in ("mpc", "mpç", "mpt")
+    for value in row["value"].split("|")
+    if cluster in row["form"] and cluster not in value
+}
+voiced_u = {
+    value
+    for row in rows
+    if row["era"] == "br_1971" and "ü" in row["form"]
+    for value in row["value"].split("|")
+}
+sorted(silent_p)[:3]   # ['assimptota', 'assimptotismo', 'assimptótico']
+sorted(voiced_u)[:3]   # ['Equídeos', 'aguentador', 'aguista']
 ```
 
 Use them to flag tokens that need special attention in a pronunciation or
@@ -137,11 +168,13 @@ spell-checking pipeline.
 - **Two transcription styles.** The homograph table writes the stress mark
   before the syllable (`ɐˈkoɾdu`). The regional dictionary marks syllables with
   `·` and writes the stress mark before the vowel (`ɐ·kˈoɾ·du`).
-- **AO1990 conversion matches whole whitespace-separated words.** A word with
-  attached punctuation or a capital letter is not converted, and runs of spaces
-  become one space ([#46](https://github.com/TigreGotico/tugalex/issues/46)).
-- **Method names read `1900`.** `normalize_ao1900`, `reverse_ao1900_pt`, and
-  `reverse_ao1900_br` all implement the AO1990 agreement.
+- **The deprecated AO1990 methods match whole whitespace-separated words.** A
+  word with attached punctuation or a capital letter is not converted, and runs
+  of spaces become one space ([#46](https://github.com/TigreGotico/tugalex/issues/46)).
+  `desacordo_ortografico.convert()` keeps punctuation and capitals.
+- **Method names read `1900`.** The deprecated `normalize_ao1900`,
+  `reverse_ao1900_pt`, and `reverse_ao1900_br` all implement the AO1990
+  agreement.
 
 ---
 [← API reference](api.md) · [Home](../README.md)
