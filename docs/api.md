@@ -178,10 +178,22 @@ mislead.
 
 ## Orthographic agreement (AO1990)
 
-> **Deprecated.** desacordo_ortografico owns the spelling table. `modern_spelling`, `normalize_ao1900` and the two `reverse_*` methods emit a
-> `DeprecationWarning` and return the frozen TugaLex tables. The next major
-> release removes them. Use `desacordo_ortografico.convert(text, source, target)`,
-> or the rows of its `data/spelling.json`.
+> **Deprecated.** desacordo_ortografico owns the spelling table. The four
+> methods below and the seven spelling properties of
+> [Properties and cached views](#properties-and-cached-views) emit a
+> `DeprecationWarning` and return the frozen TugaLex tables. TugaLex 3.0.0
+> (`tugalex.SPELLING_REMOVAL_VERSION`) removes them. The warning of each name
+> gives its replacement:
+>
+> | Deprecated name | Replacement |
+> | --- | --- |
+> | `modern_spelling`, `normalize_ao1900` | `desacordo_ortografico.convert(text, source, "ao1990-pt") or "ao1990-br"` |
+> | `reverse_ao1900_pt` | `desacordo_ortografico.convert(text, "ao1990-pt", "pt_1973")` |
+> | `reverse_ao1900_br` | `desacordo_ortografico.convert(text, "ao1990-br", "br_1971")` |
+> | `archaic_words`, `archaic_words_br` | the etymological rows of `desacordo_ortografico/data/spelling.json` |
+> | `ao_pt`, `silent_p_words` | the pt_1973 rows of `desacordo_ortografico/data/spelling.json` |
+> | `ao_br`, `voiced_u_words` | the br_1971 rows of `desacordo_ortografico/data/spelling.json` |
+> | `AO1990` | the pt_1973 and br_1971 rows of `desacordo_ortografico/data/spelling.json` |
 
 `normalize_ao1900` and the two `reverse_*` methods split the sentence on
 whitespace, look up each word exactly as written, and join the result with
@@ -248,6 +260,12 @@ lex.reverse_ao1900_br("ato")   # 'ato'
 | `AO1990` | `Dict[old, List[str]]` | Combined PT + BR old-to-new spelling map (cached). Deprecated. |
 | `silent_p_words` | `Set[str]` | Words with a silent `p` (`mpc`/`mpç`/`mpt` clusters) (cached). Deprecated. |
 | `voiced_u_words` | `Set[str]` | Words where `u` is voiced in `gue`/`gui`/`que`/`qui` (former trema) (cached). Deprecated. |
+
+The seven deprecated spelling properties (`archaic_words`, `archaic_words_br`,
+`ao_pt`, `ao_br`, `AO1990`, `silent_p_words` and `voiced_u_words`) are
+read-only. An assignment such as `lex.AO1990 = {}` raises `AttributeError`.
+[Orthographic agreement (AO1990)](#orthographic-agreement-ao1990) names the
+replacement of each one.
 
 ```python
 sorted(lex.regions)            # ['dli', 'lbx', 'lda', 'mpx', 'rjx', 'spx']

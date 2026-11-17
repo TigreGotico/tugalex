@@ -14,14 +14,26 @@ It gives NLP pipelines and linguistics research a single API for the differences
 > pt-PT lexicon of `o2i-lexicons` (`orthography2ipa.use_packaged_lexicons`).
 
 > **Deprecated: the spelling accessors.** desacordo_ortografico owns the
-> spelling table. `archaic_words`, `archaic_words_br`, `ao_pt`, `ao_br`,
-> `AO1990`, `silent_p_words`, `voiced_u_words`, `modern_spelling`,
-> `normalize_ao1900`, `reverse_ao1900_pt` and `reverse_ao1900_br` emit a
-> `DeprecationWarning` and return the frozen TugaLex tables. The next major
-> release removes them. Use
-> [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico):
-> `convert(text, source, target)` converts text, and its
-> `data/spelling.json` holds the rows of the archaism and AO1990 tables.
+> spelling table. The eleven names in the table below emit a
+> `DeprecationWarning` and return the frozen TugaLex tables. TugaLex 3.0.0
+> (`tugalex.SPELLING_REMOVAL_VERSION`) removes them. Each warning names the
+> [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico)
+> replacement. `convert(text, source, target)` converts text, and the rows of
+> `desacordo_ortografico/data/spelling.json` hold the archaism and AO1990
+> tables.
+>
+> | Deprecated name | Replacement |
+> | --- | --- |
+> | `archaic_words`, `archaic_words_br` | the etymological rows of `desacordo_ortografico/data/spelling.json` |
+> | `ao_pt`, `silent_p_words` | the pt_1973 rows of `desacordo_ortografico/data/spelling.json` |
+> | `ao_br`, `voiced_u_words` | the br_1971 rows of `desacordo_ortografico/data/spelling.json` |
+> | `AO1990` | the pt_1973 and br_1971 rows of `desacordo_ortografico/data/spelling.json` |
+> | `modern_spelling`, `normalize_ao1900` | `desacordo_ortografico.convert(text, source, "ao1990-pt") or "ao1990-br"` |
+> | `reverse_ao1900_pt` | `desacordo_ortografico.convert(text, "ao1990-pt", "pt_1973")` |
+> | `reverse_ao1900_br` | `desacordo_ortografico.convert(text, "ao1990-br", "br_1971")` |
+>
+> The seven properties in the table are read-only. An assignment such as
+> `lex.ao_pt = {}` raises `AttributeError`.
 >
 > The word list (`get_wordlist`), the noun gender and the given-name gender
 > stay.
@@ -78,31 +90,26 @@ verb_phonemes = lex.get_phonemes("acordo", pos="NOUN")
 
 ### 2. Orthographic Agreement (AO1990)
 
-These methods are deprecated. Use `desacordo_ortografico.convert` instead.
-
-Convert text between pre-agreement and post-agreement (AO1990) spelling for Portugal and Brazil.
-
-* **Normalize:** Old spelling to modern spelling.
-* **Reverse:** Modern spelling to old regional spelling (PT or BR).
+The TugaLex AO1990 methods are deprecated. Convert text with
+[desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico),
+which keeps punctuation and capitals:
 
 ```python
-lex.normalize_ao1900("acção óptimo")   # 'ação ótimo'
-lex.reverse_ao1900_pt("ótimo")         # 'óptimo'
+from desacordo_ortografico import convert
+
+convert("Acção, óptimo!", "pt_1973", "ao1990-pt")       # 'Ação, ótimo!'
+convert("ótimo", "ao1990-pt", "pt_1973")                # 'óptimo'
+convert("Pharmacia", "etymological", "ao1990-br")       # 'Farmácia'
+convert("chronico", "etymological", "ao1990-pt")        # 'crónico'
+convert("chronico", "etymological", "ao1990-br")        # 'crônico'
 ```
 
-The conversion splits on whitespace and matches each word exactly, so a word with attached punctuation or a capital letter is not converted ([#46](https://github.com/TigreGotico/tugalex/issues/46)).
-
-`modern_spelling` rewrites one word to its modern spelling in one variety. It applies the archaism table and then the AO1990 table, and keeps the case of the word:
-
-```python
-lex.modern_spelling("Pharmacia", "pt-BR")   # 'Farmácia'
-lex.modern_spelling("chronico", "pt-PT")    # 'crónico'
-lex.modern_spelling("chronico", "pt-BR")    # 'crônico'
-```
+[`docs/api.md`](docs/api.md) documents the deprecated TugaLex methods until
+3.0.0 removes them.
 
 ### 3. Linguistic Insights
 
-TugaLex identifies specific linguistic phenomena programmatically. The archaism, silent-letter and voiced-u sets are deprecated with the spelling accessors.
+TugaLex identifies specific linguistic phenomena programmatically. The archaism, silent-letter and voiced-u sets are deprecated with the spelling accessors. The recipe in [`docs/advanced.md`](docs/advanced.md) reads the same sets from the desacordo_ortografico spelling table.
 
 * **Homographs:** Words that change pronunciation with POS (e.g., *acordo* the noun `ɐˈkoɾdu` vs *acordo* the verb `ɐˈkɔɾdu`). Two readings with the same POS, such as *sede* thirst vs headquarters, need [bifonia](https://github.com/TigreGotico/bifonia).
 * **Archaic Words:** Mapping 19th-century etymological spellings to modern ones.
