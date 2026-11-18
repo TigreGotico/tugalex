@@ -1,8 +1,10 @@
 """Example — archaisms, silent 'p', and the formerly-trema voiced 'u'.
 
 This example uses the deprecated dictionary API and the deprecated spelling
-accessors. Both emit a DeprecationWarning and are removed in the next major
-release. desacordo_ortografico owns the spelling table.
+accessors. Both emit a DeprecationWarning and are removed in tugalex 3.0.0.
+desacordo_ortografico owns the spelling table: docs/advanced.md reads the same
+sets from the rows of desacordo_ortografico/data/spelling.json. For
+pronunciation, use orthography2ipa with the pt-PT lexicon of o2i-lexicons.
 
 Run::
 

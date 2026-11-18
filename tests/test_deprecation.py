@@ -184,3 +184,16 @@ def test_internal_reads_of_the_spelling_tables_are_silent():
 def test_dictionary_api_reads_no_spelling_accessor():
     deprecations = _recorded(lambda: TugaLexicon().get_phonemes("pharmacia"))
     assert [str(w.message).split()[0] for w in deprecations] == ["TugaLexicon.get_phonemes"]
+
+
+EXAMPLES = Path(__file__).resolve().parent.parent / "examples"
+
+
+@pytest.mark.parametrize("name", ["04_ao1990.py", "05_phenomena.py"])
+def test_example_names_the_removal_release_and_the_replacement(name):
+    # An example that calls a deprecated accessor says when it goes away, in
+    # the words of the warning, and what replaces it.
+    doc = (EXAMPLES / name).read_text(encoding="utf-8")
+    assert f"removed in {REMOVAL}" in doc
+    assert "next major release" not in doc
+    assert "desacordo_ortografico.convert(" in doc or "desacordo_ortografico/data/spelling.json" in doc
