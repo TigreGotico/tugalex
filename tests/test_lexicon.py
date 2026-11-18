@@ -66,6 +66,11 @@ class TestHomographs:
         assert adp and verb
         assert adp != verb
 
+    def test_gosto_verb_ends_in_its_vowel(self, lex):
+        # Infopédia, "gosto": noun [ˈgoʃtu], verb (1sg of gostar) [ˈgɔʃtu], as
+        # extracted in bifonia/data/infopedia_pt.csv.
+        assert lex.homographs["gosto"] == {"NOUN": "ˈɡoʃtu", "VERB": "ˈɡɔʃtu"}
+
     def test_get_phonemes_verb_variant_not_none(self, lex):
         # The CRLF bug made the VERB lookup return None.
         assert lex.get_phonemes("para", pos="VERB") is not None
