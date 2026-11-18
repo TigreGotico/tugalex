@@ -143,9 +143,29 @@ def test_spelling_api_returns_the_frozen_tables(lex):
         assert lex.reverse_ao1900_br("frequente") == "freqüente"
 
 
+def test_phlegmao_is_the_archaic_key_of_flegmao(lex):
+    # Cândido de Figueiredo, Novo Diccionário da Língua Portuguesa (1913), in
+    # Dicionário Aberto: "Phlegmão, m. (V. fleimão)". VOP lists flegmão. phlegmon is
+    # the French and English spelling; Dicionário Aberto has no entry for it.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        assert lex.archaic_words["phlegmão"] == "flegmão"
+        assert lex.archaic_words_br["phlegmão"] == "flegmão"
+        assert "phlegmon" not in lex.archaic_words
+
+
+def test_antarctia_maps_to_antartia(lex):
+    # Not a misspelling of antárctica. VOP lists antártia, a feminine noun, with the
+    # variant antárctia. Figueiredo (1913) defines Antárctia as a genus of beetles.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        assert lex.ao_pt["antárctia"] == ["antártia"]
+        assert lex.ao_pt["antárctica"] == ["antártica"]
+
+
 # The deprecated accessors return this data unchanged until their removal.
 FROZEN = {
-    "archaisms.csv": "0a97745eba667a48c326e69acd9812630f31c94d9bb242b98c50f7878ebcb437",
+    "archaisms.csv": "46c192342e9676f36a1fcec4eef123ba3d8df2cd3e40c10a51b6334019e65742",
     "acordo_ortografico_pt_PT.csv": "b689beb17d7ba70c5a608e5469552cc9bd4f32634ed5b4e01b6d91c598b7c4a0",
     "acordo_ortografico_pt_BR.csv": "100182d73166e6455cc5b129529c7dbf9e0c6f61b414aaedd856747a8414cd23",
 }
