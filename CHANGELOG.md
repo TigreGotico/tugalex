@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.5.1a1](https://github.com/TigreGotico/tugalex/tree/2.5.1a1) (2026-11-18)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.0a2...2.5.1a1)
+
+**Merged pull requests:**
+
+- fix: give the verb gosto its final vowel in the homograph table [\#92](https://github.com/TigreGotico/tugalex/pull/92) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+- fix: name tugalex 3.0.0 and the replacement in examples 04 and 05 [\#91](https://github.com/TigreGotico/tugalex/pull/91) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.5.0a2](https://github.com/TigreGotico/tugalex/tree/2.5.0a2) (2026-11-17)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.0a1...2.5.0a2)
