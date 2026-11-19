@@ -163,10 +163,19 @@ def test_antarctia_maps_to_antartia(lex):
         assert lex.ao_pt["antárctica"] == ["antártica"]
 
 
+def test_intercepto_lists_the_pt_pt_ao1990_form_first(lex):
+    # VOP lemma 191893: "interceto - adjetivo", Portugal, "variante AO de : intercepto".
+    # Like infecto, the row lists the AO1990 pt-PT form first and the p form second.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        assert lex.ao_pt["intercepto"] == ["interceto", "intercepto"]
+        assert lex.ao_pt["infecto"] == ["infeto", "infecto"]
+
+
 # The deprecated accessors return this data unchanged until their removal.
 FROZEN = {
     "archaisms.csv": "46c192342e9676f36a1fcec4eef123ba3d8df2cd3e40c10a51b6334019e65742",
-    "acordo_ortografico_pt_PT.csv": "3eeae02b542783ae127fa21068896e764c9c7b84ef6602977184d30b9cf74336",
+    "acordo_ortografico_pt_PT.csv": "248c49f0e2a1f5bd02ce3249fa3b86927b7d491f17f30902639fd43a1d4193fe",
     "acordo_ortografico_pt_BR.csv": "7ec069023e05c8b81cb8d0db60ad9b8610d66f2e64ff0d07e90ecf898e8e691e",
 }
 
