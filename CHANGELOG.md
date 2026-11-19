@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.5a1](https://github.com/TigreGotico/tugalex/tree/2.5.5a1) (2026-11-19)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.4a2...2.5.5a1)
+
+**Merged pull requests:**
+
+- fix: list the AO1990 pt-PT form first in the intercepto row [\#101](https://github.com/TigreGotico/tugalex/pull/101) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.5.4a2](https://github.com/TigreGotico/tugalex/tree/2.5.4a2) (2026-11-19)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.4a1...2.5.4a2)
