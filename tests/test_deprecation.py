@@ -166,14 +166,25 @@ def test_antarctia_maps_to_antartia(lex):
 # The deprecated accessors return this data unchanged until their removal.
 FROZEN = {
     "archaisms.csv": "46c192342e9676f36a1fcec4eef123ba3d8df2cd3e40c10a51b6334019e65742",
-    "acordo_ortografico_pt_PT.csv": "b689beb17d7ba70c5a608e5469552cc9bd4f32634ed5b4e01b6d91c598b7c4a0",
-    "acordo_ortografico_pt_BR.csv": "100182d73166e6455cc5b129529c7dbf9e0c6f61b414aaedd856747a8414cd23",
+    "acordo_ortografico_pt_PT.csv": "3eeae02b542783ae127fa21068896e764c9c7b84ef6602977184d30b9cf74336",
+    "acordo_ortografico_pt_BR.csv": "7ec069023e05c8b81cb8d0db60ad9b8610d66f2e64ff0d07e90ecf898e8e691e",
 }
 
 
 @pytest.mark.parametrize("name", sorted(FROZEN))
 def test_spelling_tables_are_frozen(name):
     assert hashlib.sha256((DATA / name).read_bytes()).hexdigest() == FROZEN[name]
+
+
+def test_neo_republicano_doubles_the_r(lex):
+    # AO1990 Base XVI 2.º a): "Nas formações em que o prefixo ou falso prefixo termina em
+    # vogal e o segundo elemento começa por r ou s, devendo estas consoantes duplicar-se".
+    # The VOP lists neorrepublicano, a noun and an adjective, and has no neorepublicano.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        assert lex.ao_pt["neo-republicano"] == ["neorrepublicano"]
+        assert lex.ao_br["neo-republicano"] == ["neorrepublicano"]
+        assert lex.ao_pt["neo-republicanismo"] == ["neorrepublicanismo"]
 
 
 KEPT = {
