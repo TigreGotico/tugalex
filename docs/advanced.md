@@ -7,7 +7,7 @@ and the packaged data.
 
 > **Deprecated.** `get_ipa_map()`, `get_phonemes()` and the dictionary views `ipa`,
 > `syllables`, `regions` and `possible_postags` emit a `DeprecationWarning`.
-> The next major release removes them, together with the legacy
+> TugaLex 3.0.0 removes them, together with the legacy
 > `tugaphone.dialects` inventories that read them. For Portuguese
 > pronunciation, use orthography2ipa with the pt-PT lexicon of
 > `o2i-lexicons`.
