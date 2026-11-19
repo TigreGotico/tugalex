@@ -7,9 +7,10 @@ It gives NLP pipelines and linguistics research a single API for the differences
 > **Deprecated: the regional pronunciation dictionary.** The phoneme and
 > syllable API (`get`, `get_phonemes`, `get_syllables`, `get_ipa_map`,
 > `lang_to_region`, `ipa`, `syllables`, `regions` and `possible_postags`)
-> emits a `DeprecationWarning`. The next major release
-> removes it, together with the legacy `tugaphone.dialects` inventories
-> that read it. For Portuguese pronunciation, use
+> emits a `DeprecationWarning`. TugaLex 3.0.0
+> (`tugalex.DICTIONARY_REMOVAL_VERSION`)
+> removes it. The legacy `tugaphone.dialects` inventories read it and
+> stop working then. For Portuguese pronunciation, use
 > [orthography2ipa](https://github.com/TigreGotico/orthography2ipa) with the
 > pt-PT lexicon of `o2i-lexicons` (`orthography2ipa.use_packaged_lexicons`).
 
@@ -180,7 +181,7 @@ TugaLex publishes alpha releases from the `dev` branch. Use `--pre` to get the A
 
 TugaLex is one piece of the TigreGotico Portuguese NLP stack:
 
-* [tugaphone](https://github.com/TigreGotico/tugaphone): phonemizes arbitrary Portuguese text across dialects, using TugaLex plus a rule-based fallback. tugaphone depends on TugaLex.
+* [tugaphone](https://github.com/TigreGotico/tugaphone): phonemizes Portuguese text per dialect. It runs the lect specs of [orthography2ipa](https://github.com/TigreGotico/orthography2ipa) and the lexicons of `o2i-lexicons`. It depends on TugaLex, and its text normalization reads the TugaLex noun and given-name genders. Its legacy `tugaphone.dialects` inventories read the deprecated regional dictionary.
 * [bifonia](https://github.com/TigreGotico/bifonia): picks the reading of a heterophonic homograph by meaning, including the same-POS pairs that the TugaLex homograph table cannot separate.
 * [tugamorph](https://github.com/TigreGotico/tugamorph): rule-based morphological analyzer for Portuguese.
 * [tugatagger](https://github.com/TigreGotico/tugatagger): Part-of-Speech tagging wrapper for Portuguese. Its `lexicon` extra installs TugaLex.
