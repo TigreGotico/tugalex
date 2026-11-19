@@ -9,8 +9,8 @@ It gives NLP pipelines and linguistics research a single API for the differences
 > `lang_to_region`, `ipa`, `syllables`, `regions` and `possible_postags`)
 > emits a `DeprecationWarning`. TugaLex 3.0.0
 > (`tugalex.DICTIONARY_REMOVAL_VERSION`)
-> removes it, together with the legacy `tugaphone.dialects` inventories
-> that read it. For Portuguese pronunciation, use
+> removes it. The legacy `tugaphone.dialects` inventories read it and
+> stop working then. For Portuguese pronunciation, use
 > [orthography2ipa](https://github.com/TigreGotico/orthography2ipa) with the
 > pt-PT lexicon of `o2i-lexicons` (`orthography2ipa.use_packaged_lexicons`).
 
