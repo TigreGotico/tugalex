@@ -163,9 +163,12 @@ def test_antarctia_maps_to_antartia(lex):
         assert lex.ao_pt["antárctica"] == ["antártica"]
 
 
-def test_intercepto_lists_the_pt_pt_ao1990_form_first(lex):
+def test_intercepto_lists_interceto_first_like_infecto(lex):
     # VOP lemma 191893: "interceto - adjetivo", Portugal, "variante AO de : intercepto".
-    # Like infecto, the row lists the AO1990 pt-PT form first and the p form second.
+    # The adjetivo keeps both forms, but the verb form "intercepto" has one pt-PT
+    # spelling: the VOP labels interceptar Brasil (44914) and intercetar Portugal
+    # (191891). infecto is the same case (infectar is Brasil, 92811), so both rows
+    # list the pt-PT form first. Other dual rows have no such verb and keep their order.
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", DeprecationWarning)
         assert lex.ao_pt["intercepto"] == ["interceto", "intercepto"]
