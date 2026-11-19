@@ -134,7 +134,7 @@ def test_spelling_api_returns_the_frozen_tables(lex):
         assert lex.AO1990["acção"] == ["ação"]
         # both tables hold intersectar; the pt-BR row wins the merge
         assert lex.ao_pt["intersectar"] == ["intersetar", "intersectar"]
-        assert lex.AO1990["intersectar"] == ["intersetar"]
+        assert lex.AO1990["intersectar"] == ["intersectar"]
         assert "peremptório" in lex.silent_p_words
         assert "frequente" in lex.voiced_u_words
         assert lex.modern_spelling("Pharmacia", "pt-BR") == "Farmácia"
@@ -179,7 +179,7 @@ def test_intercepto_lists_interceto_first_like_infecto(lex):
 FROZEN = {
     "archaisms.csv": "46c192342e9676f36a1fcec4eef123ba3d8df2cd3e40c10a51b6334019e65742",
     "acordo_ortografico_pt_PT.csv": "248c49f0e2a1f5bd02ce3249fa3b86927b7d491f17f30902639fd43a1d4193fe",
-    "acordo_ortografico_pt_BR.csv": "7ec069023e05c8b81cb8d0db60ad9b8610d66f2e64ff0d07e90ecf898e8e691e",
+    "acordo_ortografico_pt_BR.csv": "912686f4061def49ffcbfa2dde61defae15b67eec47b50f2a0aef9d8a66a986e",
 }
 
 

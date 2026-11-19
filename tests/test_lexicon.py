@@ -480,3 +480,29 @@ class TestPhenomena:
         words = lex.voiced_u_words
         assert isinstance(words, set)
         assert len(words) > 0
+
+
+class TestBrazilianRows:
+    """The ABL VOLP keeps the consonant in these words and has no form without it:
+    "perfeccional adj.2g.", "perfeccionismo s.m.", "perfeccionista adj. s.2g.",
+    "perfeccionístico adj.", "intersectar v." and "conceptual adj.2g.". Priberam, "Grafia
+    no Brasil": perfeccionismo, perfeccionista, perfeccional and intersectar."""
+
+    @pytest.mark.parametrize("word", [
+        "perfeccional", "perfeccionismo", "perfeccionista", "perfeccionístico",
+        "intersectar", "conceptualmente",
+    ])
+    def test_consonant_kept_in_brazil(self, lex, word):
+        assert lex.ao_br[word] == [word]
+        assert lex.modern_spelling(word, "pt-BR") == word
+
+    def test_co_diretora_is_the_brazilian_old_form(self, lex):
+        """ABL Pequeno Vocabulário Ortográfico (1943): "co-diretor, s. m."."""
+        assert lex.ao_br["co-diretora"] == ["codiretora"]
+        assert "co-directora" not in lex.ao_br
+
+    @pytest.mark.parametrize("word", ["zoelectricidade", "dielectricidade"])
+    def test_no_brazilian_old_form_with_c(self, lex, word):
+        """ABL VOLP: "zoeletricidade s.f." and "dieletricidade s.f.", with no c form."""
+        assert word not in lex.ao_br
+        assert lex.modern_spelling(word.replace("ct", "t"), "pt-BR") == word.replace("ct", "t")
