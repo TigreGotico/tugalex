@@ -1,8 +1,21 @@
 # Changelog
 
+## [2.5.3a1](https://github.com/TigreGotico/tugalex/tree/2.5.3a1) (2026-11-19)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.2a1...2.5.3a1)
+
+**Merged pull requests:**
+
+- fix: double the r of neorrepublicano in both AO1990 maps [\#96](https://github.com/TigreGotico/tugalex/pull/96) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+- fix: key the flegmão archaism by phlegmão, not phlegmon [\#95](https://github.com/TigreGotico/tugalex/pull/95) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.5.2a1](https://github.com/TigreGotico/tugalex/tree/2.5.2a1) (2026-11-18)
 
-[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.0a2...2.5.2a1)
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.1a1...2.5.2a1)
+
+## [2.5.1a1](https://github.com/TigreGotico/tugalex/tree/2.5.1a1) (2026-11-18)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.0a2...2.5.1a1)
 
 **Merged pull requests:**
 
