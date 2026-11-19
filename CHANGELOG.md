@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.6a1](https://github.com/TigreGotico/tugalex/tree/2.5.6a1) (2026-11-19)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.5a1...2.5.6a1)
+
+**Merged pull requests:**
+
+- fix: give the Brazilian form of nine pt-BR AO1990 rows [\#102](https://github.com/TigreGotico/tugalex/pull/102) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.5.5a1](https://github.com/TigreGotico/tugalex/tree/2.5.5a1) (2026-11-19)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.4a2...2.5.5a1)
