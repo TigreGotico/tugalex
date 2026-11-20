@@ -270,7 +270,7 @@ replacement of each one.
 
 ```python
 sorted(lex.regions)            # ['dli', 'lbx', 'lda', 'mpx', 'rjx', 'spx']
-len(lex.AO1990)                # 5474
+len(lex.AO1990)                # 5475
 len(lex.silent_p_words)        # 15
 len(lex.voiced_u_words)        # 324
 lex.possible_postags["acordo"] # ['NOUN', 'VERB']
