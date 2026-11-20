@@ -22,8 +22,8 @@ or regions.
 
 > **Deprecated.** The phoneme and syllable lookups below and the dictionary views `ipa`,
 > `syllables`, `regions` and `possible_postags` emit a `DeprecationWarning`.
-> The next major release removes them, together with the legacy
-> `tugaphone.dialects` inventories that read them. For Portuguese
+> TugaLex 3.0.0 removes them. The legacy `tugaphone.dialects`
+> inventories read them and stop working then. For Portuguese
 > pronunciation, use orthography2ipa with the pt-PT lexicon of
 > `o2i-lexicons`.
 
@@ -87,18 +87,27 @@ lex.get_phonemes("acordo", pos="NOUN", region="rjx")
 
 ## 5. Orthographic agreement (AO1990)
 
-Convert between pre-agreement and modern spelling in both directions:
+> **Deprecated.** desacordo_ortografico owns the spelling table. The TugaLex
+> AO1990 methods (`modern_spelling`, `normalize_ao1900`, `reverse_ao1900_pt`
+> and `reverse_ao1900_br`) emit a `DeprecationWarning` and return the frozen
+> TugaLex tables. TugaLex 3.0.0 removes them. The
+> [API reference](api.md#orthographic-agreement-ao1990) names the replacement
+> of each one.
+
+Convert between pre-agreement and modern spelling with
+`desacordo_ortografico.convert(text, source, target)`. Install it with
+`pip install --pre desacordo_ortografico`.
 
 ```python
-lex.normalize_ao1900("acção óptimo")    # 'ação ótimo'   (old to modern)
-lex.reverse_ao1900_pt("ótimo")          # 'óptimo'        (modern to old PT-PT)
-lex.reverse_ao1900_br("ato")            # 'ato'           (modern to old PT-BR)
+from desacordo_ortografico import convert
+
+convert("acção óptimo", "pt_1973", "ao1990-pt")   # 'ação ótimo'    (old to modern)
+convert("ótimo", "ao1990-pt", "pt_1973")          # 'óptimo'        (modern to old PT-PT)
+convert("o ato", "ao1990-br", "br_1971")          # 'o ato'         (modern to old PT-BR)
 ```
 
-Words with no mapping pass through unchanged. The conversion splits on
-whitespace and matches each word exactly, so a word with attached
-punctuation or a capital letter passes through unchanged too
-([#46](https://github.com/TigreGotico/tugalex/issues/46)).
+Words with no mapping pass through unchanged. Punctuation and capitals stay:
+`convert("Acção, óptimo!", "pt_1973", "ao1990-pt")` gives `'Ação, ótimo!'`.
 
 ---
 [Home](../README.md) · [API reference →](api.md)

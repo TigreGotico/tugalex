@@ -7,13 +7,37 @@ It gives NLP pipelines and linguistics research a single API for the differences
 > **Deprecated: the regional pronunciation dictionary.** The phoneme and
 > syllable API (`get`, `get_phonemes`, `get_syllables`, `get_ipa_map`,
 > `lang_to_region`, `ipa`, `syllables`, `regions` and `possible_postags`)
-> emits a `DeprecationWarning`. The next major release
-> removes it, together with the legacy `tugaphone.dialects` inventories
-> that read it. For Portuguese pronunciation, use
+> emits a `DeprecationWarning`. TugaLex 3.0.0
+> (`tugalex.DICTIONARY_REMOVAL_VERSION`)
+> removes it. The legacy `tugaphone.dialects` inventories read it and
+> stop working then. For Portuguese pronunciation, use
 > [orthography2ipa](https://github.com/TigreGotico/orthography2ipa) with the
 > pt-PT lexicon of `o2i-lexicons` (`orthography2ipa.use_packaged_lexicons`).
-> The word list (`get_wordlist`), the noun gender, given-name gender and
-> AO1990 tools stay.
+
+> **Deprecated: the spelling accessors.** desacordo_ortografico owns the
+> spelling table. The eleven names in the table below emit a
+> `DeprecationWarning` and return the frozen TugaLex tables. TugaLex 3.0.0
+> (`tugalex.SPELLING_REMOVAL_VERSION`) removes them. Each warning names the
+> [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico)
+> replacement. `convert(text, source, target)` converts text, and the rows of
+> `desacordo_ortografico/data/spelling.json` hold the archaism and AO1990
+> tables.
+>
+> | Deprecated name | Replacement |
+> | --- | --- |
+> | `archaic_words`, `archaic_words_br` | the etymological rows of `desacordo_ortografico/data/spelling.json` |
+> | `ao_pt`, `silent_p_words` | the pt_1973 rows of `desacordo_ortografico/data/spelling.json` |
+> | `ao_br`, `voiced_u_words` | the br_1971 rows of `desacordo_ortografico/data/spelling.json` |
+> | `AO1990` | the pt_1973 and br_1971 rows of `desacordo_ortografico/data/spelling.json` |
+> | `modern_spelling`, `normalize_ao1900` | `desacordo_ortografico.convert(text, source, "ao1990-pt") or "ao1990-br"` |
+> | `reverse_ao1900_pt` | `desacordo_ortografico.convert(text, "ao1990-pt", "pt_1973")` |
+> | `reverse_ao1900_br` | `desacordo_ortografico.convert(text, "ao1990-br", "br_1971")` |
+>
+> The seven properties in the table are read-only. An assignment such as
+> `lex.ao_pt = {}` raises `AttributeError`.
+>
+> The word list (`get_wordlist`), the noun gender and the given-name gender
+> stay.
 
 ---
 
@@ -67,29 +91,26 @@ verb_phonemes = lex.get_phonemes("acordo", pos="NOUN")
 
 ### 2. Orthographic Agreement (AO1990)
 
-Convert text between pre-agreement and post-agreement (AO1990) spelling for Portugal and Brazil.
-
-* **Normalize:** Old spelling to modern spelling.
-* **Reverse:** Modern spelling to old regional spelling (PT or BR).
-
-```python
-lex.normalize_ao1900("acção óptimo")   # 'ação ótimo'
-lex.reverse_ao1900_pt("ótimo")         # 'óptimo'
-```
-
-The conversion splits on whitespace and matches each word exactly, so a word with attached punctuation or a capital letter is not converted ([#46](https://github.com/TigreGotico/tugalex/issues/46)).
-
-`modern_spelling` rewrites one word to its modern spelling in one variety. It applies the archaism table and then the AO1990 table, and keeps the case of the word:
+The TugaLex AO1990 methods are deprecated. Convert text with
+[desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico),
+which keeps punctuation and capitals:
 
 ```python
-lex.modern_spelling("Pharmacia", "pt-BR")   # 'Farmácia'
-lex.modern_spelling("chronico", "pt-PT")    # 'crónico'
-lex.modern_spelling("chronico", "pt-BR")    # 'crônico'
+from desacordo_ortografico import convert
+
+convert("Acção, óptimo!", "pt_1973", "ao1990-pt")       # 'Ação, ótimo!'
+convert("ótimo", "ao1990-pt", "pt_1973")                # 'óptimo'
+convert("Pharmacia", "etymological", "ao1990-br")       # 'Farmácia'
+convert("chronico", "etymological", "ao1990-pt")        # 'crónico'
+convert("chronico", "etymological", "ao1990-br")        # 'crônico'
 ```
+
+[`docs/api.md`](docs/api.md) documents the deprecated TugaLex methods until
+3.0.0 removes them.
 
 ### 3. Linguistic Insights
 
-TugaLex identifies specific linguistic phenomena programmatically:
+TugaLex identifies specific linguistic phenomena programmatically. The archaism, silent-letter and voiced-u sets are deprecated with the spelling accessors. The recipe in [`docs/advanced.md`](docs/advanced.md) reads the same sets from the desacordo_ortografico spelling table.
 
 * **Homographs:** Words that change pronunciation with POS (e.g., *acordo* the noun `ɐˈkoɾdu` vs *acordo* the verb `ɐˈkɔɾdu`). Two readings with the same POS, such as *sede* thirst vs headquarters, need [bifonia](https://github.com/TigreGotico/bifonia).
 * **Archaic Words:** Mapping 19th-century etymological spellings to modern ones.
@@ -160,11 +181,11 @@ TugaLex publishes alpha releases from the `dev` branch. Use `--pre` to get the A
 
 TugaLex is one piece of the TigreGotico Portuguese NLP stack:
 
-* [tugaphone](https://github.com/TigreGotico/tugaphone): phonemizes arbitrary Portuguese text across dialects, using TugaLex plus a rule-based fallback. tugaphone depends on TugaLex.
+* [tugaphone](https://github.com/TigreGotico/tugaphone): phonemizes Portuguese text per dialect. It runs the lect specs of [orthography2ipa](https://github.com/TigreGotico/orthography2ipa) and the lexicons of `o2i-lexicons`. It depends on TugaLex, and its text normalization reads the TugaLex noun and given-name genders. Its legacy `tugaphone.dialects` inventories read the deprecated regional dictionary.
 * [bifonia](https://github.com/TigreGotico/bifonia): picks the reading of a heterophonic homograph by meaning, including the same-POS pairs that the TugaLex homograph table cannot separate.
 * [tugamorph](https://github.com/TigreGotico/tugamorph): rule-based morphological analyzer for Portuguese.
 * [tugatagger](https://github.com/TigreGotico/tugatagger): Part-of-Speech tagging wrapper for Portuguese. Its `lexicon` extra installs TugaLex.
-* [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico): detects and converts between Portuguese orthographies, including the AO1990 reform. It reads the TugaLex word list, and its spelling table holds the rows of the TugaLex AO1990 and archaism lists.
+* [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico): detects and converts between Portuguese orthographies, including the AO1990 reform. It reads the TugaLex word list, and its spelling table holds the archaism and AO1990 rows that the deprecated TugaLex spelling accessors return.
 
 ---
 

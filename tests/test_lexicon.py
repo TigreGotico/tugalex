@@ -11,7 +11,7 @@ import pytest
 
 from tugalex import TugaLexicon
 
-# exercises the deprecated dictionary API; tests/test_deprecation.py covers the warning
+# exercises the deprecated dictionary and spelling API; tests/test_deprecation.py covers the warnings
 pytestmark = pytest.mark.filterwarnings(r"ignore:TugaLexicon\.\w+ is deprecated:DeprecationWarning")
 
 
@@ -65,6 +65,11 @@ class TestHomographs:
         verb = lex.get_phonemes("para", pos="VERB")
         assert adp and verb
         assert adp != verb
+
+    def test_gosto_verb_ends_in_its_vowel(self, lex):
+        # Infopédia, "gosto": noun [ˈgoʃtu], verb (1sg of gostar) [ˈgɔʃtu], as
+        # extracted in bifonia/data/infopedia_pt.csv.
+        assert lex.homographs["gosto"] == {"NOUN": "ˈɡoʃtu", "VERB": "ˈɡɔʃtu"}
 
     def test_get_phonemes_verb_variant_not_none(self, lex):
         # The CRLF bug made the VERB lookup return None.
@@ -475,3 +480,29 @@ class TestPhenomena:
         words = lex.voiced_u_words
         assert isinstance(words, set)
         assert len(words) > 0
+
+
+class TestBrazilianRows:
+    """The ABL VOLP keeps the consonant in these words and has no form without it:
+    "perfeccional adj.2g.", "perfeccionismo s.m.", "perfeccionista adj. s.2g.",
+    "perfeccionístico adj.", "intersectar v." and "conceptual adj.2g.". Priberam, "Grafia
+    no Brasil": perfeccionismo, perfeccionista, perfeccional and intersectar."""
+
+    @pytest.mark.parametrize("word", [
+        "perfeccional", "perfeccionismo", "perfeccionista", "perfeccionístico",
+        "intersectar", "conceptualmente",
+    ])
+    def test_consonant_kept_in_brazil(self, lex, word):
+        assert lex.ao_br[word] == [word]
+        assert lex.modern_spelling(word, "pt-BR") == word
+
+    def test_co_diretora_is_the_brazilian_old_form(self, lex):
+        """ABL Pequeno Vocabulário Ortográfico (1943): "co-diretor, s. m."."""
+        assert lex.ao_br["co-diretora"] == ["codiretora"]
+        assert "co-directora" not in lex.ao_br
+
+    @pytest.mark.parametrize("word", ["zoelectricidade", "dielectricidade"])
+    def test_no_brazilian_old_form_with_c(self, lex, word):
+        """ABL VOLP: "zoeletricidade s.f." and "dieletricidade s.f.", with no c form."""
+        assert word not in lex.ao_br
+        assert lex.modern_spelling(word.replace("ct", "t"), "pt-BR") == word.replace("ct", "t")

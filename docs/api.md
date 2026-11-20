@@ -38,8 +38,9 @@ The packaged dataset has one more region than the five mapped above: `spx`
 
 > **Deprecated.** These lookups and the dictionary views `ipa`,
 > `syllables`, `regions` and `possible_postags` emit a `DeprecationWarning`.
-> The next major release removes them, together with the legacy
-> `tugaphone.dialects` inventories that read them. For Portuguese
+> TugaLex 3.0.0 (`tugalex.DICTIONARY_REMOVAL_VERSION`) removes them.
+> The legacy `tugaphone.dialects` inventories read them and stop working
+> then. For Portuguese
 > pronunciation, use orthography2ipa with the pt-PT lexicon of
 > `o2i-lexicons`.
 
@@ -178,6 +179,23 @@ mislead.
 
 ## Orthographic agreement (AO1990)
 
+> **Deprecated.** desacordo_ortografico owns the spelling table. The four
+> methods below and the seven spelling properties of
+> [Properties and cached views](#properties-and-cached-views) emit a
+> `DeprecationWarning` and return the frozen TugaLex tables. TugaLex 3.0.0
+> (`tugalex.SPELLING_REMOVAL_VERSION`) removes them. The warning of each name
+> gives its replacement:
+>
+> | Deprecated name | Replacement |
+> | --- | --- |
+> | `modern_spelling`, `normalize_ao1900` | `desacordo_ortografico.convert(text, source, "ao1990-pt") or "ao1990-br"` |
+> | `reverse_ao1900_pt` | `desacordo_ortografico.convert(text, "ao1990-pt", "pt_1973")` |
+> | `reverse_ao1900_br` | `desacordo_ortografico.convert(text, "ao1990-br", "br_1971")` |
+> | `archaic_words`, `archaic_words_br` | the etymological rows of `desacordo_ortografico/data/spelling.json` |
+> | `ao_pt`, `silent_p_words` | the pt_1973 rows of `desacordo_ortografico/data/spelling.json` |
+> | `ao_br`, `voiced_u_words` | the br_1971 rows of `desacordo_ortografico/data/spelling.json` |
+> | `AO1990` | the pt_1973 and br_1971 rows of `desacordo_ortografico/data/spelling.json` |
+
 `normalize_ao1900` and the two `reverse_*` methods split the sentence on
 whitespace, look up each word exactly as written, and join the result with
 single spaces. A word with attached punctuation or a capital letter is not
@@ -235,16 +253,24 @@ lex.reverse_ao1900_br("ato")   # 'ato'
 | `syllables` | `Dict[region, Dict[word, List[str]]]` | Lazy syllable map. |
 | `regions` | `Set[str]` | All region codes present in the loaded dataset. |
 | `homographs` | `Dict[word, Dict[POS, str]]` | POS-dependent pronunciations of the 27 heterophonic homographs. |
-| `archaic_words` | `Dict[old, new]` | Pre-1911 spelling to its modern pt-PT spelling. |
-| `archaic_words_br` | `Dict[old, new]` | Pre-1911 spelling to its modern pt-BR spelling. |
+| `archaic_words` | `Dict[old, new]` | Pre-1911 spelling to its modern pt-PT spelling. Deprecated. |
+| `archaic_words_br` | `Dict[old, new]` | Pre-1911 spelling to its modern pt-BR spelling. Deprecated. |
+| `ao_pt` | `Dict[old, List[str]]` | Pre-AO1990 pt-PT spelling to its AO1990 spellings. Deprecated. |
+| `ao_br` | `Dict[old, List[str]]` | Pre-AO1990 pt-BR spelling to its AO1990 spellings. Deprecated. |
 | `possible_postags` | `Dict[word, List[str]]` | POS tags available per word (cached). A word outside the homograph table has `['']`. |
-| `AO1990` | `Dict[old, List[str]]` | Combined PT + BR old-to-new spelling map (cached). |
-| `silent_p_words` | `Set[str]` | Words with a silent `p` (`mpc`/`mpç`/`mpt` clusters) (cached). |
-| `voiced_u_words` | `Set[str]` | Words where `u` is voiced in `gue`/`gui`/`que`/`qui` (former trema) (cached). |
+| `AO1990` | `Dict[old, List[str]]` | Combined PT + BR old-to-new spelling map (cached). Deprecated. |
+| `silent_p_words` | `Set[str]` | Words with a silent `p` (`mpc`/`mpç`/`mpt` clusters) (cached). Deprecated. |
+| `voiced_u_words` | `Set[str]` | Words where `u` is voiced in `gue`/`gui`/`que`/`qui` (former trema) (cached). Deprecated. |
+
+The seven deprecated spelling properties (`archaic_words`, `archaic_words_br`,
+`ao_pt`, `ao_br`, `AO1990`, `silent_p_words` and `voiced_u_words`) are
+read-only. An assignment such as `lex.AO1990 = {}` raises `AttributeError`.
+[Orthographic agreement (AO1990)](#orthographic-agreement-ao1990) names the
+replacement of each one.
 
 ```python
 sorted(lex.regions)            # ['dli', 'lbx', 'lda', 'mpx', 'rjx', 'spx']
-len(lex.AO1990)                # 5474
+len(lex.AO1990)                # 5475
 len(lex.silent_p_words)        # 15
 len(lex.voiced_u_words)        # 324
 lex.possible_postags["acordo"] # ['NOUN', 'VERB']
