@@ -1,73 +1,115 @@
 # Quickstart
 
-`tugalex` is a lexicon handler for Portuguese dialects. One class,
-`TugaLexicon`, answers questions about a Portuguese word: how is it
-pronounced (IPA), how does it break into syllables, how does it spell across
-the AO1990 orthographic agreement, and which grammatical gender a noun or a
-given name has. All data ships in the package as CSV and gzip CSV. There is
-no network access, no model files, and no API keys.
+<!-- agent-hint
+covers: how to install TugaLex and run each lookup: word list, noun gender, given-name gender, homographs, and the deprecated dictionary and spelling calls
+source: `tugalex/__init__.py:TugaLexicon`, `tugalex/data/`
+generated: no
+verify: d=$(mktemp -d) && sed '/^```/d' docs/quickstart.md > $d/q.txt && python -I -m doctest $d/q.txt
+see: `api.md`, `advanced.md`, `index.md`
+-->
 
-## 1. Install
+This page walks through the lookups of `TugaLexicon`. All data ships in the package as CSV and gzip CSV. TugaLex needs no network access, no model files and no API keys.
+
+## Install
 
 ```bash
 pip install --pre tugalex
 ```
 
-There are no third-party runtime dependencies. The datasets live under
-`tugalex/data/`. `regional_dict.csv.gz` is the large one (about 2.5 MB
-compressed) and loads lazily the first time you touch phonemes, syllables,
-or regions.
+There are no third-party runtime dependencies. The datasets live under `tugalex/data/`. `regional_dict.csv.gz` is the large one, about 2.5 MB compressed. It loads the first time a call needs phonemes, syllables or regions.
 
-## 2. The one thing to understand
+## Look up the gender of a noun
 
-> **Deprecated.** The phoneme and syllable lookups below and the dictionary views `ipa`,
-> `syllables`, `regions` and `possible_postags` emit a `DeprecationWarning`.
-> TugaLex 3.0.0 removes them. The legacy `tugaphone.dialects`
-> inventories read them and stop working then. For Portuguese
-> pronunciation, use orthography2ipa with the pt-PT lexicon of
-> `o2i-lexicons`.
-
-Everything hangs off a single object. Construct it once and reuse it. The
-heavy CSV is parsed on first access and cached on the instance.
+`get_noun_gender` is a static method, so it needs no instance. It returns `"m"`, `"f"`, or `"mf"` for a noun of both genders. A listed exception decides first, and the suffix rules decide the rest.
 
 ```python
-from tugalex import TugaLexicon
-
-lex = TugaLexicon()
-
-info = lex.get("acordo", pos="NOUN", region="lbx")
-print(info)   # {'syllables': ['a', 'cor', 'do'], 'phonemes': 'ɐˈkoɾdu'}
+>>> from tugalex import TugaLexicon
+>>> TugaLexicon.get_noun_gender("lei")
+'f'
+>>> TugaLexicon.get_noun_gender("nações")
+'f'
+>>> TugaLexicon.get_noun_gender("artista")
+'mf'
+>>> TugaLexicon.get_noun_gender("zzk") is None
+True
 ```
 
-`get()` is the convenience call. Under it sit two focused lookups,
-`get_syllables()` and `get_phonemes()`, which you can call directly when you
-only need one half.
+## Look up the gender of a given name
 
-## 3. Part-of-speech matters
-
-Portuguese has heterophonic homographs: same spelling, different sound
-depending on the grammatical role. TugaLex keys 27 of them by POS. Pass the
-right `pos` and you get the right vowel. For every other word the POS does
-not change the answer.
+Write the name as in running text, with its capital letter and accents. The match is exact.
 
 ```python
-print(lex.get_phonemes("acordo", pos="NOUN"))   # ɐˈkoɾdu  (the noun: an accord)
-print(lex.get_phonemes("acordo", pos="VERB"))   # ɐˈkɔɾdu  (the verb: I wake up)
+>>> from tugalex import TugaLexicon
+>>> TugaLexicon.get_given_name_gender("Isabel")
+'f'
+>>> TugaLexicon.get_given_name_gender("Darci")
+'mf'
+>>> TugaLexicon.get_given_name_gender("isabel") is None
+True
 ```
 
-POS tags are uppercase Universal-Dependencies style: `NOUN`, `VERB`, `ADJ`,
-`ADP`, and so on. Ask a word which tags it carries with
-`lex.possible_postags["acordo"]`, which returns `['NOUN', 'VERB']`. A word
-outside the homograph table returns `['']`, its POS-free entry.
+## Read the word list
 
-## 4. Pick a dialect
-
-The dataset is region-indexed. Public ISO dialect codes map to internal
-region codes through `lang_to_region()`:
+`get_wordlist(region)` returns every word form of a region, lowercase and sorted. The default region is `lbx`.
 
 ```python
-lex.lang_to_region("pt-PT")   # 'lbx'  (Portugal)
-lex.lang_to_region("pt-BR")   # 'rjx'  (Brazil)
+>>> from tugalex import TugaLexicon
+>>> lex = TugaLexicon()
+>>> len(lex.get_wordlist("lbx"))
+53147
+>>> len(lex.get_wordlist("spx"))
+53145
+```
+
+## Part of speech decides a homograph
+
+Portuguese has heterophonic homographs: the same spelling, a different sound for each grammatical role. TugaLex keys 27 of them by part of speech (POS). `homographs` maps each word to its POS and its IPA transcription.
+
+```python
+>>> from tugalex import TugaLexicon
+>>> lex = TugaLexicon()
+>>> lex.homographs["acordo"]
+{'NOUN': 'ɐˈkoɾdu', 'VERB': 'ɐˈkɔɾdu'}
+>>> len(lex.homographs)
+27
+```
+
+POS tags are uppercase Universal-Dependencies style: `NOUN`, `VERB`, `ADJ`, `ADP`, and so on.
+
+## Deprecated: phonemes, syllables and dialects
+
+> **Deprecated.** The phoneme and syllable lookups below and the dictionary views `ipa`, `syllables`, `regions` and `possible_postags` emit a `DeprecationWarning`. TugaLex 3.0.0 removes them. The legacy `tugaphone.dialects` inventories read them and stop working then. For Portuguese pronunciation, use orthography2ipa with the pt-PT lexicon of `o2i-lexicons`.
+
+`get()` returns the syllables and the phonemes of a word for a region. `get_syllables()` and `get_phonemes()` return one half each.
+
+```python
+>>> import warnings
+>>> warnings.simplefilter("ignore")
+>>> from tugalex import TugaLexicon
+>>> lex = TugaLexicon()
+>>> lex.get("acordo", pos="NOUN", region="lbx")
+{'syllables': ['a', 'cor', 'do'], 'phonemes': 'ɐˈkoɾdu'}
+>>> lex.get_phonemes("acordo", pos="NOUN")
+'ɐˈkoɾdu'
+>>> lex.get_phonemes("acordo", pos="VERB")
+'ɐˈkɔɾdu'
+>>> lex.get_syllables("casa")
+['ca', 'sa']
+```
+
+The dataset is region-indexed. `lang_to_region()` maps a public ISO dialect code to the internal region code, and the lookups take the region code.
+
+```python
+>>> import warnings
+>>> warnings.simplefilter("ignore")
+>>> from tugalex import TugaLexicon
+>>> lex = TugaLexicon()
+>>> lex.lang_to_region("pt-PT"), lex.lang_to_region("pt-BR")
+('lbx', 'rjx')
+>>> lex.get_phonemes("acordo", pos="NOUN", region="rjx")
+'ɐˈkoɾdu'
+>>> lex.possible_postags["acordo"]
+['NOUN', 'VERB']
 ```
 
 | ISO code | Region | Place |
@@ -79,35 +121,27 @@ lex.lang_to_region("pt-BR")   # 'rjx'  (Brazil)
 | `pt-TL` | `dli` | Timor-Leste |
 | none | `spx` | Brazil (São Paulo) |
 
-Pass the region code straight into the lookups:
+`spx` has no ISO alias. Pass it as `region="spx"`. A word outside the homograph table has the single tag `''` in `possible_postags`, its POS-free entry.
+
+## Deprecated: spelling conversion
+
+> **Deprecated.** desacordo_ortografico owns the spelling table. The TugaLex spelling methods (`modern_spelling`, `normalize_ao1900`, `reverse_ao1900_pt` and `reverse_ao1900_br`) emit a `DeprecationWarning` and return the frozen TugaLex tables. TugaLex 3.0.0 removes them. The [API reference](api.md#deprecated-names) names the replacement of each one.
+
+Install the replacement with `pip install --pre desacordo_ortografico`, and call `convert(text, source, target)`.
 
 ```python
-lex.get_phonemes("acordo", pos="NOUN", region="rjx")
+>>> from desacordo_ortografico import convert
+>>> convert("acção óptimo", "pt_1973", "ao1990-pt")
+'ação ótimo'
+>>> convert("ótimo", "ao1990-pt", "pt_1973")
+'óptimo'
+>>> convert("o ato", "ao1990-br", "br_1971")
+'o ato'
+>>> convert("Acção, óptimo!", "pt_1973", "ao1990-pt")
+'Ação, ótimo!'
 ```
 
-## 5. Orthographic agreement (AO1990)
-
-> **Deprecated.** desacordo_ortografico owns the spelling table. The TugaLex
-> AO1990 methods (`modern_spelling`, `normalize_ao1900`, `reverse_ao1900_pt`
-> and `reverse_ao1900_br`) emit a `DeprecationWarning` and return the frozen
-> TugaLex tables. TugaLex 3.0.0 removes them. The
-> [API reference](api.md#orthographic-agreement-ao1990) names the replacement
-> of each one.
-
-Convert between pre-agreement and modern spelling with
-`desacordo_ortografico.convert(text, source, target)`. Install it with
-`pip install --pre desacordo_ortografico`.
-
-```python
-from desacordo_ortografico import convert
-
-convert("acção óptimo", "pt_1973", "ao1990-pt")   # 'ação ótimo'    (old to modern)
-convert("ótimo", "ao1990-pt", "pt_1973")          # 'óptimo'        (modern to old PT-PT)
-convert("o ato", "ao1990-br", "br_1971")          # 'o ato'         (modern to old PT-BR)
-```
-
-Words with no mapping pass through unchanged. Punctuation and capitals stay:
-`convert("Acção, óptimo!", "pt_1973", "ao1990-pt")` gives `'Ação, ótimo!'`.
+A word with no mapping passes through unchanged. Punctuation and capitals stay.
 
 ---
-[Home](../README.md) · [API reference →](api.md)
+[Home](index.md) · [API reference →](api.md)
