@@ -32,7 +32,7 @@ uv pip install --python .venv/bin/python --prerelease=allow -e ".[test]" desacor
 .venv/bin/python -m pytest tests
 ```
 
-Use uv, never pip. The `desacordo_ortografico` install is only for the doctest checks of the documentation. The build scripts download their sources, so run them only to regenerate a dataset.
+Use uv, never pip. Each `verify` command calls `python`, so run `source .venv/bin/activate` first. The `desacordo_ortografico` install is only for the doctest checks of the documentation. Three build scripts download their sources, and `build_wordlist.py` reads a local dictionary file (`--dictionary PATH`). Run them only to regenerate a dataset.
 
 ## Hard rules
 

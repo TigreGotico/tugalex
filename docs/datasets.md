@@ -63,7 +63,7 @@ The scraped Portal data with all ten regional variants is the [`portuguese_phone
 
 ## Rebuild a dataset
 
-The build scripts download their sources, so run them only to regenerate a dataset.
+Three build scripts download their sources, and `build_wordlist.py` reads a local dictionary file (`--dictionary PATH`). Run them only to regenerate a dataset.
 
 ```bash
 python scripts/build_regional_dict.py
@@ -77,7 +77,7 @@ python scripts/build_given_names.py
 - `build_noun_gender.py` reads the noun genders of the English Wiktionary.
 - `build_given_names.py` reads Wikidata (CC0) and the IBGE 2010 census first names published by datasets-br/prenomes (ODC-PDDL-1.0).
 
-Three override files correct the sources: `scripts/noun_gender_overrides.csv`, `scripts/given_name_overrides.csv` and `scripts/regional_dict_additions.csv` with `scripts/regional_dict_errata.csv`. Each row of `scripts/given_name_overrides.csv` carries its evidence in the `reason` column.
+Four override files correct the sources: `scripts/noun_gender_overrides.csv`, `scripts/given_name_overrides.csv` and `scripts/regional_dict_additions.csv` with `scripts/regional_dict_errata.csv`. Each row of `scripts/given_name_overrides.csv` carries its evidence in the `reason` column.
 
 ## Related projects
 
