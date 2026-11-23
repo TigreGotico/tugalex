@@ -570,7 +570,7 @@ class TugaLexicon:
         The exceptions list decides first, then the suffix rules
         (``NOUN_GENDER_SUFFIXES``). The exceptions list also holds the words
         that are never nouns, such as adverbs, prepositions and pronouns
-        ("ainda", "para", "nada"). Such a word gets None, and the suffix rules
+        ("ainda", "para", "cada"). Such a word gets None, and the suffix rules
         do not apply to it.
 
         Args:

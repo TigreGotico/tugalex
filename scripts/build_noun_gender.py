@@ -24,21 +24,19 @@ when the word has no other entry. A gender with a regional label ("Brazil",
 "Portugal") is kept, so the noun becomes ``mf``.
 
 ``scripts/noun_gender_overrides.csv`` then sets the gender of forms that a
-rare loanword sense would make both-gender ("cores": "a cor", beside the
-computing term "o core").
+rare sense would make both-gender: a loanword ("cores": "a cor", beside the
+computing term "o core") or an insult ("banana": "o banana", a weakling).
 
-Words that are never nouns get an empty gender, so that
+A word with a noun entry gets the gender of that entry, also when it is an
+adverb, preposition, pronoun or other closed-class word too ("o nada", "a
+via", "o caso"). Words that are never nouns get an empty gender, so that
 ``get_noun_gender`` returns None for them and does not apply the suffix
 rules. These are the words that Wiktionary lists as an adverb, preposition,
 conjunction, pronoun, determiner, article, contraction or interjection and
-not as a noun ("ainda", "para", "olá"), and the words that are also an
-article, pronoun, determiner, conjunction or contraction ("os", "todo",
-"nada"). A preposition with a noun entry keeps its gender ("vezes", "via",
-"segundo"), and so does an adverb or interjection with a noun entry ("fora",
-"antes"). An empty gender is written only where the suffix rules give a
-gender. Words that are also a letter are left out. Proper nouns, words with a
-capital letter, a space, a digit or an edge hyphen, and one-letter words are
-left out too.
+not as a noun ("ainda", "para", "cada"). An empty gender is written only
+where the suffix rules give a gender. Proper nouns, words with a capital
+letter, a space, a digit or an edge hyphen, and one-letter words are left
+out.
 
 The output is a gzip-compressed CSV with a ``word,gender`` header, sorted::
 
@@ -68,11 +66,10 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = REPO_ROOT / "tugalex" / "data" / "noun_gender_exceptions.csv.gz"
 OVERRIDES = Path(__file__).resolve().parent / "noun_gender_overrides.csv"
 
-CLOSED_CLASS_POS = {"article", "pron", "det", "conj", "contraction", "character"}
 # Word classes whose words are not nouns unless they also have a noun entry.
-NON_NOUN_POS = CLOSED_CLASS_POS - {"character"} | {"adv", "prep", "intj"}
+NON_NOUN_POS = {"adv", "prep", "conj", "pron", "det", "article", "contraction", "intj"}
 # An entry whose every sense carries one of these tags is marginal. A marginal
-# closed-class entry ("nozes" for "nós") does not drop the noun, and a
+# closed-class entry ("nozes" for "nós") does not make a word a non-noun, and a
 # marginal noun entry ("cor" m, poetic "heart") gives no gender to a word that
 # has an ordinary noun entry ("cor" f, "colour").
 MARGINAL_SENSE_TAGS = {"alt-of", "misspelling", "misconstruction", "obsolete",
@@ -163,19 +160,12 @@ def build(source: str) -> tuple[dict[str, str], str]:
     # gender counts only for a word that has no ordinary entry.
     genders: dict[str, set[str]] = defaultdict(set)
     marginal: dict[str, set[str]] = defaultdict(set)
-    closed_class: set[str] = set()
     non_nouns: set[str] = set()
-    prepositions: set[str] = set()
     entries = 0
     for entry in read_entries(stream, source):
         word, pos = entry.get("word", ""), entry.get("pos")
-        if not is_marginal(entry):
-            if pos in CLOSED_CLASS_POS:
-                closed_class.add(word.lower())
-            if pos in NON_NOUN_POS:
-                non_nouns.add(word.lower())
-            if pos == "prep":
-                prepositions.add(word.lower())
+        if pos in NON_NOUN_POS and not is_marginal(entry):
+            non_nouns.add(word.lower())
         if pos != "noun":
             continue
         lemma = entry_genders(entry)
@@ -192,7 +182,7 @@ def build(source: str) -> tuple[dict[str, str], str]:
     lexicon = {}
     for word in genders.keys() | marginal.keys():
         gender = genders.get(word) or marginal[word]
-        if keep(word) and (word not in closed_class or word in prepositions):
+        if keep(word):
             lexicon[word] = "mf" if gender == {"m", "f"} else next(iter(gender))
     nouns = len(lexicon)
     for word in non_nouns:

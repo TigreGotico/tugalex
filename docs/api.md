@@ -79,7 +79,7 @@ The gender that the suffix rules alone give a word, or `None`. It ignores the ex
 True
 ```
 
-`scripts/build_noun_gender.py` regenerates the exceptions file. It compares the suffix rules with the noun genders of the English Wiktionary and keeps the nouns that the rules get wrong or do not cover, and every noun of both genders. It also keeps, with an empty gender, the words that Wiktionary lists only as an adverb, preposition, conjunction, pronoun, determiner, article, contraction or interjection and that the suffix rules give a gender. A word that is also an article, pronoun, determiner, conjunction or contraction gets an empty gender too (`todo`, `os`), unless it is also a preposition with a noun entry (`segundo`). `scripts/noun_gender_overrides.csv` sets the gender of forms that a rare loanword sense would make both-gender (`cores`: "a cor", beside the computing term "o core").
+`scripts/build_noun_gender.py` regenerates the exceptions file. It compares the suffix rules with the noun genders of the English Wiktionary and keeps the nouns that the rules get wrong or do not cover, and every noun of both genders. A word with a noun entry gets the gender of that entry, also when it is a pronoun or an adverb too (`nada`: "o nada"). The script also keeps, with an empty gender, the words that Wiktionary lists as an adverb, preposition, conjunction, pronoun, determiner, article, contraction or interjection and not as a noun, where the suffix rules give a gender. `scripts/noun_gender_overrides.csv` sets the gender of forms that a rare sense would make both-gender: a loanword (`cores`: "a cor", beside the computing term "o core") or an insult (`banana`: "o banana", a weakling).
 
 ## Given-name gender
 
