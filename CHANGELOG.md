@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.7a1](https://github.com/TigreGotico/tugalex/tree/2.5.7a1) (2026-11-23)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.6a3...2.5.7a1)
+
+**Merged pull requests:**
+
+- fix: return None for closed-class words in get\_noun\_gender [\#111](https://github.com/TigreGotico/tugalex/pull/111) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.5.6a3](https://github.com/TigreGotico/tugalex/tree/2.5.6a3) (2026-11-21)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.6a2...2.5.6a3)
