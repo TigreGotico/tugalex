@@ -24,14 +24,35 @@ when the word has no other entry. A gender with a regional label ("Brazil",
 "Portugal") is kept, so the noun becomes ``mf``.
 
 ``scripts/noun_gender_overrides.csv`` then sets the gender of forms that a
-rare loanword sense would make both-gender ("cores": "a cor", beside the
-computing term "o core").
+rare sense would make both-gender: a loanword ("cores": "a cor", beside the
+computing term "o core") or an insult ("banana": "o banana", a weakling).
+It also sets, with a Priberam citation, nouns that the English Wiktionary
+lists only in a closed class ("contra": "o contra"), and the usual sense of a
+word whose rare senses would give it a gender ("ás": "o ás", the ace). An
+empty gender marks a word whose usual sense has no gender ("mas", "but";
+"pra", the informal "para"; "agora", "now").
 
-Words that are also an article, pronoun, determiner, conjunction, contraction
-or letter ("a", "os", "ou", "todo") are left out. Prepositions stay, because
-several of them are also common nouns ("vezes", "via", "segundo"). Proper
-nouns, words with a capital letter, a space, a digit or an edge hyphen, and
-one-letter words are left out too.
+A determiner, pronoun, article, numeral or contraction with a gender gets
+that gender, also when the word has a noun entry ("uma", "as", "toda" f;
+"um", "os", "este" m). The gender comes from the head template, from a
+"feminine" or "masculine" sense tag, or from the forms table: a form tagged
+"feminine" is feminine, and the entry that lists it is masculine ("este",
+beside "esta"). A head or sense that names both genders marks a word of
+invariable gender ("qual") and gives none. A word whose entries give both
+genders is ``mf``. A contraction takes the gender that Wiktionary tags on
+it ("da" f, "ao" m); an untagged contraction ("disso") has none, and
+returns None.
+
+Otherwise a word with a noun entry gets the gender of that entry, also when
+it is an adverb, preposition, pronoun or other closed-class word too ("o
+dado", "a via", "o caso"). The words that Wiktionary lists only as an
+adverb, preposition, conjunction, pronoun, determiner, article, contraction
+or interjection, with no gender, get an empty gender ("ainda", "para",
+"cada"). ``get_noun_gender`` returns None for them and does not apply the
+suffix rules. An empty gender is written only where the suffix rules give a
+gender. Proper nouns, words with a capital
+letter, a space, a digit or an edge hyphen, and one-letter words are left
+out.
 
 The output is a gzip-compressed CSV with a ``word,gender`` header, sorted::
 
@@ -61,9 +82,13 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = REPO_ROOT / "tugalex" / "data" / "noun_gender_exceptions.csv.gz"
 OVERRIDES = Path(__file__).resolve().parent / "noun_gender_overrides.csv"
 
-CLOSED_CLASS_POS = {"article", "pron", "det", "conj", "contraction", "character"}
+# Word classes whose words are not nouns unless they also have a noun entry.
+NON_NOUN_POS = {"adv", "prep", "conj", "pron", "det", "article", "contraction", "intj"}
+# Word classes whose words agree in gender with a noun; their gender comes
+# before the gender of a noun entry.
+AGREEING_POS = {"det", "pron", "article", "num", "contraction"}
 # An entry whose every sense carries one of these tags is marginal. A marginal
-# closed-class entry ("nozes" for "nós") does not drop the noun, and a
+# closed-class entry ("nozes" for "nós") does not make a word a non-noun, and a
 # marginal noun entry ("cor" m, poetic "heart") gives no gender to a word that
 # has an ordinary noun entry ("cor" f, "colour").
 MARGINAL_SENSE_TAGS = {"alt-of", "misspelling", "misconstruction", "obsolete",
@@ -76,6 +101,7 @@ MINORITY_LABELS = re.compile(r"obsolete|nonstandard|proscribed|rare|uncommon|"
 FORM_TAGS = {"plural", "feminine", "masculine", "Portugal", "Brazil"}
 GENDER_CODES = {"m": {"m"}, "f": {"f"}, "m-p": {"m"}, "f-p": {"f"},
                 "mf": {"m", "f"}, "mfbysense": {"m", "f"}, "mfequiv": {"m", "f"}}
+GENDER_TAGS = {"masculine": "m", "feminine": "f"}
 
 
 def split_specs(arg: str) -> list[str]:
@@ -143,8 +169,43 @@ def read_entries(stream: IO[bytes], name: str) -> Iterator[dict]:
 
 
 def is_marginal(entry: dict) -> bool:
-    """Whether every sense of an entry is a marginal use."""
+    """Whether every sense of an entry is a marginal use. A contraction is never
+    marginal: kaikki tags every "contraction of X + Y" sense "alt-of"."""
+    if entry.get("pos") == "contraction":
+        return False
     return all(MARGINAL_SENSE_TAGS & set(sense.get("tags", [])) for sense in entry.get("senses", []))
+
+
+def single_gender(genders: set[str]) -> set[str]:
+    """One gender, or nothing for a word of invariable gender."""
+    return genders if len(genders) == 1 else set()
+
+
+def agreeing_genders(entry: dict) -> dict[str, set[str]]:
+    """The genders that a determiner, pronoun, article, numeral or contraction
+    entry gives its word and the gendered forms in its forms table."""
+    genders: dict[str, set[str]] = defaultdict(set)
+    for form in entry.get("forms", []):
+        tags = set(form.get("tags", []))
+        if tags <= FORM_TAGS and tags & GENDER_TAGS.keys():
+            genders[form["form"]] |= single_gender({GENDER_TAGS[tag] for tag in tags if tag in GENDER_TAGS})
+    if any("f" in gender for gender in genders.values()):
+        # The entry that lists a feminine form is the masculine ("este",
+        # beside "esta"). Its sense tags describe a use of its forms ("um",
+        # "usually feminine" in "uma grande festa").
+        genders[entry["word"]].add("m")
+        return genders
+    own: set[str] = set()
+    for head in entry.get("head_templates", []):
+        args = head.get("args", {})
+        codes = [args[k] for k in ("g", "g2", "g3") if args.get(k)]
+        if head.get("name") in ("pt-pron", "pt-det") and args.get("1"):
+            codes.append(args["1"])
+        own |= single_gender({g for code in codes for g in GENDER_CODES.get(code.removesuffix("-s"), set())})
+    for sense in entry.get("senses", []):
+        own |= single_gender({GENDER_TAGS[tag] for tag in sense.get("tags", []) if tag in GENDER_TAGS})
+    genders[entry["word"]] |= own
+    return genders
 
 
 def build(source: str) -> tuple[dict[str, str], str]:
@@ -154,12 +215,16 @@ def build(source: str) -> tuple[dict[str, str], str]:
     # gender counts only for a word that has no ordinary entry.
     genders: dict[str, set[str]] = defaultdict(set)
     marginal: dict[str, set[str]] = defaultdict(set)
-    closed_class: set[str] = set()
+    non_nouns: set[str] = set()
+    agreeing: dict[str, set[str]] = defaultdict(set)
     entries = 0
     for entry in read_entries(stream, source):
         word, pos = entry.get("word", ""), entry.get("pos")
-        if pos in CLOSED_CLASS_POS and not is_marginal(entry):
-            closed_class.add(word.lower())
+        if pos in NON_NOUN_POS and not is_marginal(entry):
+            non_nouns.add(word.lower())
+        if pos in AGREEING_POS and not is_marginal(entry):
+            for form, form_genders in agreeing_genders(entry).items():
+                agreeing[form.lower()] |= form_genders
         if pos != "noun":
             continue
         lemma = entry_genders(entry)
@@ -176,10 +241,17 @@ def build(source: str) -> tuple[dict[str, str], str]:
     lexicon = {}
     for word in genders.keys() | marginal.keys():
         gender = genders.get(word) or marginal[word]
-        if keep(word) and word not in closed_class:
+        if keep(word):
             lexicon[word] = "mf" if gender == {"m", "f"} else next(iter(gender))
-    print(f"{entries} noun entries with a gender in, {len(lexicon)} words out "
-          f"({len(closed_class & (genders.keys() | marginal.keys()))} closed-class words dropped)")
+    nouns = len(lexicon)
+    gendered = {word: "mf" if gender == {"m", "f"} else next(iter(gender))
+                for word, gender in agreeing.items() if keep(word) and gender}
+    lexicon |= gendered
+    for word in non_nouns:
+        if keep(word) and word not in lexicon:
+            lexicon[word] = ""
+    print(f"{entries} noun entries with a gender in, {nouns} nouns, {len(gendered)} agreeing words "
+          f"and {sum(1 for g in lexicon.values() if not g)} non-nouns out")
     return lexicon, date
 
 
@@ -192,8 +264,12 @@ def apply_overrides(lexicon: dict[str, str]) -> None:
 
 
 def exceptions(lexicon: dict[str, str]) -> dict[str, str]:
-    """The nouns whose gender the suffix rules get wrong or do not give."""
-    return {word: gender for word, gender in lexicon.items() if suffix_noun_gender(word) != gender}
+    """The words whose gender the suffix rules get wrong or do not give.
+
+    A non-noun has an empty gender, which the suffix rules get wrong only when
+    they give it a gender.
+    """
+    return {word: gender for word, gender in lexicon.items() if (suffix_noun_gender(word) or "") != gender}
 
 
 def write(listed: dict[str, str], output: Path) -> None:
@@ -205,7 +281,7 @@ def write(listed: dict[str, str], output: Path) -> None:
         writer.writerows(sorted(listed.items()))
         text.flush()
         text.detach()
-    counts = {g: sum(1 for v in listed.values() if v == g) for g in ("m", "f", "mf")}
+    counts = {g or "non-noun": sum(1 for v in listed.values() if v == g) for g in ("m", "f", "mf", "")}
     print(f"wrote {output} ({output.stat().st_size} bytes): {len(listed)} exceptions {counts}")
 
 
@@ -219,7 +295,7 @@ def main() -> None:
     print(f"source: {args.source} ({date})")
     apply_overrides(lexicon)
     listed = exceptions(lexicon)
-    print(f"{len(lexicon)} nouns in, {len(listed)} exceptions out, "
+    print(f"{len(lexicon)} words in, {len(listed)} exceptions out, "
           f"{len(lexicon) - len(listed)} read correctly by the suffix rules")
     write(listed, args.output)
 

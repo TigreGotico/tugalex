@@ -20,7 +20,7 @@ There are no third-party runtime dependencies. The datasets live under `tugalex/
 
 ## Look up the gender of a noun
 
-`get_noun_gender` is a static method, so it needs no instance. It returns `"m"`, `"f"`, or `"mf"` for a noun of both genders. A listed exception decides first, and the suffix rules decide the rest.
+`get_noun_gender` is a static method, so it needs no instance. It returns `"m"`, `"f"`, or `"mf"` for a noun of both genders. A listed exception decides first, and the suffix rules decide the rest. A word that Wiktionary lists only in a closed class and with no gender, such as `ainda` or `para`, gets `None`.
 
 ```python
 >>> from tugalex import TugaLexicon
@@ -31,6 +31,8 @@ There are no third-party runtime dependencies. The datasets live under `tugalex/
 >>> TugaLexicon.get_noun_gender("artista")
 'mf'
 >>> TugaLexicon.get_noun_gender("zzk") is None
+True
+>>> TugaLexicon.get_noun_gender("para") is None
 True
 ```
 
