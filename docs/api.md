@@ -45,9 +45,9 @@ Region codes are `lbx` (Portugal), `rjx` (Brazil, Rio de Janeiro), `spx` (Brazil
 
 The grammatical gender of a Portuguese common noun, singular or plural, in any letter case. It is a static method and needs no instance.
 
-It returns `"m"` or `"f"`, `"mf"` for a noun of both genders, or `None` when no rule applies and the noun is not listed. A noun of both genders is a common-gender noun (`"o/a artista"`), a noun whose gender changes with its meaning (`"o capital"`, `"a capital"`), or a noun whose gender differs between Portugal and Brazil.
+It returns `"m"` or `"f"`, `"mf"` for a noun of both genders, or `None`. It returns `None` for a word that is never a noun, and when no rule applies and the word is not listed. A noun of both genders is a common-gender noun (`"o/a artista"`), a noun whose gender changes with its meaning (`"o capital"`, `"a capital"`), or a noun whose gender differs between Portugal and Brazil.
 
-The exceptions file `tugalex/data/noun_gender_exceptions.csv.gz` decides first. Then the suffix rules in `tugalex.NOUN_GENDER_SUFFIXES` apply, in order. The suffixes `-ção`, `-são`, `-dade`, `-tude`, `-gem`, `-eza` and `-ise` are feminine. The suffixes `-o` (not `-ão`), `-or` and `-ume` are masculine, and `-a` is feminine. Plural forms of each suffix match too. The caller decides whether the word is a noun, because function words get an answer from the suffix rules too.
+The exceptions file `tugalex/data/noun_gender_exceptions.csv.gz` decides first. Then the suffix rules in `tugalex.NOUN_GENDER_SUFFIXES` apply, in order. The suffixes `-ção`, `-são`, `-dade`, `-tude`, `-gem`, `-eza` and `-ise` are feminine. The suffixes `-o` (not `-ão`), `-or` and `-ume` are masculine, and `-a` is feminine. Plural forms of each suffix match too. The exceptions file also lists the words that are never nouns, such as adverbs, prepositions and pronouns, with an empty gender. These words get `None`, and the suffix rules do not apply to them.
 
 ```python
 >>> from tugalex import TugaLexicon
@@ -61,9 +61,11 @@ The exceptions file `tugalex/data/noun_gender_exceptions.csv.gz` decides first. 
 'mf'
 >>> TugaLexicon.get_noun_gender("zzk") is None
 True
+>>> TugaLexicon.get_noun_gender("ainda") is None
+True
 ```
 
-`lei` and `dias` come from the exceptions file, `nações` from the suffix `-ção`.
+`lei` and `dias` come from the exceptions file, `nações` from the suffix `-ção`. `ainda` is an adverb, so the exceptions file gives it no gender.
 
 ### `suffix_noun_gender(word) -> Optional[str]`
 
@@ -77,7 +79,7 @@ The gender that the suffix rules alone give a word, or `None`. It ignores the ex
 True
 ```
 
-`scripts/build_noun_gender.py` regenerates the exceptions file. It compares the suffix rules with the noun genders of the English Wiktionary and keeps the nouns that the rules get wrong or do not cover, and every noun of both genders. `scripts/noun_gender_overrides.csv` sets the gender of forms that a rare loanword sense would make both-gender (`cores`: "a cor", beside the computing term "o core").
+`scripts/build_noun_gender.py` regenerates the exceptions file. It compares the suffix rules with the noun genders of the English Wiktionary and keeps the nouns that the rules get wrong or do not cover, and every noun of both genders. It also keeps, with an empty gender, the words that Wiktionary lists only as an adverb, preposition, conjunction, pronoun, determiner, article, contraction or interjection and that the suffix rules give a gender. A word that is also an article, pronoun, determiner, conjunction or contraction gets an empty gender too (`todo`, `os`), unless it is also a preposition with a noun entry (`segundo`). `scripts/noun_gender_overrides.csv` sets the gender of forms that a rare loanword sense would make both-gender (`cores`: "a cor", beside the computing term "o core").
 
 ## Given-name gender
 

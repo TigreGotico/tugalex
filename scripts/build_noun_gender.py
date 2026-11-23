@@ -27,11 +27,18 @@ when the word has no other entry. A gender with a regional label ("Brazil",
 rare loanword sense would make both-gender ("cores": "a cor", beside the
 computing term "o core").
 
-Words that are also an article, pronoun, determiner, conjunction, contraction
-or letter ("a", "os", "ou", "todo") are left out. Prepositions stay, because
-several of them are also common nouns ("vezes", "via", "segundo"). Proper
-nouns, words with a capital letter, a space, a digit or an edge hyphen, and
-one-letter words are left out too.
+Words that are never nouns get an empty gender, so that
+``get_noun_gender`` returns None for them and does not apply the suffix
+rules. These are the words that Wiktionary lists as an adverb, preposition,
+conjunction, pronoun, determiner, article, contraction or interjection and
+not as a noun ("ainda", "para", "olá"), and the words that are also an
+article, pronoun, determiner, conjunction or contraction ("os", "todo",
+"nada"). A preposition with a noun entry keeps its gender ("vezes", "via",
+"segundo"), and so does an adverb or interjection with a noun entry ("fora",
+"antes"). An empty gender is written only where the suffix rules give a
+gender. Words that are also a letter are left out. Proper nouns, words with a
+capital letter, a space, a digit or an edge hyphen, and one-letter words are
+left out too.
 
 The output is a gzip-compressed CSV with a ``word,gender`` header, sorted::
 
@@ -62,6 +69,8 @@ OUTPUT = REPO_ROOT / "tugalex" / "data" / "noun_gender_exceptions.csv.gz"
 OVERRIDES = Path(__file__).resolve().parent / "noun_gender_overrides.csv"
 
 CLOSED_CLASS_POS = {"article", "pron", "det", "conj", "contraction", "character"}
+# Word classes whose words are not nouns unless they also have a noun entry.
+NON_NOUN_POS = CLOSED_CLASS_POS - {"character"} | {"adv", "prep", "intj"}
 # An entry whose every sense carries one of these tags is marginal. A marginal
 # closed-class entry ("nozes" for "nós") does not drop the noun, and a
 # marginal noun entry ("cor" m, poetic "heart") gives no gender to a word that
@@ -155,11 +164,18 @@ def build(source: str) -> tuple[dict[str, str], str]:
     genders: dict[str, set[str]] = defaultdict(set)
     marginal: dict[str, set[str]] = defaultdict(set)
     closed_class: set[str] = set()
+    non_nouns: set[str] = set()
+    prepositions: set[str] = set()
     entries = 0
     for entry in read_entries(stream, source):
         word, pos = entry.get("word", ""), entry.get("pos")
-        if pos in CLOSED_CLASS_POS and not is_marginal(entry):
-            closed_class.add(word.lower())
+        if not is_marginal(entry):
+            if pos in CLOSED_CLASS_POS:
+                closed_class.add(word.lower())
+            if pos in NON_NOUN_POS:
+                non_nouns.add(word.lower())
+            if pos == "prep":
+                prepositions.add(word.lower())
         if pos != "noun":
             continue
         lemma = entry_genders(entry)
@@ -176,10 +192,14 @@ def build(source: str) -> tuple[dict[str, str], str]:
     lexicon = {}
     for word in genders.keys() | marginal.keys():
         gender = genders.get(word) or marginal[word]
-        if keep(word) and word not in closed_class:
+        if keep(word) and (word not in closed_class or word in prepositions):
             lexicon[word] = "mf" if gender == {"m", "f"} else next(iter(gender))
-    print(f"{entries} noun entries with a gender in, {len(lexicon)} words out "
-          f"({len(closed_class & (genders.keys() | marginal.keys()))} closed-class words dropped)")
+    nouns = len(lexicon)
+    for word in non_nouns:
+        if keep(word) and word not in lexicon:
+            lexicon[word] = ""
+    print(f"{entries} noun entries with a gender in, {nouns} nouns and "
+          f"{len(lexicon) - nouns} non-nouns out")
     return lexicon, date
 
 
@@ -192,8 +212,12 @@ def apply_overrides(lexicon: dict[str, str]) -> None:
 
 
 def exceptions(lexicon: dict[str, str]) -> dict[str, str]:
-    """The nouns whose gender the suffix rules get wrong or do not give."""
-    return {word: gender for word, gender in lexicon.items() if suffix_noun_gender(word) != gender}
+    """The words whose gender the suffix rules get wrong or do not give.
+
+    A non-noun has an empty gender, which the suffix rules get wrong only when
+    they give it a gender.
+    """
+    return {word: gender for word, gender in lexicon.items() if (suffix_noun_gender(word) or "") != gender}
 
 
 def write(listed: dict[str, str], output: Path) -> None:
@@ -205,7 +229,7 @@ def write(listed: dict[str, str], output: Path) -> None:
         writer.writerows(sorted(listed.items()))
         text.flush()
         text.detach()
-    counts = {g: sum(1 for v in listed.values() if v == g) for g in ("m", "f", "mf")}
+    counts = {g or "non-noun": sum(1 for v in listed.values() if v == g) for g in ("m", "f", "mf", "")}
     print(f"wrote {output} ({output.stat().st_size} bytes): {len(listed)} exceptions {counts}")
 
 
@@ -219,7 +243,7 @@ def main() -> None:
     print(f"source: {args.source} ({date})")
     apply_overrides(lexicon)
     listed = exceptions(lexicon)
-    print(f"{len(lexicon)} nouns in, {len(listed)} exceptions out, "
+    print(f"{len(lexicon)} words in, {len(listed)} exceptions out, "
           f"{len(lexicon) - len(listed)} read correctly by the suffix rules")
     write(listed, args.output)
 
