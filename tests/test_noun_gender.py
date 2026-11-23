@@ -100,6 +100,15 @@ def test_noun_from_dictionary(word):
     assert TugaLexicon.get_noun_gender(word) == "m"
 
 
+# The usual sense decides. "mas" is usually the conjunction "but" (Priberam
+# lists "conjunção adversativa" first), so the override gives it an empty
+# gender: "Tenho 2 mas não chegam" has no noun after the number. "ás" is
+# usually the noun "o ás" (the ace); "ás" for "às" is an obsolete spelling.
+@pytest.mark.parametrize("word,gender", [("mas", None), ("Mas", None), ("ás", "m")])
+def test_usual_sense_decides(word, gender):
+    assert TugaLexicon.get_noun_gender(word) == gender
+
+
 # The fruit is feminine. The masculine readings are rare senses ("o banana",
 # a weakling; the surname "Laranja"), so scripts/noun_gender_overrides.csv
 # sets them to "f".

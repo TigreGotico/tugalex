@@ -27,7 +27,9 @@ when the word has no other entry. A gender with a regional label ("Brazil",
 rare sense would make both-gender: a loanword ("cores": "a cor", beside the
 computing term "o core") or an insult ("banana": "o banana", a weakling).
 It also sets, with a Priberam citation, nouns that the English Wiktionary
-lists only in a closed class ("contra": "o contra").
+lists only in a closed class ("contra": "o contra"), and the usual sense of a
+word whose rare senses would give it a gender ("ás": "o ás", the ace). An
+empty gender marks a word whose usual sense has no gender ("mas", "but").
 
 A determiner, pronoun, article, numeral or contraction with a gender gets
 that gender, also when the word has a noun entry ("uma", "as", "toda" f;
