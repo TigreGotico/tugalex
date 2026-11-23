@@ -29,7 +29,8 @@ computing term "o core") or an insult ("banana": "o banana", a weakling).
 It also sets, with a Priberam citation, nouns that the English Wiktionary
 lists only in a closed class ("contra": "o contra"), and the usual sense of a
 word whose rare senses would give it a gender ("ás": "o ás", the ace). An
-empty gender marks a word whose usual sense has no gender ("mas", "but").
+empty gender marks a word whose usual sense has no gender ("mas", "but";
+"pra", the informal "para"; "agora", "now").
 
 A determiner, pronoun, article, numeral or contraction with a gender gets
 that gender, also when the word has a noun entry ("uma", "as", "toda" f;
@@ -38,12 +39,13 @@ that gender, also when the word has a noun entry ("uma", "as", "toda" f;
 "feminine" is feminine, and the entry that lists it is masculine ("este",
 beside "esta"). A head or sense that names both genders marks a word of
 invariable gender ("qual") and gives none. A word whose entries give both
-genders is ``mf``. A contraction takes the gender of its article or
-pronoun part ("da" f, "ao" m); a neuter contraction ("disso") has none.
+genders is ``mf``. A contraction takes the gender that Wiktionary tags on
+it ("da" f, "ao" m); an untagged contraction ("disso") has none, and
+returns None.
 
 Otherwise a word with a noun entry gets the gender of that entry, also when
 it is an adverb, preposition, pronoun or other closed-class word too ("o
-nada", "a via", "o caso"). The words that Wiktionary lists only as an
+dado", "a via", "o caso"). The words that Wiktionary lists only as an
 adverb, preposition, conjunction, pronoun, determiner, article, contraction
 or interjection, with no gender, get an empty gender ("ainda", "para",
 "cada"). ``get_noun_gender`` returns None for them and does not apply the

@@ -51,12 +51,16 @@ def test_no_rule_and_not_listed(word):
     assert TugaLexicon.get_noun_gender(word) is None
 
 
-# Words that the English Wiktionary lists only in a closed class, with no
-# gender: adverbs, prepositions, pronouns, conjunctions, interjections
-# ("caramba") and neuter contractions ("disso" = de + isso).
+# Words whose usual sense is a closed-class word with no gender: adverbs,
+# prepositions, pronouns, conjunctions, interjections ("caramba"), neuter
+# contractions ("disso" = de + isso) and words of invariable gender ("qual",
+# "você"). A rare noun sense ("o agora", "o nada", "um senão") does not
+# decide: scripts/noun_gender_overrides.csv gives those words an empty gender,
+# citing Priberam. "pra" and "pa" are the informal "para".
 @pytest.mark.parametrize("word", [
     "ainda", "embora", "para", "cada", "caramba", "disso", "disto", "daquilo",
-    "Ainda", "PARA",
+    "Ainda", "PARA", "pra", "pa", "ou", "porém", "senão", "mais", "agora",
+    "nada", "eu", "si", "bastante", "qual", "você", "vocês",
 ])
 def test_closed_class_only(word):
     assert TugaLexicon.get_noun_gender(word) is None
@@ -78,14 +82,12 @@ def test_agreeing_word_keeps_gender(word, gender):
 
 
 # Other closed-class words with a noun entry in the English Wiktionary take
-# the gender of that entry: "o caso", "o dado", "o mal", "o nada"
-# (nothingness), "o agora" (the present time), "o fora" (a snub, Brazil),
-# "os antes" (plural only), "a via", "o segundo", "as vezes", "o lá" (the
-# note).
+# the gender of that entry: "o caso", "o dado", "o mal", "o fora" (a snub,
+# Brazil), "os antes" (plural only), "a via", "o segundo", "as vezes", "o lá"
+# (the note).
 @pytest.mark.parametrize("word,gender", [
-    ("caso", "m"), ("dado", "m"), ("mal", "m"), ("nada", "m"), ("agora", "m"),
-    ("fora", "m"), ("antes", "m"), ("via", "f"), ("segundo", "m"),
-    ("vezes", "f"), ("lá", "m"),
+    ("caso", "m"), ("dado", "m"), ("mal", "m"), ("fora", "m"), ("antes", "m"),
+    ("via", "f"), ("segundo", "m"), ("vezes", "f"), ("lá", "m"),
 ])
 def test_noun_entry_gives_gender(word, gender):
     assert TugaLexicon.get_noun_gender(word) == gender

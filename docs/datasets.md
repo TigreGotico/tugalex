@@ -20,7 +20,7 @@ This page lists the datasets under `tugalex/data/`, says how to rebuild each one
 | `acordo_ortografico_pt_PT.csv` | Pre-AO1990 Portugal spellings and their AO1990 forms: 4,757 rows. Deprecated. |
 | `acordo_ortografico_pt_BR.csv` | Pre-AO1990 Brazil spellings and their AO1990 forms: 2,123 rows. Deprecated. |
 | `archaisms.csv` | Normalised words from before the 20th century and their modern forms: 5,522 rows. Deprecated. |
-| `noun_gender_exceptions.csv.gz` | The nouns whose gender the suffix rules get wrong or do not cover, the nouns of both genders, and the closed-class words, some with an empty gender: 23,629 rows. |
+| `noun_gender_exceptions.csv.gz` | The nouns whose gender the suffix rules get wrong or do not cover, the nouns of both genders, and the closed-class words, some with an empty gender: 23,625 rows. |
 | `given_names.csv.gz` | Given names with their gender: 10,387 rows. |
 
 The spelling files are also published as the Hugging Face datasets [AO1990_pt-PT](https://huggingface.co/datasets/TigreGotico/AO1990_pt-PT), [AO1990_pt-BR](https://huggingface.co/datasets/TigreGotico/AO1990_pt-BR) and [archaisms_pt](https://huggingface.co/datasets/TigreGotico/archaisms_pt).
@@ -38,7 +38,7 @@ Count the rows of a packaged file with the standard library:
 10387
 >>> with gzip.open(data / "noun_gender_exceptions.csv.gz", "rt", encoding="utf-8") as f:
 ...     len(list(csv.DictReader(f)))
-23629
+23625
 >>> with (data / "archaisms.csv").open(encoding="utf-8") as f:
 ...     len(list(csv.DictReader(f)))
 5522
