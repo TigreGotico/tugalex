@@ -51,28 +51,53 @@ def test_no_rule_and_not_listed(word):
     assert TugaLexicon.get_noun_gender(word) is None
 
 
-# Words that the English Wiktionary lists as an adverb, preposition,
-# conjunction, pronoun, determiner or article, and not as a noun.
+# Words that the English Wiktionary lists only in a closed class, with no
+# gender: adverbs, prepositions, pronouns, conjunctions, interjections
+# ("caramba") and neuter contractions ("disso" = de + isso).
 @pytest.mark.parametrize("word", [
-    "ainda", "embora", "contra", "para", "cada", "uma", "outra",
+    "ainda", "embora", "para", "cada", "caramba", "disso", "disto", "daquilo",
     "Ainda", "PARA",
 ])
-def test_never_a_noun(word):
+def test_closed_class_only(word):
     assert TugaLexicon.get_noun_gender(word) is None
 
 
-# Closed-class words with a noun entry in the English Wiktionary take the
-# gender of that entry: "o caso", "o dado", "o mal", "o nada" (nothingness),
-# "o agora" (the present time), "o fora" (a snub, Brazil), "os antes" (plural
-# only), "a via", "o segundo", "as vezes", "o lá" (the note). "minha" is the
-# feminine of the noun "o meu" (mine, used substantively).
+# Determiners, pronouns, articles and contractions keep their grammatical
+# gender, also when the word has a noun entry ("o as", "os quanta").
+# Contractions take the gender of their article or pronoun part ("da" = de +
+# a, "ao" = a + o).
+@pytest.mark.parametrize("word,gender", [
+    ("uma", "f"), ("umas", "f"), ("as", "f"), ("esta", "f"), ("outra", "f"),
+    ("toda", "f"), ("todas", "f"), ("quanta", "f"), ("minha", "f"), ("ela", "f"),
+    ("um", "m"), ("os", "m"), ("este", "m"), ("todo", "m"), ("ele", "m"),
+    ("da", "f"), ("na", "f"), ("pela", "f"), ("numa", "f"), ("dessa", "f"),
+    ("do", "m"), ("no", "m"), ("ao", "m"), ("dos", "m"),
+])
+def test_agreeing_word_keeps_gender(word, gender):
+    assert TugaLexicon.get_noun_gender(word) == gender
+
+
+# Other closed-class words with a noun entry in the English Wiktionary take
+# the gender of that entry: "o caso", "o dado", "o mal", "o nada"
+# (nothingness), "o agora" (the present time), "o fora" (a snub, Brazil),
+# "os antes" (plural only), "a via", "o segundo", "as vezes", "o lá" (the
+# note).
 @pytest.mark.parametrize("word,gender", [
     ("caso", "m"), ("dado", "m"), ("mal", "m"), ("nada", "m"), ("agora", "m"),
     ("fora", "m"), ("antes", "m"), ("via", "f"), ("segundo", "m"),
-    ("vezes", "f"), ("lá", "m"), ("minha", "f"),
+    ("vezes", "f"), ("lá", "m"),
 ])
 def test_noun_entry_gives_gender(word, gender):
     assert TugaLexicon.get_noun_gender(word) == gender
+
+
+# Masculine nouns that the English Wiktionary lists without a noun entry.
+# scripts/noun_gender_overrides.csv sets them, citing Priberam: "o alto"
+# (the highest point), "o rápido" (rapids), "o positivo", "o contra", "o
+# hosana".
+@pytest.mark.parametrize("word", ["alto", "rápido", "positivo", "contra", "hosana"])
+def test_noun_from_dictionary(word):
+    assert TugaLexicon.get_noun_gender(word) == "m"
 
 
 # The fruit is feminine. The masculine readings are rare senses ("o banana",

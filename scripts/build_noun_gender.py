@@ -26,15 +26,27 @@ when the word has no other entry. A gender with a regional label ("Brazil",
 ``scripts/noun_gender_overrides.csv`` then sets the gender of forms that a
 rare sense would make both-gender: a loanword ("cores": "a cor", beside the
 computing term "o core") or an insult ("banana": "o banana", a weakling).
+It also sets, with a Priberam citation, nouns that the English Wiktionary
+lists only in a closed class ("contra": "o contra").
 
-A word with a noun entry gets the gender of that entry, also when it is an
-adverb, preposition, pronoun or other closed-class word too ("o nada", "a
-via", "o caso"). Words that are never nouns get an empty gender, so that
-``get_noun_gender`` returns None for them and does not apply the suffix
-rules. These are the words that Wiktionary lists as an adverb, preposition,
-conjunction, pronoun, determiner, article, contraction or interjection and
-not as a noun ("ainda", "para", "cada"). An empty gender is written only
-where the suffix rules give a gender. Proper nouns, words with a capital
+A determiner, pronoun, article, numeral or contraction with a gender gets
+that gender, also when the word has a noun entry ("uma", "as", "toda" f;
+"um", "os", "este" m). The gender comes from the head template, from a
+"feminine" or "masculine" sense tag, or from the forms table: a form tagged
+"feminine" is feminine, and the entry that lists it is masculine ("este",
+beside "esta"). A head or sense that names both genders marks a word of
+invariable gender ("qual") and gives none. A word whose entries give both
+genders is ``mf``. A contraction takes the gender of its article or
+pronoun part ("da" f, "ao" m); a neuter contraction ("disso") has none.
+
+Otherwise a word with a noun entry gets the gender of that entry, also when
+it is an adverb, preposition, pronoun or other closed-class word too ("o
+nada", "a via", "o caso"). The words that Wiktionary lists only as an
+adverb, preposition, conjunction, pronoun, determiner, article, contraction
+or interjection, with no gender, get an empty gender ("ainda", "para",
+"cada"). ``get_noun_gender`` returns None for them and does not apply the
+suffix rules. An empty gender is written only where the suffix rules give a
+gender. Proper nouns, words with a capital
 letter, a space, a digit or an edge hyphen, and one-letter words are left
 out.
 
@@ -68,6 +80,9 @@ OVERRIDES = Path(__file__).resolve().parent / "noun_gender_overrides.csv"
 
 # Word classes whose words are not nouns unless they also have a noun entry.
 NON_NOUN_POS = {"adv", "prep", "conj", "pron", "det", "article", "contraction", "intj"}
+# Word classes whose words agree in gender with a noun; their gender comes
+# before the gender of a noun entry.
+AGREEING_POS = {"det", "pron", "article", "num", "contraction"}
 # An entry whose every sense carries one of these tags is marginal. A marginal
 # closed-class entry ("nozes" for "nós") does not make a word a non-noun, and a
 # marginal noun entry ("cor" m, poetic "heart") gives no gender to a word that
@@ -82,6 +97,7 @@ MINORITY_LABELS = re.compile(r"obsolete|nonstandard|proscribed|rare|uncommon|"
 FORM_TAGS = {"plural", "feminine", "masculine", "Portugal", "Brazil"}
 GENDER_CODES = {"m": {"m"}, "f": {"f"}, "m-p": {"m"}, "f-p": {"f"},
                 "mf": {"m", "f"}, "mfbysense": {"m", "f"}, "mfequiv": {"m", "f"}}
+GENDER_TAGS = {"masculine": "m", "feminine": "f"}
 
 
 def split_specs(arg: str) -> list[str]:
@@ -149,8 +165,43 @@ def read_entries(stream: IO[bytes], name: str) -> Iterator[dict]:
 
 
 def is_marginal(entry: dict) -> bool:
-    """Whether every sense of an entry is a marginal use."""
+    """Whether every sense of an entry is a marginal use. A contraction is never
+    marginal: kaikki tags every "contraction of X + Y" sense "alt-of"."""
+    if entry.get("pos") == "contraction":
+        return False
     return all(MARGINAL_SENSE_TAGS & set(sense.get("tags", [])) for sense in entry.get("senses", []))
+
+
+def single_gender(genders: set[str]) -> set[str]:
+    """One gender, or nothing for a word of invariable gender."""
+    return genders if len(genders) == 1 else set()
+
+
+def agreeing_genders(entry: dict) -> dict[str, set[str]]:
+    """The genders that a determiner, pronoun, article, numeral or contraction
+    entry gives its word and the gendered forms in its forms table."""
+    genders: dict[str, set[str]] = defaultdict(set)
+    for form in entry.get("forms", []):
+        tags = set(form.get("tags", []))
+        if tags <= FORM_TAGS and tags & GENDER_TAGS.keys():
+            genders[form["form"]] |= single_gender({GENDER_TAGS[tag] for tag in tags if tag in GENDER_TAGS})
+    if any("f" in gender for gender in genders.values()):
+        # The entry that lists a feminine form is the masculine ("este",
+        # beside "esta"). Its sense tags describe a use of its forms ("um",
+        # "usually feminine" in "uma grande festa").
+        genders[entry["word"]].add("m")
+        return genders
+    own: set[str] = set()
+    for head in entry.get("head_templates", []):
+        args = head.get("args", {})
+        codes = [args[k] for k in ("g", "g2", "g3") if args.get(k)]
+        if head.get("name") in ("pt-pron", "pt-det") and args.get("1"):
+            codes.append(args["1"])
+        own |= single_gender({g for code in codes for g in GENDER_CODES.get(code.removesuffix("-s"), set())})
+    for sense in entry.get("senses", []):
+        own |= single_gender({GENDER_TAGS[tag] for tag in sense.get("tags", []) if tag in GENDER_TAGS})
+    genders[entry["word"]] |= own
+    return genders
 
 
 def build(source: str) -> tuple[dict[str, str], str]:
@@ -161,11 +212,15 @@ def build(source: str) -> tuple[dict[str, str], str]:
     genders: dict[str, set[str]] = defaultdict(set)
     marginal: dict[str, set[str]] = defaultdict(set)
     non_nouns: set[str] = set()
+    agreeing: dict[str, set[str]] = defaultdict(set)
     entries = 0
     for entry in read_entries(stream, source):
         word, pos = entry.get("word", ""), entry.get("pos")
         if pos in NON_NOUN_POS and not is_marginal(entry):
             non_nouns.add(word.lower())
+        if pos in AGREEING_POS and not is_marginal(entry):
+            for form, form_genders in agreeing_genders(entry).items():
+                agreeing[form.lower()] |= form_genders
         if pos != "noun":
             continue
         lemma = entry_genders(entry)
@@ -185,11 +240,14 @@ def build(source: str) -> tuple[dict[str, str], str]:
         if keep(word):
             lexicon[word] = "mf" if gender == {"m", "f"} else next(iter(gender))
     nouns = len(lexicon)
+    gendered = {word: "mf" if gender == {"m", "f"} else next(iter(gender))
+                for word, gender in agreeing.items() if keep(word) and gender}
+    lexicon |= gendered
     for word in non_nouns:
         if keep(word) and word not in lexicon:
             lexicon[word] = ""
-    print(f"{entries} noun entries with a gender in, {nouns} nouns and "
-          f"{len(lexicon) - nouns} non-nouns out")
+    print(f"{entries} noun entries with a gender in, {nouns} nouns, {len(gendered)} agreeing words "
+          f"and {sum(1 for g in lexicon.values() if not g)} non-nouns out")
     return lexicon, date
 
 

@@ -78,7 +78,7 @@ REGIONAL_DICT_PATH = os.path.join(os.path.dirname(__file__), "data", "regional_d
 # first match wins. Each rule is right for at least 80% of the nouns it
 # matches in the source of noun_gender_exceptions.csv.gz (see
 # scripts/build_noun_gender.py); the exceptions file lists the nouns the
-# rules get wrong or do not cover, and the words that are never nouns.
+# rules get wrong or do not cover, and the closed-class words.
 NOUN_GENDER_SUFFIXES: Tuple[Tuple[str, str], ...] = (
     ("f", r"ç(?:ão|ões)$"),
     ("f", r"s(?:ão|ões)$"),
@@ -568,10 +568,11 @@ class TugaLexicon:
         Get the grammatical gender of a Portuguese common noun.
 
         The exceptions list decides first, then the suffix rules
-        (``NOUN_GENDER_SUFFIXES``). The exceptions list also holds the words
-        that are never nouns, such as adverbs, prepositions and pronouns
-        ("ainda", "para", "cada"). Such a word gets None, and the suffix rules
-        do not apply to it.
+        (``NOUN_GENDER_SUFFIXES``). A determiner, pronoun, article or
+        contraction gets its own gender ("uma", "da" f; "um", "do" m). The
+        exceptions list also holds the words that Wiktionary lists only in a
+        closed class and with no gender ("ainda", "para", "cada"). Such a word
+        gets None, and the suffix rules do not apply to it.
 
         Args:
             word (str): A noun, singular or plural, in any letter case.
@@ -580,8 +581,8 @@ class TugaLexicon:
             Optional[str]: "m" or "f"; "mf" for a noun of both genders, such
                 as a common-gender noun ("artista") or a noun whose gender
                 changes with its meaning ("capital"); None for a listed word
-                that is never a noun, and when no rule applies and the word is
-                not listed.
+                with no gender, and when no rule applies and the word is not
+                listed.
         """
         word = word.lower()
         exceptions = _noun_gender_exceptions()
