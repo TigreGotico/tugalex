@@ -118,10 +118,17 @@ def test_capital_is_feminine(word):
     assert TugaLexicon.get_noun_gender(word) == "f"
 
 
+# After a number, "grama" is the unit, masculine in Priberam and the VOLP.
+# "a grama" (grass, mostly Brazil) takes its determiner.
+@pytest.mark.parametrize("word", ["grama", "gramas"])
+def test_gram_is_masculine(word):
+    assert TugaLexicon.get_noun_gender(word) == "m"
+
+
 # The fruit is feminine. The masculine readings are rare senses ("o banana",
-# a weakling; the surname "Laranja"), so scripts/noun_gender_overrides.csv
-# sets them to "f".
-@pytest.mark.parametrize("word", ["banana", "bananas", "laranja", "laranjas"])
+# a weakling; the surname "Laranja"; "o uva", the colour), so
+# scripts/noun_gender_overrides.csv sets them to "f".
+@pytest.mark.parametrize("word", ["banana", "bananas", "laranja", "laranjas", "uva", "uvas"])
 def test_fruit_is_feminine(word):
     assert TugaLexicon.get_noun_gender(word) == "f"
 
