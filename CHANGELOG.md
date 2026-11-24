@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.9a1](https://github.com/TigreGotico/tugalex/tree/2.5.9a1) (2026-11-24)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.8a1...2.5.9a1)
+
+**Merged pull requests:**
+
+- fix: read "uva" as feminine and "grama" as masculine, their usual senses [\#115](https://github.com/TigreGotico/tugalex/pull/115) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.5.8a1](https://github.com/TigreGotico/tugalex/tree/2.5.8a1) (2026-11-24)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.7a1...2.5.8a1)
