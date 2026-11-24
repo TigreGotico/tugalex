@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.8a1](https://github.com/TigreGotico/tugalex/tree/2.5.8a1) (2026-11-24)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.7a1...2.5.8a1)
+
+**Merged pull requests:**
+
+- fix: read "capital" as feminine, its usual sense [\#113](https://github.com/TigreGotico/tugalex/pull/113) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.5.7a1](https://github.com/TigreGotico/tugalex/tree/2.5.7a1) (2026-11-23)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.6a3...2.5.7a1)
