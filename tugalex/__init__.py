@@ -580,7 +580,7 @@ class TugaLexicon:
         Returns:
             Optional[str]: "m" or "f"; "mf" for a noun of both genders, such
                 as a common-gender noun ("artista") or a noun whose gender
-                changes with its meaning ("capital"); None for a listed word
+                changes with its meaning ("rádio"); None for a listed word
                 with no gender, and when no rule applies and the word is not
                 listed.
         """

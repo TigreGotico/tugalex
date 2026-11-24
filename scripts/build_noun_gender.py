@@ -8,8 +8,8 @@ suffix rules against the genders that the English Wiktionary gives every
 Portuguese common noun, as extracted by wiktextract and published by
 kaikki.org, and writes the nouns the rules get wrong or do not cover. Nouns
 of both genders are always written as ``mf``: a common-gender noun ("o/a
-artista"), a noun whose gender changes with its meaning ("o capital"/"a
-capital"), or a noun whose gender differs between Portugal and Brazil.
+artista"), a noun whose gender changes with its meaning ("o rádio"/"a
+rádio"), or a noun whose gender differs between Portugal and Brazil.
 Nothing else from the download is kept.
 
 The genders come from the head templates of the noun entries (``{{pt-noun|f}}``,
