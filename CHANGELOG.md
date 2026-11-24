@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.10a2](https://github.com/TigreGotico/tugalex/tree/2.5.10a2) (2026-11-24)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.10a1...2.5.10a2)
+
+**Merged pull requests:**
+
+- refactor: simplify tugalex for readers [\#119](https://github.com/TigreGotico/tugalex/pull/119) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.5.10a1](https://github.com/TigreGotico/tugalex/tree/2.5.10a1) (2026-11-24)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.9a1...2.5.10a1)
