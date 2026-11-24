@@ -1,7 +1,7 @@
 # TugaLex
 
 <!-- agent-hint
-covers: what TugaLex provides, which parts are deprecated until 3.0.0, how to install it and the first calls
+covers: what TugaLex provides, how to install it and the first calls
 source: `tugalex/__init__.py`, `tugalex/version.py`, `pyproject.toml`
 generated: no
 verify: d=$(mktemp -d) && sed '/^```/d' README.md > $d/r.txt && python -I -m doctest $d/r.txt
@@ -10,7 +10,7 @@ see: `docs/index.md`, `docs/quickstart.md`, `docs/api.md`, `AGENTS.md`
 
 TugaLex is a lexicon library for Portuguese. It gives the word list of the Portuguese pronunciation dictionary, the grammatical gender of a common noun, the grammatical gender of a given name, and the pronunciation of 27 words that depend on part of speech. It has no third-party runtime dependencies, and all data ships in the package.
 
-The regional pronunciation dictionary and the spelling accessors are deprecated. Version 3.0.0 removes them. For pronunciation, use [orthography2ipa](https://github.com/TigreGotico/orthography2ipa). For spelling conversion, use [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico). [docs/api.md](docs/api.md#deprecated-names) lists each deprecated name with its replacement.
+TugaLex has no pronunciation dictionary and no spelling conversion. For pronunciation, use [orthography2ipa](https://github.com/TigreGotico/orthography2ipa). For spelling conversion, use [desacordo_ortografico](https://github.com/TigreGotico/desacordo_ortografico).
 
 ## Install
 

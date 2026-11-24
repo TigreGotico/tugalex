@@ -1,8 +1,5 @@
 """Example — part-of-speech changes the pronunciation (heterophonic homographs).
 
-This example uses the deprecated dictionary API, which emits a
-DeprecationWarning and is removed in the next major release.
-
 Run::
 
     python examples/02_postag_homographs.py
@@ -14,9 +11,8 @@ def main() -> None:
     lex = TugaLexicon()
 
     # "acordo" is the noun "an accord" or the verb "I wake up" — different vowel.
-    print("acordo as NOUN:", lex.get_phonemes("acordo", pos="NOUN"))
-    print("acordo as VERB:", lex.get_phonemes("acordo", pos="VERB"))
-    print("postags for acordo:", lex.possible_postags.get("acordo"))
+    print("acordo as NOUN:", lex.homographs["acordo"]["NOUN"])
+    print("acordo as VERB:", lex.homographs["acordo"]["VERB"])
     print()
 
     # A few words straight from the homograph table, every variant they carry.
