@@ -118,8 +118,8 @@ def test_capital_is_feminine(word):
     assert TugaLexicon.get_noun_gender(word) == "f"
 
 
-# After a number, "grama" is the unit, masculine in Priberam and the VOLP.
-# "a grama" (grass, mostly Brazil) takes its determiner.
+# After a number, "grama" is the unit, "nome masculino" in Priberam.
+# "a grama" (grass, mostly Brazil) is the rarer sense there.
 @pytest.mark.parametrize("word", ["grama", "gramas"])
 def test_gram_is_masculine(word):
     assert TugaLexicon.get_noun_gender(word) == "m"
