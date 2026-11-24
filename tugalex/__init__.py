@@ -90,6 +90,7 @@ NOUN_GENDER_SUFFIXES: Tuple[Tuple[str, str], ...] = (
     ("m", r"(?<!ã)os?$"),
     ("m", r"(?:or|ores)$"),
     ("m", r"umes?$"),
+    ("m", r"gramas?$"),
     ("f", r"as?$"),
 )
 

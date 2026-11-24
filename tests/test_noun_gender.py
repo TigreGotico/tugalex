@@ -125,6 +125,14 @@ def test_gram_is_masculine(word):
     assert TugaLexicon.get_noun_gender(word) == "m"
 
 
+# Units and nouns in -grama are masculine (o quilograma, o programa). Wiktionary
+# has no entry for some units, so the suffix rule must cover them.
+@pytest.mark.parametrize("word", ["centigrama", "decagrama", "hectograma", "nanograma",
+                                  "kilograma", "centigramas", "telegrama"])
+def test_grama_suffix_is_masculine(word):
+    assert TugaLexicon.get_noun_gender(word) == "m"
+
+
 # The fruit is feminine. The masculine readings are rare senses ("o banana",
 # a weakling; the surname "Laranja"; "o uva", the colour), so
 # scripts/noun_gender_overrides.csv sets them to "f".
