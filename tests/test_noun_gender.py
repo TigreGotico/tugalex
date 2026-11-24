@@ -5,7 +5,7 @@ in MorphoBr (LR-POR/MorphoBr, nouns/*.dict, +F or +M). For "tarde" and
 "planeta", which MorphoBr lists without a gender, the gender is the Gender
 feature of the UD Portuguese-Bosque treebank. Nouns of both genders are
 common-gender nouns ("o/a artista") or nouns whose gender changes with the
-meaning ("o capital", "a capital").
+meaning ("o rádio", the set; "a rádio", the station).
 """
 import csv
 import gzip
@@ -35,7 +35,7 @@ from tugalex import NOUN_GENDER_PATH, TugaLexicon, suffix_noun_gender
     ("crises", "f"),
     # nouns of both genders
     ("artista", "mf"), ("artistas", "mf"), ("estudante", "mf"),
-    ("capital", "mf"), ("rádio", "mf"),
+    ("rádio", "mf"),
 ])
 def test_noun_gender(word, gender):
     assert TugaLexicon.get_noun_gender(word) == gender
@@ -109,6 +109,13 @@ def test_noun_from_dictionary(word):
 @pytest.mark.parametrize("word,gender", [("mas", None), ("Mas", None), ("ás", "m")])
 def test_usual_sense_decides(word, gender):
     assert TugaLexicon.get_noun_gender(word) == gender
+
+
+# "a capital" (the city, the capital letter) is the usual sense. "o capital"
+# (money) is rarer, and a determiner before the number still decides it.
+@pytest.mark.parametrize("word", ["capital", "capitais"])
+def test_capital_is_feminine(word):
+    assert TugaLexicon.get_noun_gender(word) == "f"
 
 
 # The fruit is feminine. The masculine readings are rare senses ("o banana",
