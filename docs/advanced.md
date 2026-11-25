@@ -1,127 +1,73 @@
 # Advanced
 
-Recipes and edges beyond the basic lookups. All snippets use only the public API
-and the packaged data.
+<!-- agent-hint
+covers: recipes for homographs and the word list, and the edge cases of the lookups
+source: `tugalex/__init__.py`, `tests/test_lexicon.py`, `tests/test_wordlist.py`
+generated: no
+verify: d=$(mktemp -d) && sed '/^```/d' docs/advanced.md > $d/v.txt && python -I -m doctest $d/v.txt
+see: `api.md`, `quickstart.md`, `index.md`
+-->
 
-## Build a grapheme-to-phoneme map for a model
+This page gives recipes and edge cases beyond the basic lookups. The recipes use the public API and the packaged data.
 
-> **Deprecated.** `get_ipa_map()`, `get_phonemes()` and the dictionary views `ipa`,
-> `syllables`, `regions` and `possible_postags` emit a `DeprecationWarning`.
-> The next major release removes them, together with the legacy
-> `tugaphone.dialects` inventories that read them. For Portuguese
-> pronunciation, use orthography2ipa with the pt-PT lexicon of
-> `o2i-lexicons`.
+## Resolve homographs
 
-`get_ipa_map()` hands you a flat `{word: phonemes}` dictionary for one POS and
-region. This is exactly the shape a G2P training step or a TTS front-end wants.
-
-```python
-from tugalex import TugaLexicon
-
-lex = TugaLexicon()
-nouns = lex.get_ipa_map(pos="NOUN", region="lbx")
-verbs = lex.get_ipa_map(pos="VERB", region="lbx")
-print(len(nouns), len(verbs))   # tens of thousands each
-```
-
-To get every POS for every word, walk `possible_postags`. A word outside the
-homograph table carries the single tag `""`, its POS-free entry:
+A homograph has a different transcription for each POS. `homographs` holds the table as `{word: {POS: ipa}}`. The first reading of *para* is the preposition "for", and the second is "he stops".
 
 ```python
-for word, tags in list(lex.possible_postags.items())[:5]:
-    for tag in tags:
-        print(word, tag, lex.get_phonemes(word, pos=tag))
+>>> from tugalex import TugaLexicon
+>>> lex = TugaLexicon()
+>>> lex.homographs["para"]["ADP"]
+'ˈpɐɾɐ'
+>>> lex.homographs["para"]["VERB"]
+'ˈpaɾɐ'
 ```
 
-## Resolve homographs correctly
-
-A homograph carries a different transcription per POS. The homograph table is
-consulted before the regional dictionary. Always pass the POS you mean:
+To list every reading of a word, walk its entry.
 
 ```python
-lex.get_phonemes("para", pos="ADP")    # ˈpɐɾɐ  (the preposition "for")
-lex.get_phonemes("para", pos="VERB")   # ˈpaɾɐ  (he/she stops)
+>>> from tugalex import TugaLexicon
+>>> lex = TugaLexicon()
+>>> for word in ["acordo", "seco"]:
+...     for pos, ipa in lex.homographs[word].items():
+...         print(word, pos, ipa)
+acordo NOUN ɐˈkoɾdu
+acordo VERB ɐˈkɔɾdu
+seco ADJ ˈseku
+seco VERB ˈsɛku
 ```
 
-The full table is `lex.homographs`, shaped as `{word: {POS: ipa}}`.
+Two readings with the same POS, such as *sede* thirst and *sede* headquarters, need [bifonia](https://github.com/TigreGotico/bifonia).
 
-## Archaisms fold into pronunciation automatically
+## Compare the word lists of two regions
 
-When you ask for the phonemes of a pre-20th-century spelling, TugaLex rewrites
-it to its modern form first, so you still get a transcription:
+Each region has its own word list. A set difference shows the words that only one region lists.
 
 ```python
-lex.archaic_words["pharmacia"]      # 'farmácia'
-lex.get_phonemes("architecto")      # 'ɐɾ·ki·tˈɛ·tu'  (looked up as arquiteto)
+>>> from tugalex import TugaLexicon
+>>> lex = TugaLexicon()
+>>> lisbon, luanda = set(lex.get_wordlist("lbx")), set(lex.get_wordlist("lda"))
+>>> sorted(lisbon - luanda), sorted(luanda - lisbon)
+(['aminoácido', 'arabescar'], ['reda'])
 ```
-
-## Modernise one word for a variety
-
-`modern_spelling()` applies the archaism table and the AO1990 table of one
-variety to one word, and keeps its case. Use it in a text pipeline, one word
-at a time, after you strip the punctuation:
-
-```python
-lex.modern_spelling("Pharmacia", "pt-BR")   # 'Farmácia'
-lex.modern_spelling("kilometro", "pt-BR")   # 'quilômetro'
-```
-
-The archaism table gives a separate pt-BR form where the two standards accent
-the word differently. AO1990 Base XI, 3º, writes a stressed ⟨e⟩ or ⟨o⟩ before
-⟨m⟩ or ⟨n⟩ in a proparoxytone with an acute or a circumflex, by the vowel
-quality in each norm: `cómodo`/`cômodo`, `fenómeno`/`fenômeno`.
-
-## Round-trip orthography across the AO1990 agreement
-
-`normalize_ao1900()` goes from old to modern spelling. The two `reverse_*`
-methods go from modern back to old, one per standard. Unmapped words pass
-through unchanged. Strip punctuation and lowercase the words first, because
-the lookup matches each whitespace-separated word exactly.
-
-```python
-modern = lex.normalize_ao1900("acção óptimo")   # 'ação ótimo'
-back_pt = lex.reverse_ao1900_pt("ótimo")         # 'óptimo'
-```
-
-PT and BR diverge. A word can revert differently per standard, which is why
-there are two reverse methods instead of one.
-
-## Detect spelling phenomena
-
-Two cached sets expose AO1990-related phenomena directly:
-
-```python
-sorted(lex.silent_p_words)[:3]    # words with a silent p, e.g. 'assimptota'
-sorted(lex.voiced_u_words)[:3]    # words that used to carry the trema ü
-```
-
-Use them to flag tokens that need special attention in a pronunciation or
-spell-checking pipeline.
 
 ## Gotchas
 
-- **POS casing.** The homograph table uses uppercase tags (`NOUN`, `VERB`,
-  `ADJ`, `ADP`). A lowercase tag misses the homograph table and silently
-  falls back to the POS-free regional entry: `get_phonemes("acordo", pos="noun")`
-  gives `'ɐ·kˈoɾ·du'`, not the homograph entry `'ɐˈkoɾdu'`.
-- **Unknown words return falsy, they do not raise.** `get_phonemes` returns
-  `None` and `get_syllables` returns `[]` for words not in the dataset. An
-  unsupported *region*, by contrast, raises `ValueError` from `get_phonemes`,
-  `get_syllables`, `get_wordlist`, `get_ipa_map`, and `lang_to_region`.
-- **First touch is slow.** The first access to `ipa`, `syllables`, `regions`, or
-  any method that uses them parses the large CSV. Construct one `TugaLexicon`
-  and reuse it across calls.
-- **One region more than the five public dialects.** `lex.regions` also
-  contains `spx` (São Paulo). Only the five in `lang_to_region` have ISO
-  aliases. Reach `spx` with a raw `region=` value.
-- **Two transcription styles.** The homograph table writes the stress mark
-  before the syllable (`ɐˈkoɾdu`). The regional dictionary marks syllables with
-  `·` and writes the stress mark before the vowel (`ɐ·kˈoɾ·du`).
-- **AO1990 conversion matches whole whitespace-separated words.** A word with
-  attached punctuation or a capital letter is not converted, and runs of spaces
-  become one space ([#46](https://github.com/TigreGotico/tugalex/issues/46)).
-- **Method names read `1900`.** `normalize_ao1900`, `reverse_ao1900_pt`, and
-  `reverse_ao1900_br` all implement the AO1990 agreement.
+- **POS casing.** The homograph table uses uppercase tags (`NOUN`, `VERB`, `ADJ`, `ADP`). A lowercase tag is a missing key.
+- **An unknown region raises.** `get_wordlist` raises `ValueError` for a region code that is not one of the six.
+- **The word list is a copy.** `get_wordlist` returns a new list on each call, so a change to the list does not change the next result.
+- **A given name matches exactly.** `get_given_name_gender("isabel")` is `None`, because the list writes the name as `Isabel`. `get_noun_gender` lowercases the word first.
+
+The POS casing gotcha, shown:
+
+```python
+>>> from tugalex import TugaLexicon
+>>> lex = TugaLexicon()
+>>> lex.homographs["acordo"].get("noun") is None
+True
+>>> lex.homographs["acordo"]["NOUN"]
+'ɐˈkoɾdu'
+```
 
 ---
-[← API reference](api.md) · [Home](../README.md)
+[← API reference](api.md) · [Home](index.md) · [Datasets →](datasets.md)

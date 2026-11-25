@@ -4,31 +4,15 @@ TTS vocabularies downstream only recognize U+0261; an ASCII "g" (U+0067) in
 the IPA transcription is silently dropped, deleting the /ɡ/ phoneme from
 every word that contains it.
 """
-import pytest
-
 from tugalex import TugaLexicon
 
-# exercises the deprecated dictionary API; tests/test_deprecation.py covers the warning
-pytestmark = pytest.mark.filterwarnings(r"ignore:TugaLexicon\.\w+ is deprecated:DeprecationWarning")
 
-REGIONS = ["lbx", "rjx", "spx", "lda", "mpx", "dli"]
-
-
-@pytest.fixture(scope="module")
-def lex():
-    return TugaLexicon()
+def test_gosto_uses_ipa_g():
+    assert "ɡ" in TugaLexicon().homographs["gosto"]["NOUN"]
 
 
-class TestIPAVelarStop:
-    def test_gato_uses_ipa_g(self, lex):
-        mp = lex.get_ipa_map(region="lbx")
-        assert "ɡ" in mp["gato"], mp["gato"]
-
-    @pytest.mark.parametrize("region", REGIONS)
-    def test_no_ascii_g_in_any_ipa_value(self, lex, region):
-        mp = lex.get_ipa_map(region=region)
-        offenders = {w: v for w, v in mp.items() if "g" in v}
-        assert not offenders, (
-            f"{len(offenders)} entries in region {region!r} contain ASCII "
-            f"'g' (U+0067) instead of IPA 'ɡ' (U+0261), e.g. {next(iter(offenders.items()))}"
-        )
+def test_no_ascii_g_in_any_homograph():
+    offenders = {(word, pos): ipa
+                 for word, tags in TugaLexicon().homographs.items()
+                 for pos, ipa in tags.items() if "g" in ipa}
+    assert not offenders

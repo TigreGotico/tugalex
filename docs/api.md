@@ -1,254 +1,121 @@
 # API reference
 
-The whole library is one class.
+<!-- agent-hint
+covers: every public name of tugalex with its signature, default and return value
+source: `tugalex/__init__.py`, `tests/test_api_surface.py`
+generated: no
+verify: d=$(mktemp -d) && sed '/^```/d' docs/api.md > $d/a.txt && python -I -m doctest $d/a.txt
+see: `quickstart.md`, `advanced.md`, `index.md`
+-->
+
+This page lists the public names of `tugalex`. The package has one class, `TugaLexicon`, one function, `suffix_noun_gender`, and a few module constants.
 
 ```python
-from tugalex import TugaLexicon
+>>> from tugalex import TugaLexicon
 ```
 
-## `TugaLexicon(dictionary_path=None)`
+## `TugaLexicon()`
 
-| Arg | Type | Default | Meaning |
-| --- | --- | --- | --- |
-| `dictionary_path` | `Optional[str]` | `None` | Path to a regional CSV, plain or gzip (by the `.gz` extension), with the columns `word,phones,syllables,region_code`. `None` uses the packaged `data/regional_dict.csv.gz`. |
-
-Construction loads the small CSVs eagerly (AO1990 PT/BR, homographs, archaisms).
-The large `regional_dict.csv.gz` loads lazily on first access to phonemes,
-syllables, or regions, then it is cached on the instance. A custom
-`dictionary_path` is deprecated with the dictionary: `get_wordlist` warns
-when it reads one.
-
-### Region codes
-
-ISO dialect codes map to internal region codes through `lang_to_region()`:
-
-| ISO | Region |
-| --- | --- |
-| `pt-PT` | `lbx` |
-| `pt-BR` | `rjx` |
-| `pt-AO` | `lda` |
-| `pt-MZ` | `mpx` |
-| `pt-TL` | `dli` |
-
-The packaged dataset has one more region than the five mapped above: `spx`
-(São Paulo). Inspect `lex.regions` for the full set, and pass a raw code as
-`region=`.
-
-## Lookup methods
-
-> **Deprecated.** These lookups and the dictionary views `ipa`,
-> `syllables`, `regions` and `possible_postags` emit a `DeprecationWarning`.
-> The next major release removes them, together with the legacy
-> `tugaphone.dialects` inventories that read them. For Portuguese
-> pronunciation, use orthography2ipa with the pt-PT lexicon of
-> `o2i-lexicons`.
-
-### `get(word, pos="NOUN", region="lbx") -> dict`
-
-Both syllables and phonemes in one call.
-
-```python
-lex.get("acordo", pos="NOUN", region="lbx")
-# {'syllables': ['a', 'cor', 'do'], 'phonemes': 'ɐˈkoɾdu'}
-```
-
-Returns a dict with keys `"syllables"` (`List[str]`, empty if unknown) and
-`"phonemes"` (`Optional[str]`, `None` if unknown).
-
-### `get_phonemes(word, pos="NOUN", region="lbx") -> Optional[str]`
-
-The IPA transcription, or `None` when there is no entry. Matching is
-case-insensitive. Raises `ValueError` if `region` is not in the loaded
-dataset. Lookup order:
-
-1. If the word is an archaism, TugaLex first rewrites it to its modern form.
-2. If the word is a heterophonic homograph with an entry for `pos`, that
-   pronunciation wins (homographs are region-independent).
-3. Otherwise TugaLex consults the regional dictionary for `region`. That
-   dictionary has one POS-free pronunciation per word, so `pos` does not
-   change the answer.
-
-```python
-lex.get_phonemes("acordo", pos="NOUN")   # 'ɐˈkoɾdu'
-lex.get_phonemes("acordo", pos="VERB")   # 'ɐˈkɔɾdu'
-lex.get_phonemes("architecto")           # 'ɐɾ·ki·tˈɛ·tu'  (archaism -> arquiteto)
-```
-
-### `get_syllables(word, region="lbx") -> List[str]`
-
-Syllable segments for the word, or an empty list if unknown. Matching is
-case-insensitive. Raises `ValueError` if `region` is not in the loaded dataset.
-
-```python
-lex.get_syllables("casa")    # ['ca', 'sa']
-```
-
-### `get_ipa_map(pos="NOUN", region="lbx") -> Dict[str, str]`
-
-A flat `{word: phonemes}` map for one POS and region, merging the regional
-dictionary with the homograph table. Raises `ValueError` for an unknown
-region.
-
-```python
-g2p = lex.get_ipa_map(pos="NOUN")
-len(g2p)              # 53147
-g2p["acordo"]         # 'ɐˈkoɾdu'
-```
-
-### `lang_to_region(lang) -> str`
-
-Map an ISO dialect code to its region code. Raises `ValueError` for an
-unsupported dialect.
-
-```python
-lex.lang_to_region("pt-BR")   # 'rjx'
-```
+The constructor takes no arguments. It loads the homograph table. The word list and the gender lists load on first use, and the module caches them for every instance.
 
 ## Word list
 
 ### `get_wordlist(region="lbx") -> List[str]`
 
-Every word form known for a region, lowercase and sorted. Raises `ValueError`
-for an unknown region. The word list is not deprecated. With the packaged
-dictionary it reads `tugalex/data/words.csv.gz`, which holds the word forms of
-the regional dictionary and no pronunciations, and it does not warn. With a
-custom `dictionary_path` it returns the words of that dictionary and emits the
-dictionary `DeprecationWarning`.
+Every word form known for a region, lowercase and sorted. It reads `tugalex/data/words.csv.gz`, which holds the word forms of the regional pronunciation dictionary and no pronunciations. It returns a new list on each call, and it raises `ValueError` for an unknown region.
 
 ```python
-len(lex.get_wordlist("lbx"))   # 53147
-len(lex.get_wordlist("spx"))   # 53145
+>>> from tugalex import TugaLexicon
+>>> lex = TugaLexicon()
+>>> len(lex.get_wordlist("lbx"))
+53147
+>>> len(lex.get_wordlist("spx"))
+53145
 ```
+
+Region codes are `lbx` (Portugal), `rjx` (Brazil, Rio de Janeiro), `spx` (Brazil, São Paulo), `lda` (Angola), `mpx` (Mozambique) and `dli` (Timor-Leste).
 
 ## Noun gender
 
 ### `TugaLexicon.get_noun_gender(word) -> Optional[str]`
 
-The grammatical gender of a Portuguese common noun, singular or plural, in
-any letter case. A static method: it needs no `TugaLexicon` instance.
+The grammatical gender of a Portuguese common noun, singular or plural, in any letter case. It is a static method and needs no instance.
 
-It returns `"m"` or `"f"`, `"mf"` for a noun of both genders, or `None` when
-no rule applies and the noun is not listed. A noun of both genders is a
-common-gender noun (`"o/a artista"`), a noun whose gender changes with its
-meaning (`"o capital"`, `"a capital"`), or a noun whose gender differs
-between Portugal and Brazil.
+It returns `"m"` or `"f"`, `"mf"` for a noun of both genders, or `None`. It returns `None` for a word that Wiktionary lists only in a closed class and with no gender, and when no rule applies and the word is not listed. A noun of both genders is a common-gender noun (`"o/a artista"`), a noun whose gender changes with its meaning (`"o rádio"`, the set; `"a rádio"`, the station), or a noun whose gender differs between Portugal and Brazil.
 
-The exceptions file `tugalex/data/noun_gender_exceptions.csv.gz` decides
-first. Then the suffix rules in `tugalex.NOUN_GENDER_SUFFIXES` apply, in
-order: `-ção`, `-são`, `-dade`, `-tude`, `-gem`, `-eza` and `-ise` are
-feminine; `-o` (not `-ão`), `-or` and `-ume` are masculine; `-a` is feminine.
-Plural forms of each suffix match too. The caller decides whether the word is
-a noun, because function words get an answer from the suffix rules too.
+The exceptions file `tugalex/data/noun_gender_exceptions.csv.gz` decides first. Then the suffix rules in `tugalex.NOUN_GENDER_SUFFIXES` apply, in order. The suffixes `-ção`, `-são`, `-dade`, `-tude`, `-gem`, `-eza` and `-ise` are feminine. The suffixes `-o` (not `-ão`), `-or` and `-ume` are masculine, and `-a` is feminine. Plural forms of each suffix match too. The exceptions file also lists the closed-class words. A determiner, pronoun, article or contraction has its own gender (`uma`, `da`: `"f"`; `um`, `do`: `"m"`). A word that Wiktionary lists only in a closed class and with no gender, such as an adverb or a preposition, has an empty gender. These words get `None`, and the suffix rules do not apply to them.
 
 ```python
-from tugalex import TugaLexicon
-
-TugaLexicon.get_noun_gender("lei")       # 'f'   (listed)
-TugaLexicon.get_noun_gender("dias")      # 'm'   (listed)
-TugaLexicon.get_noun_gender("nações")    # 'f'   (suffix -ção)
-TugaLexicon.get_noun_gender("artista")   # 'mf'
-TugaLexicon.get_noun_gender("zzk")       # None
+>>> from tugalex import TugaLexicon
+>>> TugaLexicon.get_noun_gender("lei")
+'f'
+>>> TugaLexicon.get_noun_gender("dias")
+'m'
+>>> TugaLexicon.get_noun_gender("nações")
+'f'
+>>> TugaLexicon.get_noun_gender("artista")
+'mf'
+>>> TugaLexicon.get_noun_gender("zzk") is None
+True
+>>> TugaLexicon.get_noun_gender("ainda") is None
+True
 ```
 
-`scripts/build_noun_gender.py` regenerates the exceptions file. It compares
-the suffix rules against the noun genders of the English Wiktionary and
-keeps the nouns the rules get wrong or do not cover, and every noun of both
-genders. `scripts/noun_gender_overrides.csv` sets the gender of forms that a
-rare loanword sense would make both-gender (`cores`: "a cor", beside the
-computing term "o core").
+`lei` and `dias` come from the exceptions file, `nações` from the suffix `-ção`. `ainda` is an adverb, so the exceptions file gives it no gender.
+
+### `suffix_noun_gender(word) -> Optional[str]`
+
+The gender that the suffix rules alone give a word, or `None`. It ignores the exceptions file.
+
+```python
+>>> from tugalex import suffix_noun_gender
+>>> suffix_noun_gender("nações")
+'f'
+>>> suffix_noun_gender("zzk") is None
+True
+```
+
+`scripts/build_noun_gender.py` regenerates the exceptions file. It compares the suffix rules with the noun genders of the English Wiktionary and keeps the nouns that the rules get wrong or do not cover, and every noun of both genders. A determiner, pronoun, article, numeral or contraction with a gender keeps that gender, also when the word has a noun entry (`as`, `toda`: `"f"`). Otherwise a word with a noun entry gets the gender of that entry, also when it is a pronoun or an adverb too (`caso`: "o caso"). The script also keeps, with an empty gender, the words that Wiktionary lists only as an adverb, preposition, conjunction, pronoun, determiner, article, contraction or interjection and with no gender, where the suffix rules give a gender. `scripts/noun_gender_overrides.csv` sets the gender of forms that a rare sense would make both-gender: a loanword (`cores`: "a cor", beside the computing term "o core") or an insult (`banana`: "o banana", a weakling). It also sets, with a Priberam citation, the gender of nouns that the English Wiktionary lists only in a closed class (`contra`: "o contra"). An override with an empty gender lets the usual sense decide when a rare noun sense would give a gender (`agora`: "now", beside "o agora").
 
 ## Given-name gender
 
 ### `TugaLexicon.get_given_name_gender(name) -> Optional[str]`
 
-The grammatical gender of a given name. A static method: it needs no
-`TugaLexicon` instance. It returns `"m"` or `"f"`, `"mf"` for a name borne by
-both sexes, or `None` for a name that is not on the list. The match is exact:
-write the name as in running text, with its capital letter and accents.
+The grammatical gender of a given name. It is a static method and needs no instance. It returns `"m"` or `"f"`, `"mf"` for a name that both sexes bear, or `None` for a name that is not on the list. The match is exact: write the name as in running text, with its capital letter and accents.
 
 ```python
-TugaLexicon.get_given_name_gender("Isabel")   # 'f'
-TugaLexicon.get_given_name_gender("isabel")   # None
+>>> from tugalex import TugaLexicon
+>>> TugaLexicon.get_given_name_gender("Isabel")
+'f'
+>>> TugaLexicon.get_given_name_gender("isabel") is None
+True
 ```
 
-The list is `tugalex/data/given_names.csv.gz`. `scripts/build_given_names.py`
-regenerates it from Wikidata and the IBGE 2010 census first names, and
-`scripts/given_name_overrides.csv` corrects the names whose Wikidata items
-mislead.
+The list is `tugalex/data/given_names.csv.gz`. `scripts/build_given_names.py` regenerates it from Wikidata and the IBGE 2010 census first names, and `scripts/given_name_overrides.csv` corrects the names whose Wikidata items mislead.
 
-## Orthographic agreement (AO1990)
+## Homographs
 
-`normalize_ao1900` and the two `reverse_*` methods split the sentence on
-whitespace, look up each word exactly as written, and join the result with
-single spaces. A word with attached punctuation or a capital letter is not
-converted ([#46](https://github.com/TigreGotico/tugalex/issues/46)).
-`modern_spelling` takes one word and keeps its case.
+### `homographs: Dict[str, Dict[str, str]]`
 
-### `modern_spelling(word, lang="pt-PT") -> str`
-
-Rewrite one word to its modern spelling in the variety of `lang`. A pre-1911
-spelling maps to its modern form, and a pre-AO1990 spelling maps to its AO1990
-form. A Brazilian tag uses the pt-BR tables; every other tag uses the pt-PT
-tables. A word that is already a valid AO1990 spelling stays as written. When
-the agreement gives several forms, the form closest to the written word wins.
-A word in capitals stays in capitals, the first letter follows the written word,
-and a capital inside the table entry stays. AO1990 removed the
-hyphen from some compounds, so the result can be several words
-(`acha-de-armas` gives `acha de armas`). Strip punctuation from the word first.
+The POS-dependent pronunciations of the 27 heterophonic homographs, shaped as `{word: {POS: ipa}}`. The table has 55 rows, and it is the same for every region. `homographs_path` is the path of the CSV that it comes from, `tugalex/data/heterophonic_homographs.csv`.
 
 ```python
-lex.modern_spelling("Acção")                 # 'Ação'
-lex.modern_spelling("chronico", "pt-PT")     # 'crónico'
-lex.modern_spelling("chronico", "pt-BR")     # 'crônico'
-lex.modern_spelling("sector")                # 'sector'  (valid in pt-PT)
+>>> from tugalex import TugaLexicon
+>>> lex = TugaLexicon()
+>>> lex.homographs["para"]
+{'ADP': 'ˈpɐɾɐ', 'VERB': 'ˈpaɾɐ'}
+>>> len(lex.homographs), sum(len(tags) for tags in lex.homographs.values())
+(27, 55)
 ```
 
-### `normalize_ao1900(sentence) -> str`
+## Module constants
 
-Rewrite each word to its modern AO1990 spelling. Unknown words pass through.
-
-```python
-lex.normalize_ao1900("acção óptimo")   # 'ação ótimo'
-```
-
-### `reverse_ao1900_pt(sentence) -> str`
-
-Modern spelling back to pre-agreement PT-PT.
-
-```python
-lex.reverse_ao1900_pt("ótimo")   # 'óptimo'
-```
-
-### `reverse_ao1900_br(sentence) -> str`
-
-Modern spelling back to pre-agreement PT-BR.
-
-```python
-lex.reverse_ao1900_br("ato")   # 'ato'
-```
-
-## Properties and cached views
-
-| Name | Type | Meaning |
-| --- | --- | --- |
-| `ipa` | `Dict[region, Dict[word, Dict[POS, str]]]` | Lazy IPA map. |
-| `syllables` | `Dict[region, Dict[word, List[str]]]` | Lazy syllable map. |
-| `regions` | `Set[str]` | All region codes present in the loaded dataset. |
-| `homographs` | `Dict[word, Dict[POS, str]]` | POS-dependent pronunciations of the 27 heterophonic homographs. |
-| `archaic_words` | `Dict[old, new]` | Pre-1911 spelling to its modern pt-PT spelling. |
-| `archaic_words_br` | `Dict[old, new]` | Pre-1911 spelling to its modern pt-BR spelling. |
-| `possible_postags` | `Dict[word, List[str]]` | POS tags available per word (cached). A word outside the homograph table has `['']`. |
-| `AO1990` | `Dict[old, List[str]]` | Combined PT + BR old-to-new spelling map (cached). |
-| `silent_p_words` | `Set[str]` | Words with a silent `p` (`mpc`/`mpç`/`mpt` clusters) (cached). |
-| `voiced_u_words` | `Set[str]` | Words where `u` is voiced in `gue`/`gui`/`que`/`qui` (former trema) (cached). |
-
-```python
-sorted(lex.regions)            # ['dli', 'lbx', 'lda', 'mpx', 'rjx', 'spx']
-len(lex.AO1990)                # 5474
-len(lex.silent_p_words)        # 15
-len(lex.voiced_u_words)        # 324
-lex.possible_postags["acordo"] # ['NOUN', 'VERB']
-```
+| Name | Value |
+| --- | --- |
+| `NOUN_GENDER_SUFFIXES` | the ordered suffix rules of `get_noun_gender`, as `(gender, regex)` pairs |
+| `NOUN_GENDER_PATH` | the path of `tugalex/data/noun_gender_exceptions.csv.gz` |
+| `GIVEN_NAMES_PATH` | the path of `tugalex/data/given_names.csv.gz` |
+| `WORDLIST_PATH` | the path of `tugalex/data/words.csv.gz` |
 
 ---
-[← Quickstart](quickstart.md) · [Home](../README.md) · [Advanced →](advanced.md)
+[← Quickstart](quickstart.md) · [Home](index.md) · [Advanced →](advanced.md)
