@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.0a1](https://github.com/TigreGotico/tugalex/tree/3.0.0a1) (2026-11-25)
+
+[Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.10a2...3.0.0a1)
+
+**Breaking changes:**
+
+- feat!: remove the regional pronunciation dictionary and the spelling accessors [\#121](https://github.com/TigreGotico/tugalex/pull/121) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [2.5.10a2](https://github.com/TigreGotico/tugalex/tree/2.5.10a2) (2026-11-24)
 
 [Full Changelog](https://github.com/TigreGotico/tugalex/compare/2.5.10a1...2.5.10a2)
