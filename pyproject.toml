@@ -5,13 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tugalex"
 dynamic = ["version"]
-description = "A lexicon handler and linguistic utility for Portuguese dialects"
+description = "A Portuguese word list, noun and given-name gender, and homograph pronunciations"
 readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [{ name = "JarbasAi", email = "jarbasai@mailfence.com" }]
 requires-python = ">=3.11"
 dependencies = []
-keywords = ["portuguese", "nlp", "lexicon", "phonetics", "ipa", "syllables", "orthography", "ao1990"]
+keywords = ["portuguese", "nlp", "lexicon", "gender", "homographs", "ipa"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: Apache Software License",

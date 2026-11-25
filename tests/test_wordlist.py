@@ -1,4 +1,4 @@
-"""The word list reads its own words-only file and is not deprecated."""
+"""The word list reads its own words-only file and stays silent."""
 import gzip
 import importlib.util
 import os
@@ -9,8 +9,6 @@ import pytest
 from tugalex import TugaLexicon
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DICTIONARY = os.path.join(REPO_ROOT, "tugalex", "data", "regional_dict.csv.gz")
-WORDS = os.path.join(REPO_ROOT, "tugalex", "data", "words.csv.gz")
 REGIONS = ["dli", "lbx", "lda", "mpx", "rjx", "spx"]
 
 
@@ -24,83 +22,46 @@ def build():
 
 
 @pytest.mark.parametrize("region", REGIONS)
-def test_wordlist_emits_no_deprecation_warning(region):
+def test_wordlist_emits_no_warning(region):
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         words = TugaLexicon().get_wordlist(region)
     assert "casa" in words
 
 
-def test_wordlist_does_not_read_the_regional_dictionary(monkeypatch):
-    def refuse(path):
-        raise AssertionError(f"get_wordlist read the regional dictionary {path}")
-
-    monkeypatch.setattr(TugaLexicon, "_load_lang_map", staticmethod(refuse))
+def test_wordlist_holds_the_regional_differences():
     lex = TugaLexicon()
     lisbon, luanda = lex.get_wordlist("lbx"), lex.get_wordlist("lda")
     assert len(lisbon) == 53147
     assert len(luanda) == 53146
+    assert lisbon == sorted(lisbon)
     # the regional dictionary lists aminoácido and arabescar for Lisbon and
     # not for Luanda, and reda for Luanda and not for Lisbon
-    assert {"aminoácido", "arabescar"} <= set(lisbon)
-    assert not {"aminoácido", "arabescar"} & set(luanda)
+    assert set(lisbon) ^ set(luanda) == {"aminoácido", "arabescar", "reda"}
     assert "reda" in luanda and "reda" not in lisbon
-    assert lex._ipa == {}
 
 
-@pytest.fixture
-def custom_dictionary(tmp_path):
-    path = tmp_path / "custom.csv"
-    path.write_text("word,phones,syllables,region_code\n"
-                    "Zebra,zˈe|bɾɐ,ze|bra,lbx\n"
-                    "abelha,ɐ|bˈɐ|ʎɐ,a|be|lha,lbx\n"
-                    "xícara,ʃˈi|ka|ɾɐ,xí|ca|ra,rjx\n", encoding="utf-8")
-    return str(path)
-
-
-def _deprecations(call):
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
-        result = call()
-    return result, [w for w in caught if issubclass(w.category, DeprecationWarning)]
-
-
-def test_custom_dictionary_gives_its_own_words_with_one_warning(custom_dictionary):
-    lex = TugaLexicon(dictionary_path=custom_dictionary)
-    words, deprecations = _deprecations(lambda: lex.get_wordlist("lbx"))
-    assert words == ["abelha", "zebra"]
-    assert len(deprecations) == 1
-    assert str(deprecations[0].message).startswith("TugaLexicon.dictionary_path is deprecated")
-    assert deprecations[0].filename == __file__
-    assert _deprecations(lambda: lex.get_wordlist("rjx"))[0] == ["xícara"]
-
-
-def test_custom_dictionary_without_the_region_raises(custom_dictionary):
-    lex = TugaLexicon(dictionary_path=custom_dictionary)
-    with pytest.warns(DeprecationWarning), \
-            pytest.raises(ValueError, match="Unsupported dialect: dli"):
-        lex.get_wordlist("dli")
-
-
-def test_missing_custom_dictionary_raises(tmp_path):
-    lex = TugaLexicon(dictionary_path=str(tmp_path / "missing.csv.gz"))
-    with pytest.warns(DeprecationWarning), pytest.raises(FileNotFoundError):
-        lex.get_wordlist("lbx")
-
-
-@pytest.mark.parametrize("region", REGIONS)
-def test_wordlist_holds_the_words_of_the_regional_dictionary(region):
-    _, syllables, _ = TugaLexicon._load_lang_map(DICTIONARY)
-    assert TugaLexicon().get_wordlist(region) == sorted(syllables[region])
-
-
-def test_words_file_is_the_build_output(build, tmp_path):
-    # compare the CSV, not the gzip bytes: the gzip header's OS byte
-    # differs between Python versions
+@pytest.mark.parametrize("name,opener", [("dict.csv", open), ("dict.csv.gz", gzip.open)])
+def test_build_writes_each_word_with_its_regions(build, tmp_path, name, opener):
+    source = tmp_path / name
+    with opener(source, "wt", encoding="utf-8") as f:
+        f.write("# provenance header\n"
+                "word,phones,syllables,region_code\n"
+                " Zebra ,zˈe|bɾɐ,ze|bra,LBX\n"
+                "zebra,zˈe|bɾa,ze|bra,rjx\n"
+                "abelha,ɐ|bˈɐ|ʎɐ,a|be|lha,lbx\n"
+                "abelha,ɐ|bˈɐ|ʎɐ,a|be|lha,lbx\n"
+                "curto,row\n")
     out = tmp_path / "words.csv.gz"
-    build.main(["--dictionary", DICTIONARY, "--out", str(out)])
-    with gzip.open(out) as built, gzip.open(WORDS) as shipped:
-        assert built.read() == shipped.read()
+    build.main(["--dictionary", str(source), "--out", str(out)])
+    with gzip.open(out, "rt", encoding="utf-8") as f:
+        assert f.read() == "word,regions\nabelha,lbx\nzebra,lbx rjx\n"
+
+
+def test_build_needs_a_dictionary(build, capsys):
+    with pytest.raises(SystemExit):
+        build.main([])
+    assert "--dictionary" in capsys.readouterr().err
 
 
 def test_wordlist_returns_a_copy():
